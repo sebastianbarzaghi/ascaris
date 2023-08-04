@@ -1,29 +1,49 @@
 {% extends 'base.html' %}
 
-{% block title %}Home{% endblock %}
-
 {% block content %}
 
-<h1>Edit Document</h1>
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-<ul>
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
-{% endwith %}
-<form method="post" action="{{ url_for('edit_document', id=document.id) }}">
-    <label for="title">Title:</label>
-    <input type="text" name="title" id="title" value="{{ document.title }}"><br><br>
-  
-    <button id="person-button" type="button">Person</button>
-    <div id="editor-container" contenteditable="true" style="height: 300px;">{{ document.content }}</div>
-    <input type="hidden" name="content" id="content" value="{{ document.content }}"><br><br>
-  
-    <input type="submit" value="Save">
-</form>
+<div class="columns">
+    <div class="column">
+            <div class="tabs">
+                <ul>
+                    <li class="tab people-tab is-active" data-name="people"><a>People</a></li>
+                    <li class="tab places-tab" data-name="places"><a>Places</a></li>
+                    <li class="tab works-tab" data-name="works"><a>Works</a></li>
+                    <li class="tab organizations-tab" data-name="organizations"><a>Organizations</a></li>
+                    <li class="tab dates-tab" data-name="dates"><a>Dates</a></li>
+                </ul>
+            </div>
+            <div class="tab-content">
+              <div class="people-content panel-content">
+                <!-- People Content -->
+              </div>
+              <div class="places-content panel-content hidden">
+                <!-- Places Content -->
+              </div>
+              <div class="works-content panel-content hidden">
+                <!-- Works Content -->
+              </div>
+              <div class="organizations-content panel-content hidden">
+                <!-- Organizations Content -->
+              </div>
+              <div class="dates-content panel-content hidden">
+                <!-- Dates Content -->
+              </div>
+            </div>
+    </div>
+    <div class="column is-two-thirds">
+        <div class="editor">
+            <div class="toolbar">
+                <button class="button person-button" data-class="person" data-icon="user">Person</button>
+                <button class="button place-button" data-class="place" data-icon="map-marker-alt">Place</button>
+                <button class="button work-button" data-class="work" data-icon="book">Work</button>
+                <button class="button organization-button" data-class="organization" data-icon="building">Organization</button>
+                <button class="button date-button" data-class="date" data-icon="calendar-alt">Date</button>
+            </div>
+            <div class="content" contenteditable="true"></div>
+        </div>
+    </div>
+</div>
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 <script src="{{ url_for('static', filename='js/editor.js') }}"></script>

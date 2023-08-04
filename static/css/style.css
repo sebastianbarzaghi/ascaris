@@ -1,3 +1,68 @@
-.highlight {
-    background-color: yellow;
+@import "https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css";
+
+.editor {
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.toolbar {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.toolbar button {
+  margin-right: 5px;
+}
+
+.content {
+  min-height: 100px;
+  border: 1px solid #ccc;
+  padding: 5px;
+}
+
+.entity {
+  display: inline;
+  padding: 0.2rem 0.6rem;
+  border-radius: 10%;
+  margin: 0 0.1rem;
+}
+
+.tag-icon {
+  padding-left: 0.6rem;
+}
+
+.person, .person-button {
+  background-color: #fcca46;
+}
+
+.place, .place-button {
+  background-color: #80ed99;
+}
+
+.organization, .organization-button {
+  background-color: #fe7f2d;
+}
+
+.work, .work-button {
+  background-color: #ff8fab;
+}
+
+.date, .date-button {
+  background-color: #00f5d4;
+}
+
+.panel-content {
+  display: block;
+}
+
+.panel-blocks {
+  margin-top: 20px;
+}
+
+.panel-block {
+  display: block;
+  margin-bottom: 5px;
+  padding: 8px;
+  background-color: #f7f7f7;
+  border: 1px solid #ccc;
 }
