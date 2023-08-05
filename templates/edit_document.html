@@ -66,6 +66,9 @@
 </div>
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script>
+  // Set the documentId variable based on the document ID from the server-side template
+  var documentId = "{{ document.id }}";
+</script>
 <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
-
 {% endblock %}
