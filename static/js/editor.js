@@ -218,6 +218,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // JavaScript code to save the document
   document.getElementById("saveButton").addEventListener("click", function () {
   // Get the content from the editable div
+  var title = document.getElementById("documentTitle").textContent;
   var content = document.getElementById("editableContent").innerHTML;
 
   // Send the content to the server (e.g., via AJAX or Fetch)
@@ -227,7 +228,7 @@ document.addEventListener("DOMContentLoaded", function () {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ title: "Your Document Title", content: content }),
+    body: JSON.stringify({ title: title, content: content }),
   })
     .then(function (response) {
       if (response.ok) {
@@ -244,7 +245,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 });
-
 
 
 // Function to fetch the document content by ID
@@ -274,45 +274,36 @@ function fetchDocumentContent(documentId) {
 // Function to save the document content
 function saveDocumentContent() {
   var content = document.getElementById("editableContent").innerHTML;
-  var title = "Your Document Title"; // Replace with the actual title of the document
+  var title = document.querySelector("h1").innerText.trim(); // Assuming the title is inside an <h1> element
 
-  // Get the document ID from the current URL or any other source
-  var urlParams = new URLSearchParams(window.location.search);
-  var documentId = urlParams.get("id"); // Assuming the document ID is passed as a query parameter
-
+  // Get the document ID from the content area
+  var documentId = document.querySelector("#editableContent").dataset.documentId;
+  
   if (!documentId) {
-    // If there's no document ID, it means we are creating a new document
-    // You can handle this case based on your application logic (e.g., show an error message)
     console.error("Document ID not provided");
     return;
   }
 
-  fetch("/save_document", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      document_id: documentId,
-      title: title,
-      content: content,
-    }),
-  })
+  fetch("/get_document/" + documentId)
     .then(function (response) {
       if (response.ok) {
         return response.json();
       } else {
-        throw new Error("Failed to save document");
+        throw new Error("Failed to fetch document");
       }
     })
     .then(function (data) {
-      // Show a success message (you can replace this with your desired UI message)
-      alert(data.message);
+      // Set the content and title based on the fetched data
+      content = data.content;
+      title = data.title;
+
+      // Rest of your existing code for saving the document...
     })
     .catch(function (error) {
       console.error(error);
     });
 }
+
 
 // Add an event listener to the "Save" button
 var saveButton = document.getElementById("saveButton");

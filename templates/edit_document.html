@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<h1 class="title" id="documentTitle">{{ document.title }}</h1>
+
 <div class="columns">
     <div class="column">
             <div class="tabs">
@@ -60,15 +62,12 @@
                 <button class="button organization-button" data-class="organization" data-icon="building">Organization</button>
                 <button class="button date-button" data-class="date" data-icon="calendar-alt">Date</button>
             </div>
-            <div class="content" contenteditable="true" id="editableContent"></div>
+            <div class="content" contenteditable="true" id="editableContent">
+              {{ document.content | safe }}
+            </div>
         </div>
     </div>
 </div>
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-<script>
-  // Set the documentId variable based on the document ID from the server-side template
-  var documentId = "{{ document.id }}";
-</script>
 <script src="{{ url_for('static', filename='js/editor.js') }}"></script>
 {% endblock %}

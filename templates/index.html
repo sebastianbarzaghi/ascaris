@@ -5,15 +5,45 @@
 {% block content %}
 
 <h1>My Documents</h1>
-<ul>
-    {% for document in documents %}
-    <li>
-        <a href="{{ url_for('edit_document', id=document.id) }}">{{ document.title }}</a>
+{% set grouped_documents = {} %}
+{% for document in documents %}
+    {% set document_list = grouped_documents.setdefault(document.title, []) %}
+    {% set _ = document_list.append(document) %}
+{% endfor %}
+{% for title, documents_list in grouped_documents.items() %}
+    <div class="box">
+        <a href="{{ url_for('edit_document', id=documents_list[0].id) }}">{{ title }} (Latest Version)</a>
         <br>
-        <small>Created at {{ document.created_at }} | Updated at {{ document.updated_at }}</small>
-    </li>
-    {% endfor %}
-</ul>
+        <small>Created at {{ documents_list[0].created_at }} | Updated at {{ documents_list[0].updated_at }}</small>
+        {% if documents_list|length > 1 %}
+            <div class="dropdown">
+                <div class="buttons is-right">
+                <button class="button is-small is-link dropdown-trigger" aria-haspopup="true" aria-controls="dropdown-menu">Other Versions</button>
+                <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                    <div class="dropdown-content">
+                        {% for document in documents_list[1:] | sort(attribute='updated_at', reverse=True) %}
+                            <a href="{{ url_for('edit_document', id=document.id) }}" class="dropdown-item">Version {{ loop.index }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endfor %}
+
 <a href="{{ url_for('new_document') }}">New Document</a>
 
+<script>
+    // Add event listener to handle dropdowns
+  document.addEventListener("DOMContentLoaded", function () {
+    var dropdowns = document.querySelectorAll(".dropdown");
+    dropdowns.forEach(function (dropdown) {
+      var dropdownTrigger = dropdown.querySelector(".dropdown-trigger");
+      dropdownTrigger.addEventListener("click", function () {
+        dropdown.classList.toggle("is-active");
+      });
+    });
+  });
+</script>
 {% endblock %}
