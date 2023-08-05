@@ -32,6 +32,26 @@
             </div>
     </div>
     <div class="column is-two-thirds">
+      <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div id="navbarBasicExample" class="navbar-menu">
+          <div class="navbar-start">
+            <a class="navbar-item">
+              Metadata
+            </a>
+        </div>
+          <div class="navbar-end">
+            <div class="navbar-item">
+              <div class="buttons">
+                  <a class="button is-light" id="saveButton">
+                      Save
+                  </a>
+                  <a class="button is-light">
+                      Load
+                  </a>
+              </div>
+          </div>
+        </div>
+      </nav>
         <div class="editor">
             <div class="toolbar">
                 <button class="button person-button" data-class="person" data-icon="user">Person</button>
@@ -40,7 +60,7 @@
                 <button class="button organization-button" data-class="organization" data-icon="building">Organization</button>
                 <button class="button date-button" data-class="date" data-icon="calendar-alt">Date</button>
             </div>
-            <div class="content" contenteditable="true"></div>
+            <div class="content" contenteditable="true" id="editableContent"></div>
         </div>
     </div>
 </div>

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_migrate import Migrate
@@ -19,11 +19,6 @@ class Document(db.Model):
 
     def __repr__(self):
         return f"<Document {self.id}>"
-
-class Markup(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String(50), nullable=False)
-    text = db.Column(db.String(500), nullable=False)
 
 @app.route('/')
 def index():
@@ -64,14 +59,37 @@ def add_markup(html, markup_type, markup_text):
     soup.body.append(new_tag)
     return str(soup)
 
-@app.route('/save-document', methods=['POST'])
+# Flask route to save or update a document
+@app.route("/save_document", methods=["POST"])
 def save_document():
     data = request.get_json()
-    if 'content' not in data:
-        return 'Invalid request data!', 400
-    with open('document.html', 'w') as f:
-        f.write(data['content'])
-    return 'Document saved successfully!'
+    document_id = data.get("document_id")
+    title = data.get("title")
+    content = data.get("content")
+
+    # Check if a document with the given ID already exists
+    document = Document.query.filter_by(id=document_id).first()
+
+    if document:
+        # Update the existing document
+        document.title = title
+        document.content = content
+    else:
+        # Create a new document
+        new_document = Document(title=title, content=content)
+        db.session.add(new_document)
+
+    db.session.commit()
+    return jsonify({"message": "Document saved successfully!"})
+
+# Flask route to fetch a document by its ID
+@app.route("/get_document/<int:document_id>")
+def get_document(document_id):
+    document = Document.query.get(document_id)
+    if document:
+        return jsonify({"title": document.title, "content": document.content})
+    else:
+        return jsonify({"error": "Document not found"}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)

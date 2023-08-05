@@ -1,5 +1,9 @@
 @import "https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css";
 
+html {
+  padding: 2rem;
+}
+
 .editor {
   border: 1px solid #ccc;
   padding: 10px;

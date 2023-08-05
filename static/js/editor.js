@@ -215,4 +215,115 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+  // JavaScript code to save the document
+  document.getElementById("saveButton").addEventListener("click", function () {
+  // Get the content from the editable div
+  var content = document.getElementById("editableContent").innerHTML;
+
+  // Send the content to the server (e.g., via AJAX or Fetch)
+  // Make sure to include CSRF protection if using Flask and AJAX.
+  fetch("/save_document", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ title: "Your Document Title", content: content }),
+  })
+    .then(function (response) {
+      if (response.ok) {
+        // Document saved successfully
+        alert("Document saved successfully!");
+      } else {
+        // Handle errors, if any
+        alert("Error saving document. Please try again.");
+      }
+    })
+    .catch(function (error) {
+      alert("Error saving document. Please try again.");
+    });
+  });
+
+});
+
+
+
+// Function to fetch the document content by ID
+function fetchDocumentContent(documentId) {
+  fetch("/get_document/" + documentId, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then(function (response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("Failed to fetch document");
+      }
+    })
+    .then(function (data) {
+      // Set the content of the editable div
+      document.getElementById("editableContent").innerHTML = data.content;
+    })
+    .catch(function (error) {
+      console.error(error);
+    });
+}
+
+// Function to save the document content
+function saveDocumentContent() {
+  var content = document.getElementById("editableContent").innerHTML;
+  var title = "Your Document Title"; // Replace with the actual title of the document
+
+  // Get the document ID from the current URL or any other source
+  var urlParams = new URLSearchParams(window.location.search);
+  var documentId = urlParams.get("id"); // Assuming the document ID is passed as a query parameter
+
+  if (!documentId) {
+    // If there's no document ID, it means we are creating a new document
+    // You can handle this case based on your application logic (e.g., show an error message)
+    console.error("Document ID not provided");
+    return;
+  }
+
+  fetch("/save_document", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      document_id: documentId,
+      title: title,
+      content: content,
+    }),
+  })
+    .then(function (response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("Failed to save document");
+      }
+    })
+    .then(function (data) {
+      // Show a success message (you can replace this with your desired UI message)
+      alert(data.message);
+    })
+    .catch(function (error) {
+      console.error(error);
+    });
+}
+
+// Add an event listener to the "Save" button
+var saveButton = document.getElementById("saveButton");
+saveButton.addEventListener("click", saveDocumentContent);
+
+// Add event listeners to each document link in the sidebar
+var documentLinks = document.querySelectorAll(".document-link");
+documentLinks.forEach(function (link) {
+  link.addEventListener("click", function (event) {
+    event.preventDefault();
+    var documentId = link.dataset.documentId;
+    fetchDocumentContent(documentId);
+  });
 });
