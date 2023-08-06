@@ -328,24 +328,74 @@ document.addEventListener("DOMContentLoaded", function () {
   function populateSidePanel() {
     var spans = document.querySelectorAll(".entity");
     var peoplePanel = document.querySelector(".people-content .panel-blocks");
-  
+    var placesPanel = document.querySelector(".places-content .panel-blocks");
+    var worksPanel = document.querySelector(".works-content .panel-blocks");
+    var organizationsPanel = document.querySelector(".organizations-content .panel-blocks");
+    var datesPanel = document.querySelector(".dates-content .panel-blocks");
+
     spans.forEach(function (span) {
       if (span.classList.contains("person")) {
         var value = span.textContent;
-        var iconClass = "user"; // Assuming the icon class for "person" is "user"
+        var iconClass = "user";
         var tabClass = "people-content";
-  
         var panelBlock = createPanelBlock(
           "person-block",
           iconClass,
           value,
           tabClass
         );
-  
         peoplePanel.appendChild(panelBlock);
-      }
-    });
-  }
+      } else if (span.classList.contains("place")) {
+        var value = span.textContent;
+        var iconClass = "map-marker-alt";
+        var tabClass = "places-content";
+  
+        var panelBlock = createPanelBlock(
+          "place-block",
+          iconClass,
+          value,
+          tabClass
+        );
+        placesPanel.appendChild(panelBlock);
+    } else if (span.classList.contains("work")) {
+      var value = span.textContent;
+      var iconClass = "book";
+      var tabClass = "works-content";
+
+      var panelBlock = createPanelBlock(
+        "work-block",
+        iconClass,
+        value,
+        tabClass
+      );
+      worksPanel.appendChild(panelBlock);
+    } else if (span.classList.contains("organization")) {
+      var value = span.textContent;
+      var iconClass = "building";
+      var tabClass = "organizations-content";
+
+      var panelBlock = createPanelBlock(
+        "organization-block",
+        iconClass,
+        value,
+        tabClass
+      );
+      organizationsPanel.appendChild(panelBlock);
+  } else if (span.classList.contains("date")) {
+    var value = span.textContent;
+    var iconClass = "calendar-alt";
+    var tabClass = "dates-content";
+
+    var panelBlock = createPanelBlock(
+      "date-block",
+      iconClass,
+      value,
+      tabClass
+    );
+    datesPanel.appendChild(panelBlock);
+    }
+  })
+};
 
   populateSidePanel(); 
         
