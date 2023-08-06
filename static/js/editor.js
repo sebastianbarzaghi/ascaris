@@ -144,12 +144,13 @@ document.addEventListener("DOMContentLoaded", function () {
   content.addEventListener("click", function (event) {
     var target = event.target;
     if (target.tagName === "SPAN") {
-      var value = target.getAttribute("data-value");
-      var tabClass = target.classList[0] + "-content";
+      var value = target.textContent;
+      var tabClass = target.classList[1] + "-content";
       var panelBlock = createPanelBlock(
-        target.classList[0] + "-block",
+        target.classList[1] + "-block",
         "user",
-        value
+        value,
+        tabClass
       );
 
       var panelBlocks = document.querySelector("." + tabClass + "-blocks");
@@ -196,6 +197,8 @@ document.addEventListener("DOMContentLoaded", function () {
     return block;
   }
 
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   content.addEventListener("keydown", function (event) {
     var selection = window.getSelection();
     if (selection.rangeCount > 0) {
@@ -215,6 +218,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   // JavaScript code to save the document
   document.getElementById("saveButton").addEventListener("click", function () {
   // Get the content from the editable div
@@ -244,83 +249,109 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-});
 
-
-// Function to fetch the document content by ID
-function fetchDocumentContent(documentId) {
-  fetch("/get_document/" + documentId, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then(function (response) {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error("Failed to fetch document");
-      }
+  // Function to fetch the document content by ID
+  function fetchDocumentContent(documentId) {
+    fetch("/get_document/" + documentId, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
-    .then(function (data) {
-      // Set the content of the editable div
-      document.getElementById("editableContent").innerHTML = data.content;
-    })
-    .catch(function (error) {
-      console.error(error);
-    });
-}
-
-// Function to save the document content
-function saveDocumentContent() {
-  var content = document.getElementById("editableContent").innerHTML;
-  var title = document.querySelector("h1").innerText.trim(); // Assuming the title is inside an <h1> element
-
-  // Get the document ID from the content area
-  var documentId = document.querySelector("#editableContent").dataset.documentId;
-  
-  if (!documentId) {
-    console.error("Document ID not provided");
-    return;
+      .then(function (response) {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Failed to fetch document");
+        }
+      })
+      .then(function (data) {
+        // Set the content of the editable div
+        document.getElementById("editableContent").innerHTML = data.content;
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
   }
 
-  fetch("/get_document/" + documentId)
-    .then(function (response) {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error("Failed to fetch document");
-      }
-    })
-    .then(function (data) {
-      // Set the content and title based on the fetched data
-      content = data.content;
-      title = data.title;
 
-      // Rest of your existing code for saving the document...
-    })
-    .catch(function (error) {
-      console.error(error);
+  // Function to save the document content
+  function saveDocumentContent() {
+    var content = document.getElementById("editableContent").innerHTML;
+    var title = document.querySelector("h1").innerText.trim(); // Assuming the title is inside an <h1> element
+
+    // Get the document ID from the content area
+    var documentId = document.querySelector("#editableContent").dataset.documentId;
+    
+    if (!documentId) {
+      console.error("Document ID not provided");
+      return;
+    }
+
+    fetch("/get_document/" + documentId)
+      .then(function (response) {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Failed to fetch document");
+        }
+      })
+      .then(function (data) {
+        // Set the content and title based on the fetched data
+        content = data.content;
+        title = data.title;
+
+        // Rest of your existing code for saving the document...
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  }
+
+  // Add an event listener to the "Save" button
+  var saveButton = document.getElementById("saveButton");
+  saveButton.addEventListener("click", saveDocumentContent);
+
+  // Add event listeners to each document link in the sidebar
+  var documentLinks = document.querySelectorAll(".document-link");
+  documentLinks.forEach(function (link) {
+    link.addEventListener("click", function (event) {
+      event.preventDefault();
+      var documentId = link.dataset.documentId;
+      fetchDocumentContent(documentId);
     });
-}
-
-
-// Add an event listener to the "Save" button
-var saveButton = document.getElementById("saveButton");
-saveButton.addEventListener("click", saveDocumentContent);
-
-// Add event listeners to each document link in the sidebar
-var documentLinks = document.querySelectorAll(".document-link");
-documentLinks.forEach(function (link) {
-  link.addEventListener("click", function (event) {
-    event.preventDefault();
-    var documentId = link.dataset.documentId;
-    fetchDocumentContent(documentId);
   });
-});
 
-// Metadata
-document.addEventListener('DOMContentLoaded', () => {
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+  function populateSidePanel() {
+    var spans = document.querySelectorAll(".entity");
+    var peoplePanel = document.querySelector(".people-content .panel-blocks");
+  
+    spans.forEach(function (span) {
+      if (span.classList.contains("person")) {
+        var value = span.textContent;
+        var iconClass = "user"; // Assuming the icon class for "person" is "user"
+        var tabClass = "people-content";
+  
+        var panelBlock = createPanelBlock(
+          "person-block",
+          iconClass,
+          value,
+          tabClass
+        );
+  
+        peoplePanel.appendChild(panelBlock);
+      }
+    });
+  }
+
+  populateSidePanel(); 
+        
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Functions to open and close a modal
   function openModal($el) {
     $el.classList.add('is-active');
@@ -360,5 +391,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (event.code === 'Escape') {
       closeAllModals();
     }
+  });
+
+  // Additional click event listener for modal close buttons
+  var modalCloseButtons = document.querySelectorAll(".modal-close");
+  modalCloseButtons.forEach(function (closeButton) {
+    closeButton.addEventListener("click", function () {
+      closeAllModals();
+    });
   });
 });
