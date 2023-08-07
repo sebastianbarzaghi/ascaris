@@ -39,7 +39,7 @@ html {
   background-color: #fcca46;
 }
 
-.person-block i {
+.person-block .panel-icon i {
   color: #fcca46;
 }
 
@@ -47,7 +47,7 @@ html {
   background-color: #80ed99;
 }
 
-.place-block i {
+.place-block .panel-icon i {
   color: #80ed99;
 }
 
@@ -55,7 +55,7 @@ html {
   background-color: #fe7f2d;
 }
 
-.organization-block i {
+.organization-block .panel-icon i {
   color: #fe7f2d;
 }
 
@@ -63,7 +63,7 @@ html {
   background-color: #ff8fab;
 }
 
-.work-block i {
+.work-block .panel-icon i {
   color: #ff8fab;
 }
 
@@ -71,7 +71,7 @@ html {
   background-color: #00f5d4;
 }
 
-.date-block i {
+.date-block .panel-icon i {
   color: #00f5d4;
 }
 
@@ -97,4 +97,20 @@ html {
 
 .accordion-content {
   margin-top: 1rem;
+}
+
+.header-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.delete-button {
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.delete-button i {
+  color: #7e7e7e;
 }

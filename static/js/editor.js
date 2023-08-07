@@ -170,7 +170,18 @@ function createPanelBlock(blockClass, iconClass, value, tabClass, type) {
   accordionHeader.setAttribute("aria-expanded", "false");
   accordionHeader.innerHTML = '<span class="panel-icon"><i class="fas fa-' + iconClass + '"></i></span>';
   accordionHeader.innerHTML += '<span class="panel-text">' + value + '</span>';
-  block.appendChild(accordionHeader);
+
+  // Add the delete button to the accordion header
+  var deleteButton = document.createElement("button");
+  deleteButton.innerHTML = '<i class="fas fa-remove"></i>';
+  deleteButton.classList.add("delete-button");
+  
+  var headerWrapper = document.createElement("div");
+  headerWrapper.classList.add("header-wrapper");
+  headerWrapper.appendChild(accordionHeader);
+  headerWrapper.appendChild(deleteButton);
+
+  block.appendChild(headerWrapper);
 
   var accordionContent = document.createElement("div");
   accordionContent.classList.add("accordion-content", "is-hidden"); // Add is-hidden class to keep it closed by default
@@ -186,6 +197,19 @@ function createPanelBlock(blockClass, iconClass, value, tabClass, type) {
       accordionHeader.setAttribute("aria-expanded", "false");
     }
     accordionContent.classList.toggle("is-hidden");
+  });
+
+  // Add a click event listener to the delete button to remove the block and the parent span
+  deleteButton.addEventListener("click", function (event) {
+    event.stopPropagation(); // Prevent the accordion from being toggled when clicking the delete button
+    block.remove(); // Remove the accordion block
+    // Find the parent span of the accordion header, which represents the marked-up text
+    var spans = document.querySelectorAll(".entity");
+    spans.forEach(function (span) {
+      if (span.textContent === value) {
+        span.outerHTML = span.textContent; // Replace the span with its inner text content
+      }
+    });
   });
 
   return block;
@@ -204,6 +228,15 @@ function getFormFields(type) {
               </div>
             </div>
           `;
+        } else if (field.type === "textarea") {
+          return `
+          <div class="field">
+          <label class="label">${field.label}</label>
+          <div class="control">
+            <textarea class="textarea" placeholder="Enter ${field.label.toLowerCase()}"></textarea>
+          </div>
+        </div>
+          `
         } else if (field.type === "date") {
           return `
             <div class="field">
@@ -250,6 +283,7 @@ function getFormFields(type) {
         type: "select",
         options: ["--Select--", "Internal", "External", "Conjecture"],
       },
+      { label: "Note", name: "note", type: "textarea" },
     ]),
     place: createFormFields([
       { label: "Name", name: "name", type: "text" },
@@ -266,6 +300,7 @@ function getFormFields(type) {
         type: "select",
         options: ["--Select--", "Internal", "External", "Conjecture"],
       },
+      { label: "Note", name: "note", type: "textarea" },
     ]),
     work: createFormFields([
       { label: "Title", name: "name", type: "text" },
@@ -282,6 +317,7 @@ function getFormFields(type) {
         type: "select",
         options: ["--Select--", "Internal", "External", "Conjecture"],
       },
+      { label: "Note", name: "note", type: "textarea" },
     ]),
     organization: createFormFields([
       { label: "Name", name: "name", type: "text" },
@@ -298,6 +334,7 @@ function getFormFields(type) {
         type: "select",
         options: ["--Select--", "Internal", "External", "Conjecture"],
       },
+      { label: "Note", name: "note", type: "textarea" },
     ]),
     date: createFormFields([
       { label: "When", name: "when", type: "date" },
@@ -319,6 +356,7 @@ function getFormFields(type) {
         type: "select",
         options: ["--Select--", "Internal", "External", "Conjecture"],
       },
+      { label: "Note", name: "note", type: "textarea" },
     ]),
   };
 
