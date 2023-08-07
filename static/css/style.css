@@ -39,20 +39,40 @@ html {
   background-color: #fcca46;
 }
 
+.person-block i {
+  color: #fcca46;
+}
+
 .place, .place-button {
   background-color: #80ed99;
+}
+
+.place-block i {
+  color: #80ed99;
 }
 
 .organization, .organization-button {
   background-color: #fe7f2d;
 }
 
+.organization-block i {
+  color: #fe7f2d;
+}
+
 .work, .work-button {
   background-color: #ff8fab;
 }
 
+.work-block i {
+  color: #ff8fab;
+}
+
 .date, .date-button {
   background-color: #00f5d4;
+}
+
+.date-block i {
+  color: #00f5d4;
 }
 
 .panel-content {
@@ -65,8 +85,16 @@ html {
 
 .panel-block {
   display: block;
-  margin-bottom: 5px;
-  padding: 8px;
-  background-color: #f7f7f7;
-  border: 1px solid #ccc;
+  padding: 1rem;
+  margin-bottom: 0.5rem !important;
+}
+
+.accordion-header {
+  display: inline-flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+.accordion-content {
+  margin-top: 1rem;
 }

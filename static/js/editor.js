@@ -158,44 +158,189 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Function to create a panel block element
-  function createPanelBlock(blockClass, iconClass, value, tabClass) {
-    var block = document.createElement("a");
-    block.classList.add("panel-block", blockClass);
-    block.setAttribute("draggable", "true");
-    block.setAttribute("data-value", value);
+// Updated createPanelBlock function
+function createPanelBlock(blockClass, iconClass, value, tabClass, type) {
+  var block = document.createElement("div");
+  block.classList.add("box", "panel-block", blockClass);
+  block.setAttribute("data-value", value);
 
-    var icon = document.createElement("span");
-    icon.classList.add("panel-icon");
-    icon.innerHTML = '<i class="fas fa-' + iconClass + '"></i>';
+  var accordionHeader = document.createElement("a");
+  accordionHeader.classList.add("accordion-header");
+  accordionHeader.setAttribute("role", "button");
+  accordionHeader.setAttribute("aria-expanded", "false");
+  accordionHeader.innerHTML = '<span class="panel-icon"><i class="fas fa-' + iconClass + '"></i></span>';
+  accordionHeader.innerHTML += '<span class="panel-text">' + value + '</span>';
+  block.appendChild(accordionHeader);
 
-    var text = document.createElement("span");
-    text.textContent = value;
+  var accordionContent = document.createElement("div");
+  accordionContent.classList.add("accordion-content", "is-hidden"); // Add is-hidden class to keep it closed by default
+  accordionContent.innerHTML = getFormFields(type); // Function to get the form fields based on the type
+  block.appendChild(accordionContent);
 
-    block.appendChild(icon);
-    block.appendChild(text);
+  // Add a click event listener to the accordion header to toggle the accordion content
+  accordionHeader.addEventListener("click", function () {
+    var isExpanded = accordionHeader.getAttribute("aria-expanded");
+    if (isExpanded === "false") {
+      accordionHeader.setAttribute("aria-expanded", "true");
+    } else {
+      accordionHeader.setAttribute("aria-expanded", "false");
+    }
+    accordionContent.classList.toggle("is-hidden");
+  });
 
-    // Add a click event listener to the panel block to remove it on click
-    /*
-    block.addEventListener("click", function () {
-      var value = block.getAttribute("data-value");
-      var spans = document.querySelectorAll('span[data-value="' + value + '"]');
-      spans.forEach(function (span) {
-        var parent = span.parentNode;
-        while (span.firstChild) {
-          parent.insertBefore(span.firstChild, span);
+  return block;
+}
+
+function getFormFields(type) {
+  function createFormFields(fields) {
+    return fields
+      .map((field) => {
+        if (field.type === "text") {
+          return `
+            <div class="field">
+              <label class="label">${field.label}</label>
+              <div class="control">
+                <input class="input" type="text" name="${field.name}" placeholder="Enter ${field.label.toLowerCase()}">
+              </div>
+            </div>
+          `;
+        } else if (field.type === "date") {
+          return `
+            <div class="field">
+              <label class="label">${field.label}</label>
+              <div class="control">
+                <input class="input" type="date" name="${field.name}">
+              </div>
+            </div>
+          `;
+        } else if (field.type === "select") {
+          const selectOptions = field.options
+            .map((option) => `<option>${option}</option>`)
+            .join('');
+          return `
+            <div class="field">
+              <label class="label">${field.label}</label>
+              <div class="control">
+                <div class="select">
+                  <select name="${field.name}">
+                    ${selectOptions}
+                  </select>
+                </div>
+              </div>
+            </div>
+          `;
         }
-        parent.removeChild(span);
-      });
-      block.parentNode.removeChild(block);
-    });
-    */
-
-    // Add a class to the panel block corresponding to the tab
-    block.classList.add(tabClass);
-
-    return block;
+      })
+      .join('\n');
   }
+
+  const formFieldTemplates = {
+    person: createFormFields([
+      { label: "Name", name: "name", type: "text" },
+      { label: "Authority record", name: "sameAs", type: "text" },
+      {
+        label: "Certainty",
+        name: "certainty",
+        type: "select",
+        options: ["--Select--", "High", "Medium", "Low", "Unknown"],
+      },
+      {
+        label: "Evidence",
+        name: "evidence",
+        type: "select",
+        options: ["--Select--", "Internal", "External", "Conjecture"],
+      },
+    ]),
+    place: createFormFields([
+      { label: "Name", name: "name", type: "text" },
+      { label: "Authority record", name: "sameAs", type: "text" },
+      {
+        label: "Certainty",
+        name: "certainty",
+        type: "select",
+        options: ["--Select--", "High", "Medium", "Low", "Unknown"],
+      },
+      {
+        label: "Evidence",
+        name: "evidence",
+        type: "select",
+        options: ["--Select--", "Internal", "External", "Conjecture"],
+      },
+    ]),
+    work: createFormFields([
+      { label: "Title", name: "name", type: "text" },
+      { label: "Authority record", name: "sameAs", type: "text" },
+      {
+        label: "Certainty",
+        name: "certainty",
+        type: "select",
+        options: ["--Select--", "High", "Medium", "Low", "Unknown"],
+      },
+      {
+        label: "Evidence",
+        name: "evidence",
+        type: "select",
+        options: ["--Select--", "Internal", "External", "Conjecture"],
+      },
+    ]),
+    organization: createFormFields([
+      { label: "Name", name: "name", type: "text" },
+      { label: "Authority record", name: "sameAs", type: "text" },
+      {
+        label: "Certainty",
+        name: "certainty",
+        type: "select",
+        options: ["--Select--", "High", "Medium", "Low", "Unknown"],
+      },
+      {
+        label: "Evidence",
+        name: "evidence",
+        type: "select",
+        options: ["--Select--", "Internal", "External", "Conjecture"],
+      },
+    ]),
+    date: createFormFields([
+      { label: "When", name: "when", type: "date" },
+      { label: "From", name: "from", type: "date" },
+      { label: "To", name: "to", type: "date" },
+      { label: "Not Before", name: "notBefore", type: "date" },
+      { label: "Not After", name: "notAfter", type: "date" },
+      { label: "Period", name: "period", type: "text" },
+      { label: "Calendar", name: "calendar", type: "text" },
+      {
+        label: "Certainty",
+        name: "certainty",
+        type: "select",
+        options: ["--Select--", "High", "Medium", "Low", "Unknown"],
+      },
+      {
+        label: "Evidence",
+        name: "evidence",
+        type: "select",
+        options: ["--Select--", "Internal", "External", "Conjecture"],
+      },
+    ]),
+  };
+
+  return formFieldTemplates[type] || createFormFields([
+    { label: "Field 1", name: "field1", type: "text" },
+    { label: "Field 2", name: "field2", type: "text" },
+    {
+      label: "Certainty",
+      name: "certainty",
+      type: "select",
+      options: ["High", "Medium", "Low", "Unknown"],
+    },
+    {
+      label: "Evidence",
+      name: "evidence",
+      type: "select",
+      options: ["Internal", "External", "Conjecture"],
+    },
+  ]);
+}
+
+
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -338,59 +483,65 @@ document.addEventListener("DOMContentLoaded", function () {
         var value = span.textContent;
         var iconClass = "user";
         var tabClass = "people-content";
+        var entityClass = span.classList[1];
         var panelBlock = createPanelBlock(
           "person-block",
           iconClass,
           value,
-          tabClass
+          tabClass,
+          entityClass
         );
         peoplePanel.appendChild(panelBlock);
       } else if (span.classList.contains("place")) {
         var value = span.textContent;
         var iconClass = "map-marker-alt";
         var tabClass = "places-content";
-  
+        var entityClass = span.classList[1];
         var panelBlock = createPanelBlock(
           "place-block",
           iconClass,
           value,
-          tabClass
+          tabClass,
+          entityClass
         );
         placesPanel.appendChild(panelBlock);
     } else if (span.classList.contains("work")) {
       var value = span.textContent;
       var iconClass = "book";
       var tabClass = "works-content";
-
+      var entityClass = span.classList[1];
       var panelBlock = createPanelBlock(
         "work-block",
         iconClass,
         value,
-        tabClass
+        tabClass,
+        entityClass
       );
       worksPanel.appendChild(panelBlock);
     } else if (span.classList.contains("organization")) {
       var value = span.textContent;
       var iconClass = "building";
       var tabClass = "organizations-content";
-
+      var entityClass = span.classList[1];
       var panelBlock = createPanelBlock(
         "organization-block",
         iconClass,
         value,
-        tabClass
+        tabClass,
+        entityClass
       );
       organizationsPanel.appendChild(panelBlock);
   } else if (span.classList.contains("date")) {
     var value = span.textContent;
     var iconClass = "calendar-alt";
     var tabClass = "dates-content";
-
+    var entityClass = span.classList[1];
     var panelBlock = createPanelBlock(
       "date-block",
       iconClass,
       value,
-      tabClass
+      tabClass,
+      entityClass
     );
     datesPanel.appendChild(panelBlock);
     }
