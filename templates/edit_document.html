@@ -45,11 +45,16 @@
             <a class="button navbar-item js-modal-trigger" data-target="modal-js-example">
               Metadata
             </a>
+            <div class="navbar-item">
+            <label>
+              <input type="checkbox" id="autoMarkUpCheckbox">
+              Automatically mark up matching instances
+            </label>
+            </div>
           </div>
           {% include 'form_modal.html' %}
           <div class="navbar-end">
-            <div class="navbar-item">
-              <div class="buttons">
+              <div class="buttons navbar-item">
                   <a class="button is-light" id="saveButton">
                       Save
                   </a>
@@ -57,17 +62,16 @@
                       Load
                   </a>
               </div>
-            </div>
           </div>
         </div>
       </nav>
         <div class="editor">
             <div class="toolbar">
-                <button class="button person-button" data-class="person" data-icon="user">Person</button>
-                <button class="button place-button" data-class="place" data-icon="map-marker-alt">Place</button>
-                <button class="button work-button" data-class="work" data-icon="book">Work</button>
-                <button class="button organization-button" data-class="organization" data-icon="building">Organization</button>
-                <button class="button date-button" data-class="date" data-icon="calendar-alt">Date</button>
+                <button class="button entity-button person-button" data-class="person" data-icon="user">Person</button>
+                <button class="button entity-button place-button" data-class="place" data-icon="map-marker-alt">Place</button>
+                <button class="button entity-button work-button" data-class="work" data-icon="book">Work</button>
+                <button class="button entity-button organization-button" data-class="organization" data-icon="building">Organization</button>
+                <button class="button entity-button date-button" data-class="date" data-icon="calendar-alt">Date</button>
             </div>
             <div class="content" contenteditable="true" id="editableContent">
               {{ document.content | safe }}

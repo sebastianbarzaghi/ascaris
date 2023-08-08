@@ -108,9 +108,24 @@ html {
   border: 0;
   border-radius: 50%;
   cursor: pointer;
+}
+
+.accordion-utilities {
   margin-left: auto;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 .delete-button i {
   color: #7e7e7e;
+}
+
+.counter {
+  border-radius: 50% !important;
+}
+
+.navbar-start {
+  display: flex;
+  align-items: center;
 }
