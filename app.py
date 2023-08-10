@@ -4,14 +4,14 @@ from datetime import datetime
 from flask_migrate import Migrate
 from bs4 import BeautifulSoup
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.secret_key = 'mysecretkey'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 class Document(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -74,6 +74,7 @@ def save_document():
         # Update the existing document
         document.title = title
         document.content = content
+        document.updated_at = datetime.utcnow()
     else:
         # Create a new document
         new_document = Document(title=title, content=content)

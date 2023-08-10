@@ -73,12 +73,12 @@
                 <button class="button entity-button organization-button" data-class="organization" data-icon="building">Organization</button>
                 <button class="button entity-button date-button" data-class="date" data-icon="calendar-alt">Date</button>
             </div>
-            <div class="content" contenteditable="true" id="editableContent">
+            <div class="content" contenteditable="true" id="editableContent" data-documentId="{{ document.id }}">
               {{ document.content | safe }}
             </div>
         </div>
     </div>
 </div>
 
-<script src="{{ url_for('static', filename='js/editor.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/editor.js') }}"></script>
 {% endblock %}
