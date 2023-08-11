@@ -1,6 +1,6 @@
 const FormFieldsModule = (function () {
   
-  function bla(type) {
+  function createFormFieldTemplates(type) {
     function createFormFields(fields) {
       return fields
         .map((field) => {
@@ -147,7 +147,7 @@ const FormFieldsModule = (function () {
     return formFieldTemplates[type]
   };
   return {
-    bla
+    createFormFieldTemplates
   };
 })();
 

@@ -15,7 +15,7 @@ const SidePanelModule = (function () {
           var value = span.textContent;
           var iconClass = "user";
           var tabClass = "people-content";
-          var entityClass = span.classList[2];
+          var entityClass = span.classList[1];
           var panelBlock = createPanelBlock(
             "person-block",
             iconClass,
@@ -23,12 +23,13 @@ const SidePanelModule = (function () {
             tabClass,
             entityClass
           );
+          //console.log(span.classList[1])
           peoplePanel.appendChild(panelBlock);
         } else if (span.classList.contains("place")) {
           var value = span.textContent;
           var iconClass = "map-marker-alt";
           var tabClass = "places-content";
-          var entityClass = span.classList[2];
+          var entityClass = span.classList[1];
           var panelBlock = createPanelBlock(
             "place-block",
             iconClass,
@@ -41,7 +42,7 @@ const SidePanelModule = (function () {
         var value = span.textContent;
         var iconClass = "book";
         var tabClass = "works-content";
-        var entityClass = span.classList[2];
+        var entityClass = span.classList[1];
         var panelBlock = createPanelBlock(
           "work-block",
           iconClass,
@@ -54,7 +55,7 @@ const SidePanelModule = (function () {
         var value = span.textContent;
         var iconClass = "building";
         var tabClass = "organizations-content";
-        var entityClass = span.classList[2];
+        var entityClass = span.classList[1];
         var panelBlock = createPanelBlock(
           "organization-block",
           iconClass,
@@ -67,7 +68,7 @@ const SidePanelModule = (function () {
       var value = span.textContent;
       var iconClass = "calendar-alt";
       var tabClass = "dates-content";
-      var entityClass = span.classList[2];
+      var entityClass = span.classList[1];
       var panelBlock = createPanelBlock(
         "date-block",
         iconClass,
@@ -75,11 +76,12 @@ const SidePanelModule = (function () {
         tabClass,
         entityClass
       );
+
       datesPanel.appendChild(panelBlock);
       }
     
     })
-  
+    
     }
   
     return {

@@ -37,8 +37,8 @@ function createPanelBlock(blockClass, iconClass, value, tabClass, type) {
   
     var accordionContent = document.createElement("div");
     accordionContent.classList.add("accordion-content", "is-hidden"); // Add is-hidden class to keep it closed by default
-    console.log(type);
-    accordionContent.innerHTML = FormFieldsModule.bla(type); // Function to get the form fields based on the type
+    //console.log(type);
+    accordionContent.innerHTML = FormFieldsModule.createFormFieldTemplates(type); // Function to get the form fields based on the type
     block.appendChild(accordionContent);
   
     // Add a click event listener to the accordion header to toggle the accordion content

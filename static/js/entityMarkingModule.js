@@ -42,7 +42,7 @@ const EntityMarkingModule = (function () {
       if (selection.toString().trim() !== "") {
         const range = selection.getRangeAt(0);
         const span = document.createElement("span");
-        span.classList.add("button", "entity", buttonDetails.spanClass);
+        span.classList.add("entity", buttonDetails.spanClass);
         span.contentEditable = false; // Set non-editable
         span.addEventListener("click", function(event) {
           event.preventDefault(); // Prevent selecting the span's text
