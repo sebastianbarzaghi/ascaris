@@ -12,14 +12,11 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initialize the Tabs module
   TabsModule.initializeTabs();
 
-  // Initialize the Panel Block module
-  createPanelBlock();
-
-  // Initialize the Form Fields module
-  FormFieldsModule();
-
   // Initialize the Side Panel module
   SidePanelModule.populateSidePanel();
+
+  // Initialize the Form Fields module
+  //FormFieldsModule();
 
   // Initialize the Save Document module
   SaveDocumentModule.initializeModule();

@@ -4,18 +4,18 @@ const SidePanelModule = (function () {
 
     function populateSidePanel() {
       var spans = document.querySelectorAll(".entity");
-      var peoplePanel = document.querySelector(".people-content .panel-blocks");
-      var placesPanel = document.querySelector(".places-content .panel-blocks");
-      var worksPanel = document.querySelector(".works-content .panel-blocks");
-      var organizationsPanel = document.querySelector(".organizations-content .panel-blocks");
-      var datesPanel = document.querySelector(".dates-content .panel-blocks");
+      var peoplePanel = document.querySelector(".people-panel-blocks");
+      var placesPanel = document.querySelector(".places-panel-blocks");
+      var worksPanel = document.querySelector(".works-panel-blocks");
+      var organizationsPanel = document.querySelector(".organizations-panel-blocks");
+      var datesPanel = document.querySelector(".dates-panel-blocks");
   
       spans.forEach(function (span) {
         if (span.classList.contains("person")) {
           var value = span.textContent;
           var iconClass = "user";
           var tabClass = "people-content";
-          var entityClass = span.classList[1];
+          var entityClass = span.classList[2];
           var panelBlock = createPanelBlock(
             "person-block",
             iconClass,
@@ -28,7 +28,7 @@ const SidePanelModule = (function () {
           var value = span.textContent;
           var iconClass = "map-marker-alt";
           var tabClass = "places-content";
-          var entityClass = span.classList[1];
+          var entityClass = span.classList[2];
           var panelBlock = createPanelBlock(
             "place-block",
             iconClass,
@@ -41,7 +41,7 @@ const SidePanelModule = (function () {
         var value = span.textContent;
         var iconClass = "book";
         var tabClass = "works-content";
-        var entityClass = span.classList[1];
+        var entityClass = span.classList[2];
         var panelBlock = createPanelBlock(
           "work-block",
           iconClass,
@@ -54,7 +54,7 @@ const SidePanelModule = (function () {
         var value = span.textContent;
         var iconClass = "building";
         var tabClass = "organizations-content";
-        var entityClass = span.classList[1];
+        var entityClass = span.classList[2];
         var panelBlock = createPanelBlock(
           "organization-block",
           iconClass,
@@ -67,7 +67,7 @@ const SidePanelModule = (function () {
       var value = span.textContent;
       var iconClass = "calendar-alt";
       var tabClass = "dates-content";
-      var entityClass = span.classList[1];
+      var entityClass = span.classList[2];
       var panelBlock = createPanelBlock(
         "date-block",
         iconClass,
@@ -77,6 +77,7 @@ const SidePanelModule = (function () {
       );
       datesPanel.appendChild(panelBlock);
       }
+    
     })
   
     }

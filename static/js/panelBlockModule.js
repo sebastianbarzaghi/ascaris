@@ -1,6 +1,7 @@
 import { FormFieldsModule } from './formFieldsModule.js';
 
 function createPanelBlock(blockClass, iconClass, value, tabClass, type) {
+  //console.log("createPanelBlock called with:", blockClass, iconClass, value, tabClass, type);
         var block = document.createElement("div");
     block.classList.add("box", "panel-block", blockClass);
     block.setAttribute("data-value", value);
@@ -36,7 +37,8 @@ function createPanelBlock(blockClass, iconClass, value, tabClass, type) {
   
     var accordionContent = document.createElement("div");
     accordionContent.classList.add("accordion-content", "is-hidden"); // Add is-hidden class to keep it closed by default
-    accordionContent.innerHTML = FormFieldsModule(type); // Function to get the form fields based on the type
+    console.log(type);
+    accordionContent.innerHTML = FormFieldsModule.bla(type); // Function to get the form fields based on the type
     block.appendChild(accordionContent);
   
     // Add a click event listener to the accordion header to toggle the accordion content
@@ -52,7 +54,7 @@ function createPanelBlock(blockClass, iconClass, value, tabClass, type) {
   
     // Add a click event listener to the delete button to remove the block and the parent span
     deleteButton.addEventListener("click", function (event) {
-      //event.stopPropagation(); // Prevent the accordion from being toggled when clicking the delete button
+      event.stopPropagation(); // Prevent the accordion from being toggled when clicking the delete button
       block.remove(); // Remove the accordion block
       // Find the parent span of the accordion header, which represents the marked-up text
       var spans = document.querySelectorAll(".entity");

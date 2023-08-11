@@ -1,6 +1,6 @@
 const FormFieldsModule = (function () {
   
-  return function(type) {
+  function bla(type) {
     function createFormFields(fields) {
       return fields
         .map((field) => {
@@ -144,24 +144,11 @@ const FormFieldsModule = (function () {
         { label: "Note", name: "note", type: "textarea" },
       ]),
     };
-
-    return formFieldTemplates[type] || createFormFields([
-      { label: "Field 1", name: "field1", type: "text" },
-      { label: "Field 2", name: "field2", type: "text" },
-      {
-        label: "Certainty",
-        name: "certainty",
-        type: "select",
-        options: ["High", "Medium", "Low", "Unknown"],
-      },
-      {
-        label: "Evidence",
-        name: "evidence",
-        type: "select",
-        options: ["Internal", "External", "Conjecture"],
-      },
-    ]);
-  };  
+    return formFieldTemplates[type]
+  };
+  return {
+    bla
+  };
 })();
 
 export { FormFieldsModule };

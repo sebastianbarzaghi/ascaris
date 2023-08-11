@@ -29,6 +29,7 @@ html {
   padding: 0.2rem 0.6rem;
   border-radius: 10%;
   margin: 0.1rem;
+  cursor: pointer;
 }
 
 .tag-icon {
@@ -128,4 +129,8 @@ html {
 .navbar-start {
   display: flex;
   align-items: center;
+}
+
+.selected {
+  background-color: #f5f5f5; /* or any other color you prefer */
 }
