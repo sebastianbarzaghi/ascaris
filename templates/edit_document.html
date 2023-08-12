@@ -39,20 +39,17 @@
             </div>
     </div>
     <div class="column is-two-thirds">
+      <div class="box metadata-accordion">
+        <div class="metadata-accordion-header">
+            <a class="metadata-accordion-toggle" href="#">Document metadata</a>
+        </div>
+        <div class="metadata-accordion-content is-hidden">
+            {% include 'form_modal.html' %}
+        </div>
+      </div>
       <nav class="navbar" role="navigation" aria-label="main navigation">
         <div id="navbarBasicExample" class="navbar-menu">
-          <div class="navbar-start">
-            <a class="button navbar-item js-modal-trigger" data-target="modal-js-example">
-              Metadata
-            </a>
-            <div class="navbar-item">
-            <label>
-              <input type="checkbox" id="autoMarkUpCheckbox">
-              Automatically mark up matching instances
-            </label>
-            </div>
-          </div>
-          {% include 'form_modal.html' %}
+          
           <div class="navbar-end">
               <div class="buttons navbar-item">
                   <a class="button is-light" id="saveButton">

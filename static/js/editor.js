@@ -1,11 +1,9 @@
 import { TabsModule } from './tabsModule.js';
 import { EntityMarkingModule } from './entityMarkingModule.js';
 import { createPanelBlock } from './panelBlockModule.js';
-import { FormFieldsModule } from './formFieldsModule.js';
 import { SidePanelModule } from './sidePanelModule.js';
-import { ModalModule } from './modalModule.js';
 import { SaveDocumentModule } from './saveDocumentModule.js';
-import { AutoMarkUpModule } from './autoMarkupModule.js';
+import { InterfaceModule } from './interfaceModule.js'
 
 // main code
 document.addEventListener("DOMContentLoaded", function () {
@@ -15,12 +13,10 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initialize the Side Panel module
   SidePanelModule.populateSidePanel();
 
-  // Initialize the Form Fields module
-  //FormFieldsModule();
-
   // Initialize the Save Document module
   SaveDocumentModule.initializeModule();
 
   // Initialize the Auto Markup module
   // AutoMarkUpModule();
+
 });
