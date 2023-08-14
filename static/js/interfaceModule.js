@@ -8,16 +8,25 @@ const InterfaceModule = (function () {
     const addResponsibilityButton = form.querySelector(".add-responsibility-button");
     const addPubAuthorityButton = form.querySelector(".add-publication-authority-button");
     const addIdentifierButton = form.querySelector(".add-identifier-button");
+    const addExtentButton = form.querySelector(".add-extent-button");
+    const addSourceButton = form.querySelector(".add-source-button");
+    const addEditorialDeclButton = form.querySelector(".add-editorial-declaration-button");
 
     const titleInputGroup = form.querySelector(".title-input-group");
     const responsibilitiesInputGroup = form.querySelector(".responsibility-input-group");
     const pubAuthoritiesInputGroup = form.querySelector(".publication-authority-input-group");
     const identifierInputGroup = form.querySelector(".identifier-input-group");
+    const extentInputGroup = form.querySelector(".extent-input-group");
+    const sourceInputGroup = form.querySelector(".source-input-group");
+    const editorialDeclInputGroup = form.querySelector(".editorial-declaration-input-group");
 
     const additionalTitlesContainer = form.querySelector(".additional-titles");
     const additionalResponsibilitiesContainer = form.querySelector(".additional-responsibilities");
     const additionalPubAuthoritiesContainer = form.querySelector(".additional-publication-authorities");
     const additionalIdentifierContainer = form.querySelector(".additional-identifiers");
+    const additionalExtentContainer = form.querySelector(".additional-extents");
+    const additionalSourceContainer = form.querySelector(".additional-sources");
+    const additionalEditorialDeclContainer = form.querySelector(".additional-editorial-declarations");
 
     accordionHeaders.forEach(accordionHeader => {
         accordionHeader.addEventListener("click", function () {
@@ -30,7 +39,7 @@ const InterfaceModule = (function () {
         if (event.target.classList.contains("add-title-button")) {
             const clone = titleInputGroup.cloneNode(true);
             clone.querySelector(".metadata-title").value = "";
-            const removeButton = document.createElement("button");
+            const removeButton = document.createElement("span");
             removeButton.classList.add("button", "is-danger", "is-light", "remove-title-button");
             const minusIcon = document.createElement("i");
             minusIcon.classList.add("fa-solid", "fa-minus");
@@ -46,8 +55,8 @@ const InterfaceModule = (function () {
     addResponsibilityButton.addEventListener("click", function (event) {
         if (event.target.classList.contains("add-responsibility-button")) {
             const clone = responsibilitiesInputGroup.cloneNode(true);
-            clone.querySelector(".metadata-full-name").value = "";
-            const removeButton = document.createElement("button");
+            clone.querySelector(".metadata-title-responsibility").value = "";
+            const removeButton = document.createElement("span");
             removeButton.classList.add("button", "is-danger", "is-light", "remove-responsibility-button");
             const minusIcon = document.createElement("i");
             minusIcon.classList.add("fa-solid", "fa-minus");
@@ -64,7 +73,7 @@ const InterfaceModule = (function () {
         if (event.target.classList.contains("add-publication-authority-button")) {
             const clone = pubAuthoritiesInputGroup.cloneNode(true);
             clone.querySelector(".metadata-publication-authority").value = "";
-            const removeButton = document.createElement("button");
+            const removeButton = document.createElement("span");
             removeButton.classList.add("button", "is-danger", "is-light", "remove-publication-authority-button");
             const minusIcon = document.createElement("i");
             minusIcon.classList.add("fa-solid", "fa-minus");
@@ -81,7 +90,7 @@ const InterfaceModule = (function () {
         if (event.target.classList.contains("add-identifier-button")) {
             const clone = identifierInputGroup.cloneNode(true);
             clone.querySelector(".metadata-identifier").value = "";
-            const removeButton = document.createElement("button");
+            const removeButton = document.createElement("span");
             removeButton.classList.add("button", "is-danger", "is-light", "remove-identifier-button");
             const minusIcon = document.createElement("i");
             minusIcon.classList.add("fa-solid", "fa-minus");
@@ -91,6 +100,40 @@ const InterfaceModule = (function () {
 
             // Remove the add button from the added title
             clone.querySelector(".add-identifier-button").remove();
+        }
+    });
+
+    addExtentButton.addEventListener("click", function (event) {
+        if (event.target.classList.contains("add-extent-button")) {
+            const clone = extentInputGroup.cloneNode(true);
+            clone.querySelector(".metadata-extent").value = "";
+            const removeButton = document.createElement("span");
+            removeButton.classList.add("button", "is-danger", "is-light", "remove-extent-button");
+            const minusIcon = document.createElement("i");
+            minusIcon.classList.add("fa-solid", "fa-minus");
+            removeButton.appendChild(minusIcon);
+            clone.appendChild(removeButton);
+            additionalExtentContainer.appendChild(clone);
+
+            // Remove the add button from the added title
+            clone.querySelector(".add-extent-button").remove();
+        }
+    });
+
+    addSourceButton.addEventListener("click", function (event) {
+        if (event.target.classList.contains("add-source-button")) {
+            const clone = sourceInputGroup.cloneNode(true);
+            clone.querySelector(".metadata-source").value = "";
+            const removeButton = document.createElement("span");
+            removeButton.classList.add("button", "is-danger", "is-light", "remove-source-button");
+            const minusIcon = document.createElement("i");
+            minusIcon.classList.add("fa-solid", "fa-minus");
+            removeButton.appendChild(minusIcon);
+            clone.appendChild(removeButton);
+            additionalSourceContainer.appendChild(clone);
+
+            // Remove the add button from the added title
+            clone.querySelector(".add-source-button").remove();
         }
     });
 
@@ -108,6 +151,15 @@ const InterfaceModule = (function () {
         else if (event.target.classList.contains("remove-identifier-button")) {
             event.target.closest(".identifier-input-group").remove();
         }
+        else if (event.target.classList.contains("remove-extent-button")) {
+            event.target.closest(".extent-input-group").remove();
+        }
+        else if (event.target.classList.contains("remove-source-button")) {
+            event.target.closest(".source-input-group").remove();
+        }
+//        else if (event.target.classList.contains("remove-editorial-declaration-button")) {
+//            event.target.closest(".editorial-declaration-input-group").remove();
+//        }
     });
 
 })();

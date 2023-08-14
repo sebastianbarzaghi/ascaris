@@ -1,0 +1,89 @@
+<div class="box">
+    
+    <h2 class="title">Publication statement</h2>
+
+    <div class="field">
+        <label class="label">Publication authorities</label>
+        <div class="control">
+          <div class="publication-authority-input-group input-group">
+            <input class="input metadata-publication-authority metadata-publication-authority-surname" type="text" placeholder="Enter surname">
+            <input class="input metadata-publication-authority metadata-publication-authority-name" type="text" placeholder="Enter name">
+            <input class="input metadata-publication-authority metadata-publication-authority-authority" type="text" placeholder="Enter authority record">
+            <div class="select">
+              <select class="responsibility-dropdown">
+                <option value="publisher">Publisher</option>
+                <option value="distributor">Distributor</option>
+                <option value="authority">Authority</option>
+              </select>
+            </div>
+            <span class="button is-success is-light add-publication-authority-button"><i class="fa-solid fa-plus"></i></span>
+          </div>
+        </div>
+      </div>
+      <div class="additional-publication-authorities">
+        <!-- Additional authorities will be inserted here -->
+      </div>
+    
+      <div class="field">
+        <label class="label">Publication place</label>
+        <div class="control">
+          <div class="publication-place-input-group input-group">
+            <input class="input metadata-publication-place metadata-publication-place-name" type="text" placeholder="Enter publication place name">
+            <input class="input metadata-publication-place metadata-publication-place-authority" type="text" placeholder="Enter authority record">
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Publication date</label>
+        <div class="control">
+          <div class="publication-date-input-group input-group">
+            <input class="input metadata-publication-date" type="date">
+          </div>
+        </div>
+      </div>
+    
+      <div class="field">
+        <label class="label">Identifier</label>
+        <div class="control">
+          <div class="identifier-input-group input-group">
+            <input class="input metadata-identifier" type="text" placeholder="Enter identifier">
+            <div class="select">
+              <select class="identifier-dropdown">
+                <option value="isbn">ISBN</option>
+                <option value="issn">ISSN</option>
+                <option value="doi">DOI</option>
+                <option value="uri">URI</option>
+                <option value="viaf">VIAF</option>
+                <option value="estc">ESTC</option>
+                <option value="oclc">OCLC</option>
+                <!-- ADD "OTHER" OPTION? -->
+              </select>
+            </div>
+            <span class="button is-success is-light add-identifier-button"><i class="fa-solid fa-plus"></i></span>
+          </div>
+        </div>
+      </div>
+      <div class="additional-identifiers">
+        <!-- Additional identifiers will be inserted here -->
+      </div>
+    
+      <div class="field">
+        <label class="label">Availability</label>
+        <div class="control">
+          <div class="availability-input-group input-group">
+            <textarea class="input metadata-availability metadata-availability-license-text" type="textarea" placeholder="Enter license information"></textarea>
+            <input class="input metadata-availability metadata-availability-license-link" type="text" placeholder="Enter license link">
+            <div class="select">
+              <select class="status-dropdown">
+                <option value="free">Free</option>
+                <option value="unknown">Unknown</option>
+                <option value="restricted">Restricted</option>
+                <!-- ADD "OTHER" OPTION? -->
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+        
+</div>

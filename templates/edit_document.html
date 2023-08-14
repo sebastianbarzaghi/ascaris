@@ -39,17 +39,20 @@
             </div>
     </div>
     <div class="column is-two-thirds">
-      <div class="box metadata-accordion">
-        <div class="metadata-accordion-header">
-            <a class="metadata-accordion-toggle" href="#">Document metadata</a>
-        </div>
-        <div class="metadata-accordion-content is-hidden">
-            {% include 'form_modal.html' %}
-        </div>
+      <div class="tabs is-right">
+        <ul>
+          <li class="editor-tab text-tab is-active"><a>Text</a></li>
+          <li class="editor-tab metadata-tab"><a>Metadata</a></li>
+        </ul>
       </div>
+
+      <div class="metadata-panel" id="metadataContent">
+        {% include 'form_modal.html' %}
+      </div>
+
+      <div class="editor-panel">
       <nav class="navbar" role="navigation" aria-label="main navigation">
         <div id="navbarBasicExample" class="navbar-menu">
-          
           <div class="navbar-end">
               <div class="buttons navbar-item">
                   <a class="button is-light" id="saveButton">
@@ -74,6 +77,7 @@
               {{ document.content | safe }}
             </div>
         </div>
+      </div>
     </div>
 </div>
 

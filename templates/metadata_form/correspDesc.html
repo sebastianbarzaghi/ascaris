@@ -1,0 +1,48 @@
+<div class="box">
+
+    <h2 class="title">Correspondence description</h2>
+
+    <div class="field">
+        <label class="label">Action</label>
+        <div class="control">
+        <div class="action-input-group input-group">
+            <input class="input metadata-action metadata-action-surname" type="text" placeholder="Enter surname">
+            <input class="input metadata-action metadata-action-name" type="text" placeholder="Enter name">
+            <input class="input metadata-action metadata-action-person-authority" type="text" placeholder="Enter authority record">
+            <input class="input metadata-action metadata-action-place" type="text" placeholder="Enter place name">
+            <input class="input metadata-action metadata-action-place-authority" type="text" placeholder="Enter authority record">
+            <input class="input metadata-action metadata-action-date" type="date">
+            <div class="select">
+            <select class="action-type-dropdown">
+                <option value="sent">Sent</option>
+                <option value="received">Received</option>
+                <option value="transmitted">Transmitted</option>
+                <option value="redirected">Redirected</option>
+                <option value="forwarded">Forwarded</option>
+                <!-- Add more language options here -->
+            </select>
+            </div>
+            <span class="button is-success is-light add-title-button"><i class="fa-solid fa-plus"></i></span>
+        </div>
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="label">Context</label>
+        <div class="control">
+        <div class="context-input-group input-group">
+            <textarea class="input metadata-context metadata-context-description" type="textarea" placeholder="Enter context description"></textarea>
+            <input class="input metadata-context metadata-context-target" type="text" placeholder="Enter document link">            
+            <div class="select">
+            <select class="context-type-dropdown">
+                <option value="next">Next</option>
+                <option value="previous">Previous</option>
+                <!-- Add more language options here -->
+            </select>
+            </div>
+            <span class="button is-success is-light add-title-button"><i class="fa-solid fa-plus"></i></span>
+        </div>
+        </div>
+    </div>
+
+</div>

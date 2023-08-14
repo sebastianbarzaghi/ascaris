@@ -1,160 +1,44 @@
 <form class="metadata-form">
-  <h2 class="title">File Description</h2>
 
-  <div class="field">
-    <label class="label">Title</label>
-    <div class="control">
-      <div class="title-input-group input-group">
-        <input class="input metadata-title" type="text" placeholder="Enter text">
-        <div class="select">
-          <select class="language">
-            <option value="en">en</option>
-            <option value="it">it</option>
-            <option value="es">es</option>
-            <option value="fr">fr</option>
-            <!-- Add more language options here -->
-          </select>
-        </div>
-        <button class="button is-success is-light add-title-button"><i class="fa-solid fa-plus"></i></button>
-      </div>
-    </div>
-  </div>
-  <div class="additional-titles">
-    <!-- Additional titles will be inserted here -->
-  </div>
+  {% include 'metadata_form/titleStmt.html' %}
 
-  <div class="field">
-    <label class="label">Responsibility</label>
-    <div class="control">
-      <div class="responsibility-input-group input-group">
-        <input class="input metadata-full-name" type="text" placeholder="Enter full name">
-        <div class="select">
-          <select class="responsibility-dropdown">
-            <option value="author">Author</option>
-            <option value="editor">Editor</option>
-            <option value="sponsor">Sponsor</option>
-            <option value="sponsor">Founder</option>
-            <option value="sponsor">Principal</option>
-            <!-- Add "Other" option? -->
-          </select>
-        </div>
-        <button class="button is-success is-light add-responsibility-button"><i class="fa-solid fa-plus"></i></button>
-      </div>
-    </div>
-  </div>
-  <div class="additional-responsibilities">
-    <!-- Additional responsibilities will be inserted here -->
-  </div>
+  {% include 'metadata_form/publicationStmt.html' %}
 
-  <div class="field">
-    <label class="label">Edition</label>
-    <div class="control">
-      <div class="edition-input-group input-group">
-        <input class="input metadata-edition" type="text" placeholder="Enter edition information">
-      </div>
-    </div>
-  </div>
+  {% include 'metadata_form/sourceDesc.html' %}
 
-  <!--MISSING: EDITION RESPONSIBILITIES-->
+  {% include 'metadata_form/editionStmt.html' %}
 
-  <!--MISSING: EXTENT-->
+  {% include 'metadata_form/extent.html' %}
 
-  <div class="field">
-    <label class="label">Publication authorities</label>
-    <div class="control">
-      <div class="publication-authority-input-group input-group">
-        <input class="input metadata-publication-authority" type="text" placeholder="Enter full name">
-        <div class="select">
-          <select class="responsibility-dropdown">
-            <option value="publisher">Publisher</option>
-            <option value="distributor">Distributor</option>
-            <option value="authority">Authority</option>
-          </select>
-        </div>
-        <button class="button is-success is-light add-publication-authority-button"><i class="fa-solid fa-plus"></i></button>
-      </div>
-    </div>
-  </div>
-  <div class="additional-publication-authorities">
-    <!-- Additional authorities will be inserted here -->
-  </div>
+  <!-- seriesStmt -->
 
-  <div class="field">
-    <label class="label">Publication place</label>
-    <div class="control">
-      <div class="publication-place-input-group input-group">
-        <input class="input metadata-publication-place" type="text" placeholder="Enter publication place">
-      </div>
-    </div>
-  </div>
+  {% include 'metadata_form/notesStmt.html' %}
 
-  <div class="field">
-    <label class="label">Publication address</label>
-    <div class="control">
-      <div class="address-input-group input-group">
-        <input class="input metadata-address" type="text" placeholder="Enter address information">
-      </div>
-    </div>
-  </div>
+  <!-- msDesc -->
 
-  <div class="field">
-    <label class="label">Identifier</label>
-    <div class="control">
-      <div class="identifier-input-group input-group">
-        <input class="input metadata-identifier" type="text" placeholder="Enter identifier">
-        <div class="select">
-          <select class="identifier-dropdown">
-            <option value="isbn">ISBN</option>
-            <option value="issn">ISSN</option>
-            <option value="doi">DOI</option>
-            <option value="uri">URI</option>
-            <option value="viaf">VIAF</option>
-            <option value="estc">ESTC</option>
-            <option value="oclc">OCLC</option>
-            <!-- ADD "OTHER" OPTION? -->
-          </select>
-        </div>
-        <button class="button is-success is-light add-identifier-button"><i class="fa-solid fa-plus"></i></button>
-      </div>
-    </div>
-  </div>
-  <div class="additional-identifiers">
-    <!-- Additional identifiers will be inserted here -->
-  </div>
+  {% include 'metadata_form/projectDesc.html' %}
 
-  <!--MISSING: AVAILABILITY-->
+  {% include 'metadata_form/samplingDecl.html' %}
 
-  <div class="field">
-    <label class="label">Publication date</label>
-    <div class="control">
-      <div class="publication-date-input-group input-group">
-        <input class="input metadata-publication-date" type="date">
-      </div>
-    </div>
-  </div>
+  {% include 'metadata_form/editorialDecl.html' %}
 
-  <!--MISSING: SOURCEDESC-->
-        <!--INCLUDE MSDESC-->
-    
-  <div class="field">
-    <label class="label">Description</label>
-    <div class="control">
-      <div class="description-input-group input-group">
-        <textarea class="input metadata-description" type="textarea" placeholder="Enter project description"></textarea>
-      </div>
-    </div>
-  </div>
+  {% include 'metadata_form/abstract.html' %}
 
-  <!--samplingDecl?-->
+  {% include 'metadata_form/creation.html' %}
 
-  <!-- MISSING editorialDesc: correction 
-    hyphenation 
-    interpretation 
-    normalization 
-    punctuation 
-    quotation 
-    segmentation -->
-  
+  {% include 'metadata_form/langUsage.html' %}
+
+  {% include 'metadata_form/calendarDesc.html' %}
+
+  {% include 'metadata_form/correspDesc.html' %}
+
+  <!-- textDesc -->
+
+  <!-- particDesc -->
+
+  <!-- settingDesc -->
+
+  <!-- handNotes -->
 
   <!-- Submit button here -->
 </form>

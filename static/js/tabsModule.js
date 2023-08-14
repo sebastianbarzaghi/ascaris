@@ -22,11 +22,33 @@ const TabsModule = (function () {
         });
       });
     }
-  
+
+    const editorPanel = document.querySelector(".editor-panel");
+    const metadataPanel = document.querySelector(".metadata-panel");
+
+    const tabs = document.querySelectorAll(".editor-tab");
+    tabs.forEach(tab => {
+        tab.addEventListener("click", function() {
+            if (tab.classList.contains("is-active")) return;
+
+            tabs.forEach(t => t.classList.remove("is-active"));
+            tab.classList.add("is-active");
+
+            if (tab.classList.contains("text-tab")) {
+                editorPanel.style.display = "block";
+                metadataPanel.style.display = "none";
+            } else if (tab.classList.contains("metadata-tab")) {
+                editorPanel.style.display = "none";
+                metadataPanel.style.display = "block";
+            }
+        });
+    });
+
     return {
       openTab,
       initializeTabs,
     };
+
   })();
 
   export { TabsModule };
