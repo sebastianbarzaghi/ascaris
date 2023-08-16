@@ -1,0 +1,86 @@
+<div class="box accordion">
+
+    <div class="metadata-accordion-header title is-4">
+        <a class="accordion-toggle">Series statement</a>
+    </div>
+  
+    <div class="accordion-content is-hidden">
+
+        <div class="field">
+            <label class="label">Series title</label>
+            <div class="control">
+                <div class="series-title-input-group input-group">
+                    <input class="input metadata-series-title" type="text" placeholder="Enter series title">
+                    <div class="select">
+                        <select class="language-dropdown">
+                            <option value="en">en</option>
+                            <option value="it">it</option>
+                            <option value="es">es</option>
+                            <option value="fr">fr</option>
+                            <!-- Add more language options here -->
+                        </select>
+                    </div>
+                    <div class="select">
+                        <select class="type-dropdown">
+                            <option value="main">main</option>
+                            <option value="sub">sub</option>
+                            <option value="alt">alt</option>
+                            <option value="short">short</option>
+                            <option value="desc">desc</option>
+                        </select>
+                    </div>
+                    <div class="select">
+                        <select class="level-dropdown">
+                            <option value="a">analytic</option>
+                            <option value="m">monographic</option>
+                            <option value="j">journal</option>
+                            <option value="s">series</option>
+                            <option value="u">unpublished</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label">Responsibility</label>
+            <div class="control">
+            <div class="series-responsibility-input-group input-group">
+                <input class="input metadata-series-responsibility metadata-series-responsibility-surname" type="text" placeholder="Enter surname">
+                <input class="input metadata-series-responsibility metadata-series-responsibility-name" type="text" placeholder="Enter name">
+                <input class="input metadata-series-responsibility metadata-series-responsibility-authority" type="text" placeholder="Enter authority record">
+                <input class="input metadata-series-responsibility metadata-series-responsibility-resp" type="text" placeholder="Enter responsibility info">
+                <span class="button is-success is-light add-series-responsibility-button"><i class="fa-solid fa-plus"></i></span>
+            </div>
+            </div>
+        </div>
+        <div class="additional-series-responsibilities">
+            <!-- Additional responsibilities will be inserted here -->
+        </div>
+
+        <div class="field">
+            <label class="label">Identifier</label>
+            <div class="control">
+              <div class="series-identifier-input-group input-group">
+                <input class="input metadata-series-identifier" type="text" placeholder="Enter series identifier">
+                <div class="select">
+                  <select class="series-identifier-dropdown">
+                    <option value="isbn">ISBN</option>
+                    <option value="issn">ISSN</option>
+                    <option value="doi">DOI</option>
+                    <option value="uri">URI</option>
+                    <option value="viaf">VIAF</option>
+                    <option value="estc">ESTC</option>
+                    <option value="oclc">OCLC</option>
+                    <!-- ADD "OTHER" OPTION? -->
+                  </select>
+                </div>
+                <span class="button is-success is-light add-series-identifier-button"><i class="fa-solid fa-plus"></i></span>
+              </div>
+            </div>
+        </div>
+        <div class="additional-series-identifiers">
+            <!-- Additional series identifiers will be inserted here -->
+        </div>
+    </div>
+</div>
