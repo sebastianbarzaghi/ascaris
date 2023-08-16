@@ -8,43 +8,26 @@ const InterfaceModule = (function () {
     const addResponsibilityButton = form.querySelector(".add-responsibility-button");
     const addPubAuthorityButton = form.querySelector(".add-publication-authority-button");
     const addIdentifierButton = form.querySelector(".add-identifier-button");
-    const addExtentButton = form.querySelector(".add-extent-button");
     const addSourceButton = form.querySelector(".add-source-button");
-    const addEditionRespButton = form.querySelector(".add-edition-responsibility-button");
-    const addSeriesRespButton = form.querySelector(".add-series-responsibility-button");
-    const addSeriesIdentButton = form.querySelector(".add-series-identifier-button");
     const addLangUsageButton = form.querySelector(".add-language-button");
-    const addCalendarButton = form.querySelector(".add-calendar-button");
-    const addActionButton = form.querySelector(".add-action-button");
-    const addContextButton = form.querySelector(".add-context-button");
+    const addCategoryButton = form.querySelector(".add-category-button");
 
     const titleInputGroup = form.querySelector(".title-input-group");
     const responsibilitiesInputGroup = form.querySelector(".responsibility-input-group");
     const pubAuthoritiesInputGroup = form.querySelector(".publication-authority-input-group");
     const identifierInputGroup = form.querySelector(".identifier-input-group");
-    const extentInputGroup = form.querySelector(".extent-input-group");
     const sourceInputGroup = form.querySelector(".source-input-group");
-    const editionRespInputGroup = form.querySelector(".edition-responsibility-input-group");
-    const seriesRespInputGroup = form.querySelector(".series-responsibility-input-group");
-    const seriesIdentInputGroup = form.querySelector(".series-identifier-input-group");
     const langUsageInputGroup = form.querySelector(".language-input-group");
-    const calendarInputGroup = form.querySelector(".calendar-input-group");
-    const actionInputGroup = form.querySelector(".action-input-group");
-    const contextInputGroup = form.querySelector(".calendar-input-group");
+    const categoryInputGroup = form.querySelector(".category-input-group");
+
 
     const additionalTitlesContainer = form.querySelector(".additional-titles");
     const additionalResponsibilitiesContainer = form.querySelector(".additional-responsibilities");
     const additionalPubAuthoritiesContainer = form.querySelector(".additional-publication-authorities");
     const additionalIdentifierContainer = form.querySelector(".additional-identifiers");
-    const additionalExtentContainer = form.querySelector(".additional-extents");
     const additionalSourceContainer = form.querySelector(".additional-sources");
-    const additionalEditionRespContainer = form.querySelector(".additional-edition-responsibilities");
-    const additionalSeriesRespContainer = form.querySelector(".additional-series-responsibilities");
-    const additionalSeriesIdentContainer = form.querySelector(".additional-series-identifiers");
     const additionalLangUsageContainer = form.querySelector(".additional-languages");
-    const additionalCalendarContainer = form.querySelector(".additional-calendars");
-    const additionalActionContainer = form.querySelector(".additional-actions");
-    const additionalContextContainer = form.querySelector(".additional-contexts");
+    const additionalCategoryContainer = form.querySelector(".additional-categories");
 
     accordionHeaders.forEach(accordionHeader => {
         accordionHeader.addEventListener("click", function () {
@@ -121,23 +104,6 @@ const InterfaceModule = (function () {
         }
     });
 
-    addExtentButton.addEventListener("click", function (event) {
-        if (event.target.classList.contains("add-extent-button")) {
-            const clone = extentInputGroup.cloneNode(true);
-            clone.querySelector(".metadata-extent").value = "";
-            const removeButton = document.createElement("span");
-            removeButton.classList.add("button", "is-danger", "is-light", "remove-extent-button");
-            const minusIcon = document.createElement("i");
-            minusIcon.classList.add("fa-solid", "fa-minus");
-            removeButton.appendChild(minusIcon);
-            clone.appendChild(removeButton);
-            additionalExtentContainer.appendChild(clone);
-
-            // Remove the add button from the added title
-            clone.querySelector(".add-extent-button").remove();
-        }
-    });
-
     addSourceButton.addEventListener("click", function (event) {
         if (event.target.classList.contains("add-source-button")) {
             const clone = sourceInputGroup.cloneNode(true);
@@ -155,23 +121,39 @@ const InterfaceModule = (function () {
         }
     });
 
-    addEditionRespButton.addEventListener("click", function (event) {
-        if (event.target.classList.contains("add-edition-responsibility-button")) {
-            const clone = editionRespInputGroup.cloneNode(true);
-            clone.querySelector(".metadata-edition-responsibility").value = "";
+    addLangUsageButton.addEventListener("click", function (event) {
+        if (event.target.classList.contains("add-language-button")) {
+            const clone = langUsageInputGroup.cloneNode(true);
+            clone.querySelector(".metadata-language").value = "";
             const removeButton = document.createElement("span");
-            removeButton.classList.add("button", "is-danger", "is-light", "remove-edition-responsibility-button");
+            removeButton.classList.add("button", "is-danger", "is-light", "remove-language-button");
             const minusIcon = document.createElement("i");
             minusIcon.classList.add("fa-solid", "fa-minus");
             removeButton.appendChild(minusIcon);
             clone.appendChild(removeButton);
-            additionalEditionRespContainer.appendChild(clone);
+            additionalLangUsageContainer.appendChild(clone);
 
             // Remove the add button from the added title
-            clone.querySelector(".add-edition-responsibility-button").remove();
+            clone.querySelector(".add-language-button").remove();
         }
     });
 
+    addCategoryButton.addEventListener("click", function (event) {
+        if (event.target.classList.contains("add-category-button")) {
+            const clone = categoryInputGroup.cloneNode(true);
+            clone.querySelector(".metadata-category").value = "";
+            const removeButton = document.createElement("span");
+            removeButton.classList.add("button", "is-danger", "is-light", "remove-category-button");
+            const minusIcon = document.createElement("i");
+            minusIcon.classList.add("fa-solid", "fa-minus");
+            removeButton.appendChild(minusIcon);
+            clone.appendChild(removeButton);
+            additionalCategoryContainer.appendChild(clone);
+
+            // Remove the add button from the added title
+            clone.querySelector(".add-category-button").remove();
+        }
+    });
 
     // Handle remove button click
     form.addEventListener("click", function (event) {
@@ -187,14 +169,14 @@ const InterfaceModule = (function () {
         else if (event.target.classList.contains("remove-identifier-button")) {
             event.target.closest(".identifier-input-group").remove();
         }
-        else if (event.target.classList.contains("remove-extent-button")) {
-            event.target.closest(".extent-input-group").remove();
-        }
         else if (event.target.classList.contains("remove-source-button")) {
             event.target.closest(".source-input-group").remove();
         }
-        else if (event.target.classList.contains("remove-edition-responsibility-button")) {
-            event.target.closest(".edition-responsibility-input-group").remove();
+        else if (event.target.classList.contains("remove-language-button")) {
+            event.target.closest(".language-input-group").remove();
+        }
+        else if (event.target.classList.contains("remove-category-button")) {
+            event.target.closest(".category-input-group").remove();
         }
     });
 
