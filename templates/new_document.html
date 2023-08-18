@@ -14,8 +14,8 @@
     {% endif %}
     {% endwith %}
     <form method="post" action="{{ url_for('new_document') }}">
-        <label for="title">Title:</label>
-        <input type="text" name="title" id="title"><br><br>
+        <label for="docTitle">Document title:</label>
+        <input type="text" name="docTitle" id="docTitle"><br><br>
         <label for="content">Content:</label><br>
         <textarea name="content" id="content" rows="10" cols="50"></textarea><br><br>
         <input type="submit" value="Save">

@@ -5,10 +5,10 @@ db = SQLAlchemy()
 
 class Document(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    title = db.Column(db.String(100), nullable=False)
+    docTitle = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
     
-    docTitle = db.relationship('DocTitle', backref='document', lazy=True)
+    title = db.relationship('Title', backref='document', lazy=True)
     resp = db.relationship('Resp', backref='document', lazy=True)
     pubAuthority = db.relationship('PubAuthority', backref='document', lazy=True)
     pubPlace = db.relationship('PubPlace', backref='document', lazy=True)
@@ -30,7 +30,7 @@ class Document(db.Model):
     def __repr__(self):
         return f"<Document {self.id}>"
     
-class DocTitle(db.Model):
+class Title(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     document_id = db.Column(db.Integer, db.ForeignKey('document.id'))
     text = db.Column(db.String)

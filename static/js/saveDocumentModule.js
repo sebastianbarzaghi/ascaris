@@ -44,7 +44,7 @@ const SaveDocumentModule = (function () {
       },
       body: JSON.stringify({
         document_id: documentId,
-        title: title,
+        docTitle: title,
         content: content,
       }),
     })

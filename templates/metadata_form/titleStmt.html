@@ -9,9 +9,10 @@
             <label class="label">Title</label>
             <div class="control">
             <div class="title-input-group input-group">
-                <input class="input metadata-title" type="text" placeholder="Enter title">
+                <input id="title-text" name="title-text" class="input metadata-title" type="text" placeholder="Enter title">
                 <div class="select">
-                    <select class="language-dropdown">
+                    <select id="title-language" class="language-dropdown">
+                        <option>--Select--</option>
                         <option value="en">en</option>
                         <option value="it">it</option>
                         <option value="es">es</option>
@@ -20,7 +21,8 @@
                     </select>
                 </div>
                 <div class="select">
-                    <select class="type-dropdown">
+                    <select id="title-type" class="type-dropdown">
+                        <option>--Select--</option>
                         <option value="main">main</option>
                         <option value="sub">sub</option>
                         <option value="alt">alt</option>
@@ -29,12 +31,13 @@
                     </select>
                 </div>
                 <div class="select">
-                    <select class="level-dropdown">
-                        <option value="a">analytic</option>
-                        <option value="m">monographic</option>
-                        <option value="j">journal</option>
-                        <option value="s">series</option>
-                        <option value="u">unpublished</option>
+                    <select id="title-level" class="level-dropdown">
+                        <option>--Select--</option>
+                        <option value="a">Analytic</option>
+                        <option value="m">Monographic</option>
+                        <option value="j">Journal</option>
+                        <option value="s">Series</option>
+                        <option value="u">Unpublished</option>
                     </select>
                 </div>
                 <span class="button is-success is-light add-button add-title-button"><i class="fa-solid fa-plus"></i></span>
