@@ -7,7 +7,7 @@
 <h1>My Documents</h1>
 {% set grouped_documents = {} %}
 {% for document in documents %}
-    {% set document_list = grouped_documents.setdefault(document.title, []) %}
+    {% set document_list = grouped_documents.setdefault(document.docTitle, []) %}
     {% set _ = document_list.append(document) %}
 {% endfor %}
 {% for title, documents_list in grouped_documents.items() %}

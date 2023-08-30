@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from models import db, Document, Title
 
 app = Flask(__name__, static_url_path='/static')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test2.db'
 app.secret_key = 'mysecretkey'
 db.init_app(app)
 migrate = Migrate(app, db)
@@ -35,19 +35,6 @@ def new_document():
 @app.route('/document/<int:id>/edit', methods=['GET', 'POST'])
 def edit_document(id):
     document = Document.query.get_or_404(id)
-    #if request.method == 'POST':
-        
-    #    title_text = request.form.get('title-text')
-    #    title_language = request.form.get('title-language')
-        #title_type = request.form.get('title-type')
-        #title_level = request.form.get('title-level')
-
-        #if title_text:
-        #    title = Title(document_id=document.id, 
-        #                  text=title_text)
-        #    db.session.add(title)
-        #    db.session.commit()
-
     return render_template('edit_document.html', document=document)
 
 # Flask route to save or update a document
@@ -74,6 +61,7 @@ def save_document():
     db.session.commit()
     return jsonify({"message": "Document saved successfully!"})
 
+
 # Flask route to fetch a document by its ID
 @app.route("/get_document/<int:document_id>")
 def get_document(document_id):
@@ -83,20 +71,34 @@ def get_document(document_id):
     else:
         return jsonify({"error": "Document not found"}), 404
 
+
 @app.route('/save_metadata/<int:id>', methods=['POST'])
 def save_metadata(id):
     document = Document.query.get_or_404(id)
     
     if request.method == 'POST':
-        title_text = request.form.get('title-text')
 
-        if title_text:
+        title_text = request.form.get('title-text')
+        existing_title = Title.query.filter_by(document_id=document.id).first()
+        if existing_title:
+            existing_title.text = title_text
+        else:
             title = Title(document_id=document.id, text=title_text)
             db.session.add(title)
-            print(db.session)
-            db.session.commit()
+        
+        db.session.commit()
 
     return redirect(url_for('edit_document', id=document.id))
+
+
+@app.route('/get_existing_data/<int:id>/<field_type>')
+def get_existing_data(id, field_type):
+    existing_data = []
+    print(field_type)
+    if field_type == 'title':
+        existing_data = [title.text for title in Title.query.filter_by(document_id=id).all()]
+        print(existing_data)
+    return jsonify(existing_data)
 
 
 if __name__ == '__main__':
