@@ -78,7 +78,66 @@ const InterfaceModule = (function () {
             .then(data => {
                 // Populate main form fields with existing data
                 const titleInput = document.querySelector('#title-text');
-                titleInput.value = data[0];
+                const titleLang = document.querySelector('#title-language');
+                const titleType = document.querySelector('#title-type');
+                const titleLevel = document.querySelector('#title-level');
+                titleInput.value = data.title[0].text;
+                for (const option of titleLang.options) {
+                    if (option.value === data.title[0].lang) {
+                        option.selected = true;
+                        break;
+                    }
+                }
+                for (const option of titleType.options) {
+                    if (option.value === data.title[0].type) {
+                        option.selected = true;
+                        break;
+                    }
+                }
+                for (const option of titleLevel.options) {
+                    if (option.value === data.title[0].level) {
+                        option.selected = true;
+                        break;
+                    }
+                }
+
+                const respSurname = document.querySelector('#resp-surname');
+                const respName = document.querySelector('#resp-name');
+                const respAuthority = document.querySelector('#resp-authority');
+                const respRole = document.querySelector('#resp-role');
+                respSurname.value = data.resp[0].surname;
+                respName.value = data.resp[0].name;
+                respAuthority.value = data.resp[0].authority;
+                for (const option of respRole.options) {
+                    if (option.value === data.resp[0].role) {
+                        option.selected = true;
+                        break;
+                    }
+                }
+
+                //pubauthority
+
+                const pubPlaceName = document.querySelector('#pubPlace-name');
+                const pubPlaceAuthority = document.querySelector('#pubPlace-authority');
+                pubPlaceName.value = data.pubPlace[0].name;
+                pubPlaceAuthority.value = data.pubPlace[0].authority;
+
+                //pubdate
+
+                const identText = document.querySelector('#identifier-text');
+                const identType = document.querySelector('#identifier-type');
+                identText.value = data.ident[0].text;
+                for (const option of identType.options) {
+                    if (option.value === data.ident[0].type) {
+                        option.selected = true;
+                        break;
+                    }
+                }
+
+                const descText = document.querySelector('#description-text');
+                descText.value = data.desc[0].text;
+
+
                 // Populate other main form fields similarly
     
                 // Populate additional fields
@@ -117,6 +176,8 @@ const InterfaceModule = (function () {
     initializeRemoveButtons("category");
 
     fetchExistingDataAndPopulate(documentId, "title");
+    fetchExistingDataAndPopulate(documentId, "resp");
+    fetchExistingDataAndPopulate(documentId, "pubPlace");
 
 })();
 

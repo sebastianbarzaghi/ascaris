@@ -11,7 +11,7 @@
             <div class="title-input-group input-group">
                 <input id="title-text" name="title-text" class="input metadata-title" type="text" placeholder="Enter title">
                 <div class="select">
-                    <select id="title-language" class="language-dropdown">
+                    <select id="title-language" name="title-language" class="language-dropdown">
                         <option>--Select--</option>
                         <option value="en">en</option>
                         <option value="it">it</option>
@@ -21,17 +21,17 @@
                     </select>
                 </div>
                 <div class="select">
-                    <select id="title-type" class="type-dropdown">
+                    <select id="title-type" name="title-type" class="type-dropdown">
                         <option>--Select--</option>
-                        <option value="main">main</option>
-                        <option value="sub">sub</option>
-                        <option value="alt">alt</option>
-                        <option value="short">short</option>
-                        <option value="desc">desc</option>
+                        <option value="main">Main</option>
+                        <option value="sub">Subordinate</option>
+                        <option value="alt">Alternate</option>
+                        <option value="short">Short</option>
+                        <option value="desc">Descriptive</option>
                     </select>
                 </div>
                 <div class="select">
-                    <select id="title-level" class="level-dropdown">
+                    <select id="title-level" name="title-level" class="level-dropdown">
                         <option>--Select--</option>
                         <option value="a">Analytic</option>
                         <option value="m">Monographic</option>
@@ -52,18 +52,18 @@
             <label class="label">Responsibility</label>
             <div class="control">
             <div class="responsibility-input-group input-group">
-                <input class="input metadata-responsibility metadata-responsibility-surname" type="text" placeholder="Enter surname">
-                <input class="input metadata-responsibility metadata-responsibility-name" type="text" placeholder="Enter name">
-                <input class="input metadata-responsibility metadata-responsibility-authority" type="text" placeholder="Enter authority record">
+                <input id="resp-surname" name="resp-surname" class="input metadata-responsibility metadata-responsibility-surname" type="text" placeholder="Enter surname">
+                <input id="resp-name" name="resp-name" class="input metadata-responsibility metadata-responsibility-name" type="text" placeholder="Enter name">
+                <input id="resp-authority" name="resp-authority" class="input metadata-responsibility metadata-responsibility-authority" type="text" placeholder="Enter authority record">
                 <div class="select">
-                <select class="responsibility-dropdown">
-                    <option value="author">Author</option>
-                    <option value="editor">Editor</option>
-                    <option value="sponsor">Sponsor</option>
-                    <option value="sponsor">Founder</option>
-                    <option value="sponsor">Principal</option>
-                    <!-- Add "Other" option? -->
-                </select>
+                    <select id="resp-role" name="resp-role" class="responsibility-dropdown">
+                        <option value="author">Author</option>
+                        <option value="editor">Editor</option>
+                        <option value="sponsor">Sponsor</option>
+                        <option value="sponsor">Founder</option>
+                        <option value="sponsor">Principal</option>
+                        <!-- Add "Other" option? -->
+                    </select>
                 </div>
                 <span class="button is-success is-light add-button add-responsibility-button"><i class="fa-solid fa-plus"></i></span>
             </div>

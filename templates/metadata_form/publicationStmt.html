@@ -31,8 +31,8 @@
         <label class="label">Publication place</label>
         <div class="control">
           <div class="pubPlace-input-group input-group">
-            <input class="input metadata-pubPlace metadata-pubPlace-name" type="text" placeholder="Enter publication place name">
-            <input class="input metadata-pubPlace metadata-pubPlace-authority" type="text" placeholder="Enter authority record">
+            <input id="pubPlace-name" name="pubPlace-name" class="input metadata-pubPlace metadata-pubPlace-name" type="text" placeholder="Enter publication place name">
+            <input id="pubPlace-authority" name="pubPlace-authority" class="input metadata-pubPlace metadata-pubPlace-authority" type="text" placeholder="Enter authority record">
           </div>
         </div>
       </div>
@@ -41,7 +41,7 @@
         <label class="label">Publication date</label>
         <div class="control">
           <div class="pubDate-input-group input-group">
-            <input class="input metadata-pubDate" type="date">
+            <input id="pubDate-name" name="pubDate-name" class="input metadata-pubDate" type="date">
           </div>
         </div>
       </div>
@@ -50,9 +50,10 @@
         <label class="label">Identifier</label>
         <div class="control">
           <div class="identifier-input-group input-group">
-            <input class="input metadata-identifier" type="text" placeholder="Enter identifier">
+            <input id="identifier-text" name="identifier-text" class="input metadata-identifier" type="text" placeholder="Enter identifier">
             <div class="select">
-              <select class="identifier-dropdown">
+              <select id="identifier-type" name="identifier-type" class="identifier-dropdown">
+                <option value="NULL">--Select--</option>
                 <option value="isbn">ISBN</option>
                 <option value="issn">ISSN</option>
                 <option value="doi">DOI</option>
@@ -75,10 +76,25 @@
         <label class="label">Availability</label>
         <div class="control">
           <div class="availability-input-group input-group">
-            <textarea class="input metadata-availability metadata-availability-license-text" type="textarea" placeholder="Enter license information"></textarea>
-            <input class="input metadata-availability metadata-availability-license-link" type="text" placeholder="Enter license link">
+            <textarea id="license-text" name="license-text" class="input metadata-availability metadata-availability-license-text" type="textarea" placeholder="Enter license information"></textarea>
             <div class="select">
-              <select class="status-dropdown">
+              <select id="license-link" name="license-link" class="status-dropdown">
+                <option>--Select--</option>
+                <option value="https://creativecommons.org/publicdomain/zero/1.0/">CC0 (Creative Commons Zero)</option>
+                <option value="https://creativecommons.org/licenses/by/4.0/">CC BY (Attribution)</option>
+                <option value="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA (Attribution-ShareAlike)</option>
+                <option value="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC (Attribution-NonCommercial)</option>
+                <option value="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)</option>
+                <option value="https://opensource.org/licenses/MIT">MIT License</option>
+                <option value="https://opensource.org/licenses/BSD-3-Clause">BSD License</option>
+                <option value="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License (GPL)</option>
+                <option value="https://www.gnu.org/licenses/lgpl-3.0.en.html">GNU Lesser General Public License (LGPL)</option>
+                <!-- ADD "OTHER" OPTION? -->
+              </select>
+            </div>
+            <div class="select">
+              <select id="license-status" name="license-status" class="status-dropdown">
+                <option>--Select--</option>
                 <option value="free">Free</option>
                 <option value="unknown">Unknown</option>
                 <option value="restricted">Restricted</option>
