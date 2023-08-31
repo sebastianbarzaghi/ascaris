@@ -49,7 +49,6 @@ class Resp(db.Model):
 class PubAuthority(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     document_id = db.Column(db.Integer, db.ForeignKey('document.id'))
-    surname = db.Column(db.String)
     name = db.Column(db.String)
     authority = db.Column(db.String)
     role = db.Column(db.String)

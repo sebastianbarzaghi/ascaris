@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_migrate import Migrate
 from bs4 import BeautifulSoup
-from models import db, Document, Title, Resp, PubPlace, Identifier, Description
+from models import db, Document, Title, Resp, PubAuthority, PubPlace, Identifier, Description, Abstract, CreationPlace, Language
 
 
 app = Flask(__name__, static_url_path='/static')
@@ -115,7 +115,20 @@ def save_metadata(id):
                         role=resp_role)
             db.session.add(resp)
 
-        #pubauthority --> da unire surname e name in singolo campo
+        pubAuthority_name = request.form.get('pubAuthority-name')
+        pubAuthority_authority = request.form.get('pubAuthority-authority')
+        pubAuthority_role = request.form.get('pubAuthority-role')
+        existing_pubAuthority = PubAuthority.query.filter_by(document_id=document.id).first()
+        if existing_pubAuthority:
+            existing_pubAuthority.name = pubAuthority_name
+            existing_pubAuthority.authority = pubAuthority_authority
+            existing_pubAuthority.role = pubAuthority_role
+        else:
+            pubAuthority = PubAuthority(document_id=document.id,
+                        name=pubAuthority_name,
+                        authority=pubAuthority_authority,
+                        role=pubAuthority_role)
+            db.session.add(pubAuthority)
 
         pubPlace_name = request.form.get('pubPlace-name')
         pubPlace_authority = request.form.get('pubPlace-authority')
@@ -153,6 +166,42 @@ def save_metadata(id):
             description = Description(document_id=document.id,
                                       text=description_text)
             db.session.add(description)
+        
+        abstract_text = request.form.get('abstract-text')
+        existing_abstract = Abstract.query.filter_by(document_id=document.id).first()
+        if existing_abstract:
+            existing_abstract.text = abstract_text
+        else:
+            abstract = Abstract(document_id=document.id,
+                                text=abstract_text)
+            db.session.add(abstract)
+
+        creationPlace_name = request.form.get('creationPlace-name')
+        creationPlace_authority = request.form.get('creationPlace-authority')
+        existing_creationPlace = CreationPlace.query.filter_by(document_id=document.id).first()
+        if existing_creationPlace:
+            existing_creationPlace.name = creationPlace_name
+            existing_creationPlace.authority = creationPlace_authority
+        else:
+            creationPlace = CreationPlace(document_id=document.id,
+                                name=creationPlace_name,
+                                authority=creationPlace_authority)
+            db.session.add(creationPlace)
+
+        lang_text = request.form.get('language-text')
+        lang_ident = request.form.get('language-ident')
+        lang_usage = request.form.get('language-usage')
+        existing_lang = Language.query.filter_by(document_id=document.id).first()
+        if existing_lang:
+            existing_lang.text = lang_text
+            existing_lang.ident = lang_ident
+            existing_lang.usage = lang_usage
+        else:
+            lang = Language(document_id=document.id,
+                            text=lang_text,
+                            ident=lang_ident,
+                            usage=lang_usage)
+            db.session.add(lang)
 
         db.session.commit()
 
@@ -164,9 +213,13 @@ def get_existing_data(id, field_type):
     existing_data = {
         'title': [],
         'resp': [],
+        'pubAuthority': [],
         'pubPlace': [],
         'ident': [],
         'desc': [],
+        'abstract': [],
+        'creationPlace': [],
+        'lang': [],
         # Add more field types as needed
     }
 
@@ -187,6 +240,14 @@ def get_existing_data(id, field_type):
             'authority': resp.authority,
             'role': resp.role
         })
+
+    existing_pubAuthorities = PubAuthority.query.filter_by(document_id=id).all()
+    for pubAuthority in existing_pubAuthorities:
+        existing_data['pubAuthority'].append({
+            'name': pubAuthority.name,
+            'authority': pubAuthority.authority,
+            'role': pubAuthority.role
+        })
     
     existing_pubPlace = PubPlace.query.filter_by(document_id=id).all()
     for pubPlace in existing_pubPlace:
@@ -206,6 +267,27 @@ def get_existing_data(id, field_type):
     for desc in existing_description:
         existing_data['desc'].append({
             'text': desc.text
+        })
+    
+    existing_abstract = Abstract.query.filter_by(document_id=id).all()
+    for abstract in existing_abstract:
+        existing_data['abstract'].append({
+            'text': abstract.text
+        })
+
+    existing_creationPlace = CreationPlace.query.filter_by(document_id=id).all()
+    for creationPlace in existing_creationPlace:
+        existing_data['creationPlace'].append({
+            'name': creationPlace.name,
+            'authority': creationPlace.authority
+        })
+    
+    existing_languages = Language.query.filter_by(document_id=id).all()
+    for lang in existing_languages:
+        existing_data['lang'].append({
+            'text': lang.text,
+            'ident': lang.ident,
+            'usage': lang.usage
         })
 
     return jsonify(existing_data)

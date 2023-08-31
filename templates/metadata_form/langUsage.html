@@ -9,9 +9,9 @@
         <label class="label">Language</label>
         <div class="control">
           <div class="language-input-group input-group">
-            <input class="input metadata-language metadata-language-description" type="text" placeholder="Enter language used">
+            <input id="language-text" name="language-text" class="input metadata-language metadata-language-description" type="text" placeholder="Enter language used">
             <div class="select">
-              <select class="language-ident-dropdown">
+              <select id="language-ident" name="language-ident" class="language-ident-dropdown">
                 <option value="en">en</option>
                 <option value="it">it</option>
                 <option value="es">es</option>
@@ -19,7 +19,7 @@
                 <!-- Add more language options here -->
               </select>
             </div>
-            <input class="input metadata-language metadata-language-usage" type="text" placeholder="Enter language usage">
+            <input id="language-usage" name="language-usage" class="input metadata-language metadata-language-usage" type="number" placeholder="Enter language usage">
             <span class="button is-success is-light add-button add-language-button"><i class="fa-solid fa-plus"></i></span>
           </div>
         </div>

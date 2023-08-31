@@ -115,7 +115,17 @@ const InterfaceModule = (function () {
                     }
                 }
 
-                //pubauthority
+                const pubAuthorityName = document.querySelector('#pubAuthority-name');
+                const pubAuthorityAuthority = document.querySelector('#pubAuthority-authority');
+                const pubAuthorityRole = document.querySelector('#pubAuthority-role');
+                pubAuthorityName.value = data.pubAuthority[0].name;
+                pubAuthorityAuthority.value = data.pubAuthority[0].authority;
+                for (const option of pubAuthorityRole.options) {
+                    if (option.value === data.pubAuthority[0].role) {
+                        option.selected = true;
+                        break;
+                    }
+                }
 
                 const pubPlaceName = document.querySelector('#pubPlace-name');
                 const pubPlaceAuthority = document.querySelector('#pubPlace-authority');
@@ -136,6 +146,27 @@ const InterfaceModule = (function () {
 
                 const descText = document.querySelector('#description-text');
                 descText.value = data.desc[0].text;
+
+                const abstractText = document.querySelector('#abstract-text');
+                abstractText.value = data.abstract[0].text;
+
+                const creationPlaceName = document.querySelector('#creationPlace-name');
+                const creationPlaceAuthority = document.querySelector('#creationPlace-authority');
+                creationPlaceName.value = data.creationPlace[0].name;
+                creationPlaceAuthority.value = data.creationPlace[0].authority;
+
+                const languageText = document.querySelector('#language-text');
+                const languageIdent = document.querySelector('#language-ident');
+                const languageUsage = document.querySelector('#language-usage');
+                languageText.value = data.lang[0].text;
+                for (const option of languageIdent.options) {
+                    if (option.value === data.lang[0].ident) {
+                        option.selected = true;
+                        break;
+                    }
+                };
+                languageUsage.value = data.lang[0].usage;
+
 
 
                 // Populate other main form fields similarly
@@ -175,9 +206,8 @@ const InterfaceModule = (function () {
     initializeRemoveButtons("language");
     initializeRemoveButtons("category");
 
+    // è inutile averne multipli ed è inutile il secondo parametro, si potrebbe togliere (oppure usare meglio se si vuole generalizzare)
     fetchExistingDataAndPopulate(documentId, "title");
-    fetchExistingDataAndPopulate(documentId, "resp");
-    fetchExistingDataAndPopulate(documentId, "pubPlace");
 
 })();
 

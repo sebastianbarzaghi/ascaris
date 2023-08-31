@@ -9,11 +9,11 @@
         <label class="label">Publication authorities</label>
         <div class="control">
           <div class="pubAuthority-input-group input-group">
-            <input class="input metadata-pubAuthority metadata-pubAuthority-surname" type="text" placeholder="Enter surname">
-            <input class="input metadata-pubAuthority metadata-pubAuthority-name" type="text" placeholder="Enter name">
-            <input class="input metadata-pubAuthority metadata-pubAuthority-authority" type="text" placeholder="Enter authority record">
+            <input id="pubAuthority-name" name="pubAuthority-name" class="input metadata-pubAuthority metadata-pubAuthority-name" type="text" placeholder="Enter name">
+            <input id="pubAuthority-authority" name="pubAuthority-authority" class="input metadata-pubAuthority metadata-pubAuthority-authority" type="text" placeholder="Enter authority record">
             <div class="select">
-              <select class="responsibility-dropdown">
+              <select id="pubAuthority-role" name="pubAuthority-role" class="responsibility-dropdown">
+                <option value="NULL">--Select--</option>
                 <option value="publisher">Publisher</option>
                 <option value="distributor">Distributor</option>
                 <option value="authority">Authority</option>
