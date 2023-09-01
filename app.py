@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_migrate import Migrate
 from bs4 import BeautifulSoup
-from models import db, Document, Title, Resp, PubAuthority, PubPlace, Identifier, Description, Abstract, CreationPlace, Language
+from models import db, Document, Title, Resp, PubAuthority, PubPlace, PubDate, Identifier, Availability, Description, Abstract, CreationPlace, CreationDate, Language
 
 
 app = Flask(__name__, static_url_path='/static')
@@ -142,7 +142,14 @@ def save_metadata(id):
                                 authority=pubPlace_authority)
             db.session.add(pubPlace)
 
-        #pubdate --> da modificare il campo name
+        pubDate_date = datetime.strptime(request.form.get('pubDate-date'), '%Y-%m-%d').date()
+        existing_pubDate = PubDate.query.filter_by(document_id=document.id).first()
+        if existing_pubDate:
+            existing_pubDate.date = pubDate_date
+        else:
+            pubDate = PubDate(document_id=document.id,
+                              date=pubDate_date)
+            db.session.add(pubDate)
 
         ident_text = request.form.get('identifier-text')
         ident_type = request.form.get('identifier-type')
@@ -156,7 +163,20 @@ def save_metadata(id):
                                type=ident_type)
             db.session.add(ident)
 
-        # availability --> da cambiare info in text, e forse togliere status
+        availability_text = request.form.get('availability-text')
+        availability_link = request.form.get('availability-link')
+        availability_status = request.form.get('availability-status')
+        existing_availability = Availability.query.filter_by(document_id=document.id).first()
+        if existing_availability:
+            existing_availability.text = availability_text
+            existing_availability.link = availability_link
+            existing_availability.status = availability_status
+        else:
+            availability = Availability(document_id=document.id,
+                                        text=availability_text,
+                                        link=availability_link,
+                                        status=availability_status)
+            db.session.add(availability)
 
         description_text = request.form.get('description-text')
         existing_description = Description.query.filter_by(document_id=document.id).first()
@@ -188,6 +208,15 @@ def save_metadata(id):
                                 authority=creationPlace_authority)
             db.session.add(creationPlace)
 
+        creationDate_date = datetime.strptime(request.form.get('creationDate-date'), '%Y-%m-%d').date()
+        existing_creationDate = CreationDate.query.filter_by(document_id=document.id).first()
+        if existing_creationDate:
+            existing_creationDate.date = creationDate_date
+        else:
+            creationDate = CreationDate(document_id=document.id,
+                              date=creationDate_date)
+            db.session.add(creationDate)
+
         lang_text = request.form.get('language-text')
         lang_ident = request.form.get('language-ident')
         lang_usage = request.form.get('language-usage')
@@ -208,17 +237,20 @@ def save_metadata(id):
     return redirect(url_for('edit_document', id=document.id))
 
 
-@app.route('/get_existing_data/<int:id>/<field_type>')
-def get_existing_data(id, field_type):
+@app.route('/get_existing_data/<int:id>')
+def get_existing_data(id):
     existing_data = {
         'title': [],
         'resp': [],
         'pubAuthority': [],
         'pubPlace': [],
+        'pubDate': [],
         'ident': [],
+        'availability': [],
         'desc': [],
         'abstract': [],
         'creationPlace': [],
+        'creationDate': [],
         'lang': [],
         # Add more field types as needed
     }
@@ -255,12 +287,26 @@ def get_existing_data(id, field_type):
             'name': pubPlace.name,
             'authority': pubPlace.authority
         })
+    
+    existing_pubDate = PubDate.query.filter_by(document_id=id).all()
+    for pubDate in existing_pubDate:
+        existing_data['pubDate'].append({
+            'date': pubDate.date
+        })
 
     existing_identifiers = Identifier.query.filter_by(document_id=id).all()
     for ident in existing_identifiers:
         existing_data['ident'].append({
             'text': ident.text,
             'type': ident.type
+        })
+    
+    existing_availability = Availability.query.filter_by(document_id=id).all()
+    for availability in existing_availability:
+        existing_data['availability'].append({
+            'text': availability.text,
+            'link': availability.link,
+            'status': availability.status
         })
     
     existing_description = Description.query.filter_by(document_id=id).all()
@@ -280,6 +326,12 @@ def get_existing_data(id, field_type):
         existing_data['creationPlace'].append({
             'name': creationPlace.name,
             'authority': creationPlace.authority
+        })
+    
+    existing_creationDate = CreationDate.query.filter_by(document_id=id).all()
+    for creationDate in existing_creationDate:
+        existing_data['creationDate'].append({
+            'date': creationDate.date
         })
     
     existing_languages = Language.query.filter_by(document_id=id).all()

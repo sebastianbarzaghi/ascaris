@@ -62,7 +62,7 @@ class PubPlace(db.Model):
 class PubDate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     document_id = db.Column(db.Integer, db.ForeignKey('document.id'))
-    name = db.Column(db.DateTime)
+    date = db.Column(db.DateTime)
 
 class Identifier(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -73,7 +73,7 @@ class Identifier(db.Model):
 class Availability(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     document_id = db.Column(db.Integer, db.ForeignKey('document.id'))
-    info = db.Column(db.String)
+    text = db.Column(db.String)
     link = db.Column(db.String)
     status = db.Column(db.String)
 
@@ -106,7 +106,7 @@ class CreationPlace(db.Model):
 class CreationDate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     document_id = db.Column(db.Integer, db.ForeignKey('document.id'))
-    name = db.Column(db.DateTime)
+    date = db.Column(db.DateTime)
 
 class Language(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -72,8 +72,8 @@ const InterfaceModule = (function () {
     }
     
     
-    function fetchExistingDataAndPopulate(documentId, fieldType) {
-        fetch(`/get_existing_data/${documentId}/${fieldType}`)
+    function fetchExistingDataAndPopulate(documentId) {
+        fetch(`/get_existing_data/${documentId}`)
             .then(response => response.json())
             .then(data => {
                 // Populate main form fields with existing data
@@ -87,19 +87,19 @@ const InterfaceModule = (function () {
                         option.selected = true;
                         break;
                     }
-                }
+                };
                 for (const option of titleType.options) {
                     if (option.value === data.title[0].type) {
                         option.selected = true;
                         break;
                     }
-                }
+                };
                 for (const option of titleLevel.options) {
                     if (option.value === data.title[0].level) {
                         option.selected = true;
                         break;
                     }
-                }
+                };
 
                 const respSurname = document.querySelector('#resp-surname');
                 const respName = document.querySelector('#resp-name');
@@ -113,7 +113,7 @@ const InterfaceModule = (function () {
                         option.selected = true;
                         break;
                     }
-                }
+                };
 
                 const pubAuthorityName = document.querySelector('#pubAuthority-name');
                 const pubAuthorityAuthority = document.querySelector('#pubAuthority-authority');
@@ -125,14 +125,18 @@ const InterfaceModule = (function () {
                         option.selected = true;
                         break;
                     }
-                }
+                };
 
                 const pubPlaceName = document.querySelector('#pubPlace-name');
                 const pubPlaceAuthority = document.querySelector('#pubPlace-authority');
                 pubPlaceName.value = data.pubPlace[0].name;
                 pubPlaceAuthority.value = data.pubPlace[0].authority;
 
-                //pubdate
+                const pubDateDate = document.querySelector('#pubDate-date');
+                let parsedDate = new Date(data.pubDate[0].date);
+                let formattedDate = parsedDate.getFullYear() + "-" + ((parsedDate.getMonth() + 1) < 10 ? '0' : '') + 
+                    (parsedDate.getMonth() + 1) + "-" + (parsedDate.getDate() < 10 ? '0' : '') + parsedDate.getDate();
+                pubDateDate.value = formattedDate;
 
                 const identText = document.querySelector('#identifier-text');
                 const identType = document.querySelector('#identifier-type');
@@ -142,7 +146,24 @@ const InterfaceModule = (function () {
                         option.selected = true;
                         break;
                     }
-                }
+                };
+
+                const availText = document.querySelector('#availability-text');
+                const availLink = document.querySelector('#availability-link');
+                const availStatus = document.querySelector('#availability-status');
+                availText.value = data.availability[0].text;
+                for (const option of availLink.options) {
+                    if (option.value === data.availability[0].link) {
+                        option.selected = true;
+                        break;
+                    }
+                };
+                for (const option of availStatus.options) {
+                    if (option.value === data.availability[0].status) {
+                        option.selected = true;
+                        break;
+                    }
+                };
 
                 const descText = document.querySelector('#description-text');
                 descText.value = data.desc[0].text;
@@ -154,6 +175,13 @@ const InterfaceModule = (function () {
                 const creationPlaceAuthority = document.querySelector('#creationPlace-authority');
                 creationPlaceName.value = data.creationPlace[0].name;
                 creationPlaceAuthority.value = data.creationPlace[0].authority;
+
+                const creationDateDate = document.querySelector('#creationDate-date');
+                let creationParsedDate = new Date(data.creationDate[0].date);
+                let creationFormattedDate = creationParsedDate.getFullYear() + "-" + 
+                    ((creationParsedDate.getMonth() + 1) < 10 ? '0' : '') + (creationParsedDate.getMonth() + 1) + "-" + 
+                    (creationParsedDate.getDate() < 10 ? '0' : '') + creationParsedDate.getDate();
+                    creationDateDate.value = creationFormattedDate;
 
                 const languageText = document.querySelector('#language-text');
                 const languageIdent = document.querySelector('#language-ident');
@@ -207,7 +235,7 @@ const InterfaceModule = (function () {
     initializeRemoveButtons("category");
 
     // è inutile averne multipli ed è inutile il secondo parametro, si potrebbe togliere (oppure usare meglio se si vuole generalizzare)
-    fetchExistingDataAndPopulate(documentId, "title");
+    fetchExistingDataAndPopulate(documentId);
 
 })();
 
