@@ -5,6 +5,15 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
+:document a skos:Concept ;
+    rdfs:label "document"@en ;
+    skos:prefLabel "Document"@en ;
+    skos:definition "A written or printed piece of information that serves as a record, proof, or evidence of something."@en ;
+    skos:topConceptOf :document-type-vocabulary ;
+    skos:inScheme :document-type-vocabulary ;
+    dcterms:creator <https://orcid.org/0000-0002-0799-1527> ;
+    dcterms:created "2023-08-31"^^xsd:date .
+
 :book a skos:Concept ;
     rdfs:label "book"@en ;
     skos:prefLabel "Book"@en ;
@@ -19,15 +28,6 @@
     skos:prefLabel "Letter"@en ;
     skos:definition "A physical document that contains written content, typically sent from one individual or entity to another."@en ;
     skos:broader :document ;
-    skos:inScheme :document-type-vocabulary ;
-    dcterms:creator <https://orcid.org/0000-0002-0799-1527> ;
-    dcterms:created "2023-08-31"^^xsd:date .
-
-:document a skos:Concept ;
-    rdfs:label "document"@en ;
-    skos:prefLabel "Document"@en ;
-    skos:definition "A written or printed piece of information that serves as a record, proof, or evidence of something."@en ;
-    skos:topConceptOf :document-type-vocabulary ;
     skos:inScheme :document-type-vocabulary ;
     dcterms:creator <https://orcid.org/0000-0002-0799-1527> ;
     dcterms:created "2023-08-31"^^xsd:date .

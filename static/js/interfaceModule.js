@@ -60,6 +60,28 @@ const InterfaceModule = (function () {
         };
     }
 
+    function populateSKOSDropdown() {
+        const skosSelect = document.getElementById("category-type");
+        const store = new window.$rdf.IndexedFormula();
+        const fetcher = new window.$rdf.Fetcher(store);
+        const skosPath = 'http://127.0.0.1:5000/docta';
+        return new Promise((resolve, reject) => {
+            fetcher.load(skosPath).then(() => {
+                store.each(undefined, undefined, window.$rdf.sym("http://www.w3.org/2004/02/skos/core#Concept")).forEach(concept => {
+                    const conceptLabel = store.any(concept, window.$rdf.sym("http://www.w3.org/2004/02/skos/core#prefLabel")).value;
+                    //const conceptValue = store.any(concept, window.$rdf.sym("http://www.w3.org/2000/01/rdf-schema#label")).value;
+                    const conceptValue = concept.value;
+                    const option = document.createElement("option");
+                    option.value = conceptValue;
+                    option.textContent = conceptLabel;
+                    skosSelect.appendChild(option);
+                });
+                resolve();
+            });
+        });
+    };
+
+
     function populateAdditionalFields(fieldType, existingData) {
         const additionalContainer = document.querySelector(`.additional-${fieldType}`);
         
@@ -70,10 +92,11 @@ const InterfaceModule = (function () {
             additionalContainer.appendChild(clone);
         });
     }
-    
+
     
     function fetchExistingDataAndPopulate(documentId) {
-        fetch(`/get_existing_data/${documentId}`)
+        populateSKOSDropdown().then(() => {
+            fetch(`/get_existing_data/${documentId}`)
             .then(response => response.json())
             .then(data => {
                 // Populate main form fields with existing data
@@ -165,6 +188,12 @@ const InterfaceModule = (function () {
                     }
                 };
 
+                const sourceText = document.querySelector('#source-text');
+                sourceText.value = data.source[0].text;
+
+                const noteText = document.querySelector('#note-text');
+                noteText.value = data.note[0].text;
+
                 const descText = document.querySelector('#description-text');
                 descText.value = data.desc[0].text;
 
@@ -195,7 +224,13 @@ const InterfaceModule = (function () {
                 };
                 languageUsage.value = data.lang[0].usage;
 
-
+                const category = document.querySelector('#category-type');
+                for (const option of category.options) {
+                    if (option.value === data.category[0].type) {
+                        option.selected = true;
+                        break;
+                    }
+                };
 
                 // Populate other main form fields similarly
     
@@ -203,7 +238,8 @@ const InterfaceModule = (function () {
                 //populateAdditionalFields('title', data.titles);
                 //populateAdditionalFields('responsibility', data.responsibilities);
                 // ... Populate other additional fields similarly
-            });
+            });    
+        })
     }
     
     
@@ -218,11 +254,13 @@ const InterfaceModule = (function () {
         form.addEventListener("click", handleRemoveButtonClick(field));
     }
 
+
     initializeAddButtons("title");
     initializeAddButtons("responsibility");
     initializeAddButtons("pubAuthority");
     initializeAddButtons("identifier");
     initializeAddButtons("source");
+    initializeAddButtons("note");
     initializeAddButtons("language");
     initializeAddButtons("category");
 
@@ -231,10 +269,10 @@ const InterfaceModule = (function () {
     initializeRemoveButtons("pubAuthority");
     initializeRemoveButtons("identifier");
     initializeRemoveButtons("source");
+    initializeRemoveButtons("note");
     initializeRemoveButtons("language");
     initializeRemoveButtons("category");
 
-    // è inutile averne multipli ed è inutile il secondo parametro, si potrebbe togliere (oppure usare meglio se si vuole generalizzare)
     fetchExistingDataAndPopulate(documentId);
 
 })();

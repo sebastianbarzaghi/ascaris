@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_migrate import Migrate
 from bs4 import BeautifulSoup
-from models import db, Document, Title, Resp, PubAuthority, PubPlace, PubDate, Identifier, Availability, Description, Abstract, CreationPlace, CreationDate, Language
+from models import db, Document, Title, Resp, PubAuthority, PubPlace, PubDate, Identifier, Availability, Source, Note, Description, Abstract, CreationPlace, CreationDate, Language, Category
 
 
 app = Flask(__name__, static_url_path='/static')
@@ -178,6 +178,24 @@ def save_metadata(id):
                                         status=availability_status)
             db.session.add(availability)
 
+        source_text = request.form.get('source-text')
+        existing_source = Source.query.filter_by(document_id=document.id).first()
+        if existing_source:
+            existing_source.text = source_text
+        else:
+            source = Source(document_id=document.id,
+                            text=source_text)
+            db.session.add(source)
+
+        note_text = request.form.get('note-text')
+        existing_note = Note.query.filter_by(document_id=document.id).first()
+        if existing_note:
+            existing_note.text = note_text
+        else:
+            note = Note(document_id=document.id,
+                        text=note_text)
+            db.session.add(note)
+
         description_text = request.form.get('description-text')
         existing_description = Description.query.filter_by(document_id=document.id).first()
         if existing_description:
@@ -232,6 +250,15 @@ def save_metadata(id):
                             usage=lang_usage)
             db.session.add(lang)
 
+        category_type = request.form.get('category-type')
+        existing_category = Category.query.filter_by(document_id=document.id).first()
+        if existing_category:
+            existing_category.type = category_type
+        else:
+            category = Category(document_id=document.id,
+                                type=category_type)
+            db.session.add(category)
+
         db.session.commit()
 
     return redirect(url_for('edit_document', id=document.id))
@@ -247,11 +274,14 @@ def get_existing_data(id):
         'pubDate': [],
         'ident': [],
         'availability': [],
+        'source': [],
+        'note': [],
         'desc': [],
         'abstract': [],
         'creationPlace': [],
         'creationDate': [],
         'lang': [],
+        'category': [],
         # Add more field types as needed
     }
 
@@ -308,6 +338,18 @@ def get_existing_data(id):
             'link': availability.link,
             'status': availability.status
         })
+
+    existing_sources = Source.query.filter_by(document_id=id).all()
+    for source in existing_sources:
+        existing_data['source'].append({
+            'text': source.text
+        })
+
+    existing_notes = Note.query.filter_by(document_id=id).all()
+    for note in existing_notes:
+        existing_data['note'].append({
+            'text': note.text
+        })
     
     existing_description = Description.query.filter_by(document_id=id).all()
     for desc in existing_description:
@@ -341,8 +383,30 @@ def get_existing_data(id):
             'ident': lang.ident,
             'usage': lang.usage
         })
+    
+    existing_categories = Category.query.filter_by(document_id=id).all()
+    for cat in existing_categories:
+        existing_data['category'].append({
+            'type': cat.type
+        })
 
     return jsonify(existing_data)
+
+
+@app.route('/docta')
+def serve_docta():
+    rdf_file_path = 'instance/docta.ttl'
+
+    with open(rdf_file_path, 'rb') as f:
+        rdf_content = f.read()
+
+    response = app.response_class(
+        response=rdf_content,
+        status=200,
+        mimetype='application/turtle'
+    )
+
+    return response
 
 
 if __name__ == '__main__':
