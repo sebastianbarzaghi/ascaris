@@ -4,6 +4,10 @@ html {
   padding: 2rem;
 }
 
+.navbar-item img.logo {
+  max-height: 8rem;
+}
+
 .editor {
   border: 1px solid #ccc;
   padding: 10px;

@@ -4,6 +4,7 @@ import { createPanelBlock } from './panelBlockModule.js';
 import { SidePanelModule } from './sidePanelModule.js';
 import { SaveDocumentModule } from './saveDocumentModule.js';
 import { InterfaceModule } from './interfaceModule.js'
+import { EntityInteractionModule } from './entityInteractionModule.js'
 
 // main code
 document.addEventListener("DOMContentLoaded", function () {
