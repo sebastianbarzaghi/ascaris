@@ -18,7 +18,7 @@ const FormFieldsModule = (function () {
             <div class="field">
             <label class="label">${field.label}</label>
             <div class="control">
-              <textarea class="textarea" placeholder="Enter ${field.label.toLowerCase()}"></textarea>
+              <textarea class="textarea" name="${field.name}" placeholder="Enter ${field.label.toLowerCase()}"></textarea>
             </div>
           </div>
             `;
@@ -33,7 +33,7 @@ const FormFieldsModule = (function () {
             `;
           } else if (field.type === "select") {
             const selectOptions = field.options
-              .map((option) => `<option>${option}</option>`)
+              .map((option) => `<option value="${option.toLowerCase()}">${option}</option>`)
               .join('');
             return `
               <div class="field">
@@ -54,8 +54,16 @@ const FormFieldsModule = (function () {
 
     const formFieldTemplates = {
       person: createFormFields([
-        { label: "Name", name: "name", type: "text" },
-        { label: "Authority record", name: "sameAs", type: "text" },
+        { 
+          label: "Name", 
+          name: "name", 
+          type: "text" 
+        },
+        { 
+          label: "Authority record", 
+          name: "sameAs", 
+          type: "text" 
+        },
         {
           label: "Certainty",
           name: "certainty",
@@ -68,11 +76,23 @@ const FormFieldsModule = (function () {
           type: "select",
           options: ["--Select--", "Internal", "External", "Conjecture"],
         },
-        { label: "Note", name: "note", type: "textarea" },
+        { 
+          label: "Note", 
+          name: "note", 
+          type: "textarea" 
+        },
       ]),
       place: createFormFields([
-        { label: "Name", name: "name", type: "text" },
-        { label: "Authority record", name: "sameAs", type: "text" },
+        { 
+          label: "Name", 
+          name: "name", 
+          type: "text" 
+        },
+        { 
+          label: "Authority record", 
+          name: "sameAs", 
+          type: "text" 
+        },
         {
           label: "Certainty",
           name: "certainty",
@@ -85,11 +105,23 @@ const FormFieldsModule = (function () {
           type: "select",
           options: ["--Select--", "Internal", "External", "Conjecture"],
         },
-        { label: "Note", name: "note", type: "textarea" },
+        { 
+          label: "Note", 
+          name: "note", 
+          type: "textarea" 
+        },
       ]),
       work: createFormFields([
-        { label: "Title", name: "name", type: "text" },
-        { label: "Authority record", name: "sameAs", type: "text" },
+        { 
+          label: "Title", 
+          name: "name", 
+          type: "text" 
+        },
+        { 
+          label: "Authority record", 
+          name: "sameAs", 
+          type: "text" 
+        },
         {
           label: "Certainty",
           name: "certainty",
@@ -102,11 +134,23 @@ const FormFieldsModule = (function () {
           type: "select",
           options: ["--Select--", "Internal", "External", "Conjecture"],
         },
-        { label: "Note", name: "note", type: "textarea" },
+        { 
+          label: "Note", 
+          name: "note", 
+          type: "textarea" 
+        },
       ]),
       organization: createFormFields([
-        { label: "Name", name: "name", type: "text" },
-        { label: "Authority record", name: "sameAs", type: "text" },
+        { 
+          label: "Name", 
+          name: "name", 
+          type: "text" 
+        },
+        { 
+          label: "Authority record", 
+          name: "sameAs", 
+          type: "text" 
+        },
         {
           label: "Certainty",
           name: "certainty",
@@ -119,16 +163,38 @@ const FormFieldsModule = (function () {
           type: "select",
           options: ["--Select--", "Internal", "External", "Conjecture"],
         },
-        { label: "Note", name: "note", type: "textarea" },
+        { 
+          label: "Note", 
+          name: "note", 
+          type: "textarea" 
+        },
       ]),
       date: createFormFields([
-        { label: "When", name: "when", type: "date" },
-        { label: "From", name: "from", type: "date" },
-        { label: "To", name: "to", type: "date" },
-        { label: "Not Before", name: "notBefore", type: "date" },
-        { label: "Not After", name: "notAfter", type: "date" },
-        { label: "Period", name: "period", type: "text" },
-        { label: "Calendar", name: "calendar", type: "text" },
+        { 
+          label: "When", 
+          name: "when", 
+          type: "date" 
+        },
+        { 
+          label: "From", 
+          name: "from", 
+          type: "date" 
+        },
+        { 
+          label: "To", 
+          name: "to", 
+          type: "date" 
+        },
+        { 
+          label: "Not Before", 
+          name: "notBefore", 
+          type: "date" 
+        },
+        { 
+          label: "Not After", 
+          name: "notAfter", 
+          type: "date" 
+        },
         {
           label: "Certainty",
           name: "certainty",
@@ -141,10 +207,15 @@ const FormFieldsModule = (function () {
           type: "select",
           options: ["--Select--", "Internal", "External", "Conjecture"],
         },
-        { label: "Note", name: "note", type: "textarea" },
+        { label: "Note", 
+          name: "note", 
+          type: "textarea" 
+        },
       ]),
     };
+
     return formFieldTemplates[type]
+
   };
   return {
     createFormFieldTemplates

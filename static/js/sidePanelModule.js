@@ -16,26 +16,29 @@ const SidePanelModule = (function () {
           var iconClass = "user";
           var tabClass = "people-content";
           var entityClass = span.classList[1];
+          var dataLink = span.getAttribute("data-link");
           var panelBlock = createPanelBlock(
             "person-block",
             iconClass,
             value,
             tabClass,
-            entityClass
+            entityClass,
+            dataLink
           );
-          //console.log(span.classList[1])
           peoplePanel.appendChild(panelBlock);
         } else if (span.classList.contains("place")) {
           var value = span.textContent;
           var iconClass = "map-marker-alt";
           var tabClass = "places-content";
           var entityClass = span.classList[1];
+          var dataLink = span.getAttribute("data-link");
           var panelBlock = createPanelBlock(
             "place-block",
             iconClass,
             value,
             tabClass,
-            entityClass
+            entityClass,
+            dataLink
           );
           placesPanel.appendChild(panelBlock);
       } else if (span.classList.contains("work")) {
@@ -43,12 +46,14 @@ const SidePanelModule = (function () {
         var iconClass = "book";
         var tabClass = "works-content";
         var entityClass = span.classList[1];
+        var dataLink = span.getAttribute("data-link");
         var panelBlock = createPanelBlock(
           "work-block",
           iconClass,
           value,
           tabClass,
-          entityClass
+          entityClass,
+          dataLink
         );
         worksPanel.appendChild(panelBlock);
       } else if (span.classList.contains("organization")) {
@@ -56,12 +61,14 @@ const SidePanelModule = (function () {
         var iconClass = "building";
         var tabClass = "organizations-content";
         var entityClass = span.classList[1];
+        var dataLink = span.getAttribute("data-link");
         var panelBlock = createPanelBlock(
           "organization-block",
           iconClass,
           value,
           tabClass,
-          entityClass
+          entityClass,
+          dataLink
         );
         organizationsPanel.appendChild(panelBlock);
     } else if (span.classList.contains("date")) {
@@ -69,12 +76,14 @@ const SidePanelModule = (function () {
       var iconClass = "calendar-alt";
       var tabClass = "dates-content";
       var entityClass = span.classList[1];
+      var dataLink = span.getAttribute("data-link");
       var panelBlock = createPanelBlock(
         "date-block",
         iconClass,
         value,
         tabClass,
-        entityClass
+        entityClass,
+        dataLink
       );
 
       datesPanel.appendChild(panelBlock);

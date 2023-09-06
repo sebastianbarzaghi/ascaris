@@ -35,6 +35,8 @@ const EntityMarkingModule = (function () {
     }
   ];
 
+  let linkCounter = parseInt(localStorage.getItem("linkCounter")) || 1;
+
   buttons.forEach(buttonDetails => {
     const button = document.querySelector(buttonDetails.buttonSelector);
     button.addEventListener("click", function () {
@@ -44,6 +46,7 @@ const EntityMarkingModule = (function () {
         const span = document.createElement("span");
         span.classList.add("entity", buttonDetails.spanClass);
         span.contentEditable = false; // Set non-editable
+        span.setAttribute("data-link", linkCounter);
         span.addEventListener("click", function(event) {
           event.preventDefault(); // Prevent selecting the span's text
           span.classList.toggle("selected"); // Toggle the selected class
@@ -59,12 +62,16 @@ const EntityMarkingModule = (function () {
           buttonDetails.iconClass,
           range.toString(),
           buttonDetails.panelClass,
-          buttonDetails.spanClass
+          buttonDetails.spanClass,
+          span.getAttribute("data-link")
         );
-        
-        const panelContent = document.querySelector(`.${buttonDetails.panelClass}`);
 
+        const panelContent = document.querySelector(`.${buttonDetails.panelClass}`);
         panelContent.appendChild(panelBlock);
+
+        linkCounter++;
+
+        localStorage.setItem("linkCounter", linkCounter.toString());
       }
     });
   });

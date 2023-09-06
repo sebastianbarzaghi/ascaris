@@ -1,10 +1,10 @@
 import { FormFieldsModule } from './formFieldsModule.js';
 
-function createPanelBlock(blockClass, iconClass, value, tabClass, type) {
-  //console.log("createPanelBlock called with:", blockClass, iconClass, value, tabClass, type);
-        var block = document.createElement("div");
+function createPanelBlock(blockClass, iconClass, value, tabClass, type, dataLink) {
+    var block = document.createElement("div");
     block.classList.add("box", "panel-block", blockClass);
     block.setAttribute("data-value", value);
+    block.setAttribute("data-link", dataLink)
   
     var accordionHeader = document.createElement("a");
     accordionHeader.classList.add("accordion-header");
@@ -32,15 +32,63 @@ function createPanelBlock(blockClass, iconClass, value, tabClass, type) {
     headerWrapper.classList.add("header-wrapper");
     headerWrapper.appendChild(accordionHeader);
     headerWrapper.appendChild(accordionUtilities);
-  
     block.appendChild(headerWrapper);
   
     var accordionContent = document.createElement("div");
     accordionContent.classList.add("accordion-content", "is-hidden"); // Add is-hidden class to keep it closed by default
-    //console.log(type);
     accordionContent.innerHTML = FormFieldsModule.createFormFieldTemplates(type); // Function to get the form fields based on the type
     block.appendChild(accordionContent);
-  
+
+
+    const secondChild = block.children[1];
+    function injectEntityData(field, type) {
+      let fieldInput = secondChild.querySelector(`[name="${field}"]`);
+      if (fieldInput) {
+        fieldInput.addEventListener(type, () => {
+          const value = fieldInput.value;
+          const entityLink = block.getAttribute("data-link");
+          const entitySpan = document.querySelector(`.entity[data-link="${entityLink}"]`);
+          if (entitySpan) {
+            entitySpan.setAttribute(`data-${field}`, value);
+          }
+        })
+      }
+    }
+    injectEntityData("name", "input");
+    injectEntityData("sameAs", "input");
+    injectEntityData("certainty", "change");
+    injectEntityData("evidence", "change");
+    injectEntityData("note", "input");
+    injectEntityData("when", "input");
+    injectEntityData("from", "input");
+    injectEntityData("to", "input");
+    injectEntityData("notBefore", "input");
+    injectEntityData("notAfter", "input");
+
+
+    function populateEntityFields(field) {
+      const entityLink = block.getAttribute("data-link");
+      const entitySpan = document.querySelector(`.entity[data-link="${entityLink}"]`);
+      if (entitySpan) {
+        const value = entitySpan.getAttribute(`data-${field}`);
+        const fieldInput = block.querySelector(`[name="${field}"]`);
+        if (fieldInput && value) {
+          fieldInput.value = value;
+        }
+      }
+    }
+    populateEntityFields("name");
+    populateEntityFields("sameAs");
+    populateEntityFields("certainty");
+    populateEntityFields("evidence");
+    populateEntityFields("note");
+    populateEntityFields("when");
+    populateEntityFields("from");
+    populateEntityFields("to");
+    populateEntityFields("notBefore");
+    populateEntityFields("notAfter");
+
+      
     // Add a click event listener to the accordion header to toggle the accordion content
     accordionHeader.addEventListener("click", function () {
       var isExpanded = accordionHeader.getAttribute("aria-expanded");
