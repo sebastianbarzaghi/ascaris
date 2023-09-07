@@ -400,21 +400,76 @@ def get_existing_data(id):
 def download_tei(document_id):
     # Query the database to get the title data
     title = Title.query.filter_by(document_id=document_id).first()
+    author = Resp.query.filter_by(document_id=document_id, role="author").first()
+    #pubauthorities
+    pubPlace = PubPlace.query.filter_by(document_id=document_id).first()
+    ident = Identifier.query.filter_by(document_id=document_id).first()
+    pubDate = PubDate.query.filter_by(document_id=document_id).first()
+    availability = Availability.query.filter_by(document_id=document_id).first()
+    note = Note.query.filter_by(document_id=document_id).first()
+    source = Source.query.filter_by(document_id=document_id).first()
+    description = Description.query.filter_by(document_id=document_id).first()
+    abstract = Abstract.query.filter_by(document_id=document_id).first()
+    creationDate = CreationDate.query.filter_by(document_id=document_id).first()
 
     # Create the TEI header with the title data
     tei_header = f"""
     <teiHeader xmlns="http://www.tei-c.org/ns/1.0">
       <fileDesc>
         <titleStmt>
-          <title>
-            {title.text}
-          </title>
+            <title>
+                {title.text}
+            </title>
+            <author sameAs="{author.authority}">
+                {author.surname + ", " + author.name}
+            </author>
         </titleStmt>
         <publicationStmt>
+            <pubPlace sameAs="{pubPlace.authority}">
+                {pubPlace.name}
+            </pubPlace>
+            <idno type="{ident.type}">
+                {ident.text}
+            </idno>
+            <date when="{pubDate.date}">
+                {pubDate.date}
+            </date>
+            <availability status="{availability.status}">
+                <license target="{availability.link}">
+                    {availability.text}
+                </license>
+            </availability>
         </publicationStmt>
+        <noteStmt>
+            <note>
+                {note.text}
+            </note>
+        </noteStmt>
         <sourceDesc>
+            <bibl>
+                {source.text}
+            </bibl>
         </sourceDesc>
       </fileDesc>
+      <encodingDesc>
+        <projectDesc>
+            <p>
+                {description.text}
+            </p>
+        </projectDesc>
+      </encodingDesc>
+      <profileDesc>
+        <creation>
+            <date when="{creationDate.date}">
+                {creationDate.date}
+            </date>
+        </creation>
+        <abstract>
+            <p>
+                {abstract.text}
+            </p>
+        </abstract>
+      </profileDesc>
     </teiHeader>
     """
 
@@ -430,6 +485,8 @@ def download_tei(document_id):
     # Return the TEI document as a downloadable file
     response = Response(tei_template, content_type='application/xml')
     response.headers['Content-Disposition'] = f'attachment; filename=document_{document_id}.xml'
+
+    print(tei_header)
 
     return response
 
