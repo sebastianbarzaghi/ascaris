@@ -1,8 +1,35 @@
 const EntityInteractionModule = (function () {
     const entityPanel = document.querySelector(".tab-content");
-  
+    let draggedBlock; // Define draggedBlock outside of event listeners
+
+    entityPanel.addEventListener("dragstart", (event) => {
+    draggedBlock = event.target;
+    if (draggedBlock.classList.contains("panel-block")) {
+        draggedBlock.classList.add("dragging");
+    }
+    });
+
+    entityPanel.addEventListener("dragend", (event) => {
+    if (draggedBlock && draggedBlock.classList.contains("panel-block")) {
+        draggedBlock.classList.remove("dragging");
+        draggedBlock = null; // Reset draggedBlock after drag ends
+    }
+    });
+
     entityPanel.addEventListener("dragover", (event) => {
-      event.preventDefault();
+    event.preventDefault();
+
+    const targetBlock = event.target.closest(".panel-block");
+    if (targetBlock && targetBlock !== draggedBlock) {
+        targetBlock.classList.add("valid-drop-target");
+    }
+    });
+
+    entityPanel.addEventListener("dragleave", (event) => {
+    const targetBlock = event.target.closest(".panel-block");
+    if (targetBlock) {
+        targetBlock.classList.remove("valid-drop-target");
+    }
     });
   
     entityPanel.addEventListener("drop", (event) => {
