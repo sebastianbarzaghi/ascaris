@@ -50,19 +50,24 @@ function createPanelBlock(blockClass, iconClass, value, tabClass, type, dataLink
     block.appendChild(accordionContent);
 
 
+    function updateEntities(field, value) {
+      const entityLink = block.getAttribute("data-link");
+      const entities = document.querySelectorAll(`.entity[data-link="${entityLink}"]`);
+      entities.forEach((entity) => {
+          entity.setAttribute(`data-${field}`, value);
+      });
+    }
+
+
     const secondChild = block.children[1];
     function injectEntityData(field, type) {
-      let fieldInput = secondChild.querySelector(`[name="${field}"]`);
-      if (fieldInput) {
-        fieldInput.addEventListener(type, () => {
-          const value = fieldInput.value;
-          const entityLink = block.getAttribute("data-link");
-          const entitySpan = document.querySelector(`.entity[data-link="${entityLink}"]`);
-          if (entitySpan) {
-            entitySpan.setAttribute(`data-${field}`, value);
-          }
-        })
-      }
+        let fieldInput = secondChild.querySelector(`[name="${field}"]`);
+        if (fieldInput) {
+            fieldInput.addEventListener(type, () => {
+                const value = fieldInput.value;
+                updateEntities(field, value);
+            });
+        }
     }
     injectEntityData("name", "input");
     injectEntityData("sameAs", "input");
@@ -113,14 +118,14 @@ function createPanelBlock(blockClass, iconClass, value, tabClass, type, dataLink
 
     // Add a click event listener to the delete button to remove the block and the parent span
     deleteButton.addEventListener("click", function (event) {
-      event.stopPropagation(); // Prevent the accordion from being toggled when clicking the delete button
-      block.remove(); // Remove the accordion block
+      event.stopPropagation();
+      block.remove();
       // Find the parent span of the accordion header, which represents the marked-up text
       var spans = document.querySelectorAll(".entity");
       spans.forEach(function (span) {
-        if (span.textContent === value) {
-          span.outerHTML = span.textContent; // Replace the span with its inner text content
-        }
+          if (span.getAttribute("data-link") === block.getAttribute("data-link")) {
+              span.outerHTML = span.textContent; // Replace the span with its inner text content
+          }
       });
     });
 
