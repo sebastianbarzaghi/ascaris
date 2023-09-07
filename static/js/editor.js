@@ -5,6 +5,7 @@ import { SidePanelModule } from './sidePanelModule.js';
 import { SaveDocumentModule } from './saveDocumentModule.js';
 import { InterfaceModule } from './interfaceModule.js'
 import { EntityInteractionModule } from './entityInteractionModule.js'
+import { DownloadModule } from './downloadModule.js'
 
 // main code
 document.addEventListener("DOMContentLoaded", function () {

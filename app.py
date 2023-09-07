@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, Response, render_template, request, redirect, url_for, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_migrate import Migrate
@@ -12,10 +12,12 @@ app.secret_key = 'mysecretkey'
 db.init_app(app)
 migrate = Migrate(app, db)
 
+
 @app.route('/')
 def index():
     documents = Document.query.order_by(Document.updated_at.desc()).all()
     return render_template('index.html', documents=documents)
+
 
 @app.route('/document/new', methods=['GET', 'POST'])
 def new_document():
@@ -28,15 +30,16 @@ def new_document():
         document = Document(docTitle=title, content=content)
         db.session.add(document)
         db.session.commit()
-
         flash('Your document has been created successfully.', 'success')
         return redirect(url_for('index'))
     return render_template('new_document.html')
+
 
 @app.route('/document/<int:id>/edit', methods=['GET', 'POST'])
 def edit_document(id):
     document = Document.query.get_or_404(id)
     return render_template('edit_document.html', document=document)
+
 
 # Flask route to save or update a document
 @app.route("/save_document", methods=["POST"])
@@ -391,6 +394,44 @@ def get_existing_data(id):
         })
 
     return jsonify(existing_data)
+
+
+@app.route('/download_tei/<int:document_id>')
+def download_tei(document_id):
+    # Query the database to get the title data
+    title = Title.query.filter_by(document_id=document_id).first()
+
+    # Create the TEI header with the title data
+    tei_header = f"""
+    <teiHeader xmlns="http://www.tei-c.org/ns/1.0">
+      <fileDesc>
+        <titleStmt>
+          <title>
+            {title.text}
+          </title>
+        </titleStmt>
+        <publicationStmt>
+        </publicationStmt>
+        <sourceDesc>
+        </sourceDesc>
+      </fileDesc>
+    </teiHeader>
+    """
+
+    # Create the complete TEI document
+    tei_template = f"""
+    <TEI xmlns="http://www.tei-c.org/ns/1.0">
+      {tei_header}
+      <text>
+      </text>
+    </TEI>
+    """
+
+    # Return the TEI document as a downloadable file
+    response = Response(tei_template, content_type='application/xml')
+    response.headers['Content-Disposition'] = f'attachment; filename=document_{document_id}.xml'
+
+    return response
 
 
 @app.route('/docta')
