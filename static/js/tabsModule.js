@@ -44,6 +44,52 @@ const TabsModule = (function () {
         });
     });
 
+    const content = document.getElementById('editableContent');
+
+    content.addEventListener('paste', function (event) {
+      event.preventDefault();
+    
+      // Get the pasted text as plain text
+      const plainText = (event.clipboardData || window.clipboardData).getData('text/plain');
+    
+      // Create a plain text node
+      const plainTextNode = document.createTextNode(plainText);
+    
+      // Insert the plain text node into the contenteditable div
+      const selection = window.getSelection();
+      if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        range.deleteContents();
+        range.insertNode(plainTextNode);
+      }
+    });
+
+    // Function to create a new paragraph element
+function createParagraph() {
+  const newParagraph = document.createElement('br');
+  return newParagraph;
+}
+
+editableContent.addEventListener('keydown', function (event) {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+
+    // Get the current selection
+    const selection = window.getSelection();
+    const range = selection.getRangeAt(0);
+
+    // Create a new paragraph element
+    const newParagraph = createParagraph();
+
+    // Insert the new paragraph before the next element
+    range.insertNode(newParagraph);
+    range.setStartBefore(newParagraph);
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+});
+
     return {
       openTab,
       initializeTabs,

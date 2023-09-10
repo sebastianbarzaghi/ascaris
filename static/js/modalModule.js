@@ -49,6 +49,7 @@ const ModalModule = (function () {
     });
   });
 
+
 })();
 
 export { ModalModule };
