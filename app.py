@@ -4,7 +4,10 @@ from datetime import datetime
 from flask_migrate import Migrate
 from models import db, Document, Title, Resp, PubAuthority, PubPlace, PubDate, Identifier, Availability, Source, Note, Description, Abstract, CreationPlace, CreationDate, Language, Category
 from download import get_data, generate_tei_header, generate_tei_content
-import docx
+import os
+from PyPDF2 import PdfReader
+from docx import Document as DocxDocument
+
 
 
 app = Flask(__name__, static_url_path='/static')
@@ -36,6 +39,47 @@ def new_document():
     return render_template('new_document.html')
 
 
+ALLOWED_EXTENSIONS = {'docx', 'pdf', 'txt'}
+
+# Helper function to check allowed file extensions
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Helper function to read text content from a DOCX file
+def read_docx(uploaded_file):
+    try:
+        doc = DocxDocument(uploaded_file)
+        text_content = ""
+        for paragraph in doc.paragraphs:
+            text_content += paragraph.text + "\n"
+        return text_content
+    except Exception as e:
+        print(f"Error reading DOCX file: {e}")
+        return None
+
+# Helper function to read text content from a PDF file
+def read_pdf(uploaded_file):
+    try:
+        pdf = PdfReader(uploaded_file)
+        text_content = ""
+        for page_num in range(len(pdf.pages)):
+            page = pdf.pages[page_num]
+            text_content += page.extract_text() + "\n"
+        return text_content
+    except Exception as e:
+        print(f"Error reading PDF file: {e}")
+        return None
+
+# Helper function to read text content from a TXT file
+def read_txt(uploaded_file):
+    try:
+        text_content = uploaded_file.read().decode('utf-8')
+        return text_content
+    except Exception as e:
+        print(f"Error reading TXT file: {e}")
+        return None
+
+# Main route for uploading documents
 @app.route('/document/upload', methods=['GET', 'POST'])
 def upload_document():
     if request.method == 'POST':
@@ -45,38 +89,30 @@ def upload_document():
         if not title:
             flash('Please enter a title for your document.', 'error')
         elif not uploaded_file:
-            flash('Please select a DOCX file to upload.', 'error')
+            flash('Please select a file to upload.', 'error')
         elif not allowed_file(uploaded_file.filename):
-            flash('Invalid file format. Please upload a DOCX file.', 'error')
+            flash('Invalid file format. Please upload a supported file type.', 'error')
         else:
-            # Read the uploaded DOCX file and extract its textual content
-            docx_content = read_docx(uploaded_file)
+            # Determine the file extension and call the appropriate function
+            file_extension = uploaded_file.filename.rsplit('.', 1)[1].lower()
+            if file_extension == 'docx':
+                text_content = read_docx(uploaded_file)
+            elif file_extension == 'pdf':
+                text_content = read_pdf(uploaded_file)
+            elif file_extension == 'txt':
+                text_content = read_txt(uploaded_file)
+            else:
+                text_content = None
+            
+            if text_content is not None:
+                # Create a new Document object and save it to the database
+                document = Document(docTitle=title, content=text_content)
+                db.session.add(document)
+                db.session.commit()
+                flash('Your document has been uploaded successfully.', 'success')
+                return redirect(url_for('index'))
 
-            # Create a new Document object and save it to the database
-            document = Document(docTitle=title, content=docx_content)
-            db.session.add(document)
-            db.session.commit()
-
-            flash('Your document has been uploaded successfully.', 'success')
-            return redirect(url_for('index'))
-
-    return render_template('upload_document.html')
-
-# Helper function to check allowed file extensions
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'docx'
-
-# Helper function to read text content from a DOCX file
-def read_docx(uploaded_file):
-    try:
-        doc = docx.Document(uploaded_file)
-        text_content = ""
-        for paragraph in doc.paragraphs:
-            text_content += paragraph.text + "\n"
-        return text_content
-    except Exception as e:
-        print(f"Error reading DOCX file: {e}")
-        return None
+    return render_template('new_document.html')
 
 
 @app.route('/document/<int:id>/edit', methods=['GET', 'POST'])
