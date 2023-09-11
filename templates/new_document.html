@@ -36,9 +36,9 @@
                         <input type="text" name="docTitle" id="docTitle" class="input" placeholder="Insert document title">
                     </div>
                 </div>
-                <div id="file-js-example" class="file has-name">
+                <div id="file-upload" class="field is-large is-boxed file has-name">
                     <label class="file-label">
-                    <input class="file-input" type="file" name="resume">
+                    <input class="file-input" type="file" name="uploaded_file">
                     <span class="file-cta">
                         <span class="file-icon">
                         <i class="fas fa-upload"></i>
@@ -62,10 +62,10 @@
     </div>
 
     <script>
-        const fileInput = document.querySelector('#file-js-example input[type=file]');
+        const fileInput = document.querySelector('#file-upload input[type=file]');
         fileInput.onchange = () => {
           if (fileInput.files.length > 0) {
-            const fileName = document.querySelector('#file-js-example .file-name');
+            const fileName = document.querySelector('#file-upload .file-name');
             fileName.textContent = fileInput.files[0].name;
           }
         }

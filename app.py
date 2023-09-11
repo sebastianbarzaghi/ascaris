@@ -2,9 +2,9 @@ from flask import Flask, Response, render_template, request, redirect, url_for, 
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_migrate import Migrate
-from bs4 import BeautifulSoup
 from models import db, Document, Title, Resp, PubAuthority, PubPlace, PubDate, Identifier, Availability, Source, Note, Description, Abstract, CreationPlace, CreationDate, Language, Category
 from download import get_data, generate_tei_header, generate_tei_content
+import docx
 
 
 app = Flask(__name__, static_url_path='/static')
@@ -34,6 +34,49 @@ def new_document():
         flash('Your document has been created successfully.', 'success')
         return redirect(url_for('index'))
     return render_template('new_document.html')
+
+
+@app.route('/document/upload', methods=['GET', 'POST'])
+def upload_document():
+    if request.method == 'POST':
+        title = request.form['docTitle']
+        uploaded_file = request.files['uploaded_file']
+
+        if not title:
+            flash('Please enter a title for your document.', 'error')
+        elif not uploaded_file:
+            flash('Please select a DOCX file to upload.', 'error')
+        elif not allowed_file(uploaded_file.filename):
+            flash('Invalid file format. Please upload a DOCX file.', 'error')
+        else:
+            # Read the uploaded DOCX file and extract its textual content
+            docx_content = read_docx(uploaded_file)
+
+            # Create a new Document object and save it to the database
+            document = Document(docTitle=title, content=docx_content)
+            db.session.add(document)
+            db.session.commit()
+
+            flash('Your document has been uploaded successfully.', 'success')
+            return redirect(url_for('index'))
+
+    return render_template('upload_document.html')
+
+# Helper function to check allowed file extensions
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'docx'
+
+# Helper function to read text content from a DOCX file
+def read_docx(uploaded_file):
+    try:
+        doc = docx.Document(uploaded_file)
+        text_content = ""
+        for paragraph in doc.paragraphs:
+            text_content += paragraph.text + "\n"
+        return text_content
+    except Exception as e:
+        print(f"Error reading DOCX file: {e}")
+        return None
 
 
 @app.route('/document/<int:id>/edit', methods=['GET', 'POST'])
