@@ -408,17 +408,13 @@ def download_tei(document_id):
     tei_template = f"""
     <TEI xmlns="http://www.tei-c.org/ns/1.0">
       {tei_header}
-      <text>
       {tei_content}
-      </text>
     </TEI>
     """
 
     # Return the TEI document as a downloadable file
     response = Response(tei_template, content_type='application/xml')
     response.headers['Content-Disposition'] = f'attachment; filename=document_{document_id}.xml'
-
-    print(tei_template)
 
     return response
 

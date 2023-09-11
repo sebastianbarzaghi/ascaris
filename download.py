@@ -1,5 +1,6 @@
 import re
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
+from datetime import datetime
 from models import db, Document, Title, Resp, PubAuthority, PubPlace, PubDate, Identifier, Availability, Source, Note, Description, Abstract, CreationPlace, CreationDate, Language, Category
 
 def get_data(document_id):
@@ -229,11 +230,33 @@ def generate_tei_extent(data):
     num_words = len(words)
     sentences = re.split(r'[.!?]', original_text)
     num_sentences = len([s for s in sentences if s.strip() != ''])
+    characters_measure = soup.new_tag('measure', unit='characters', quantity=num_characters)
+    characters_measure.string = num_characters
+    soup.append(characters_measure)
+    words_measure = soup.new_tag('measure', unit='words', quantity=num_words)
+    words_measure.string = num_words
+    soup.append(words_measure)
+    sentences_measure = soup.new_tag('measure', unit='sentences', quantity=num_sentences)
+    sentences_measure.string = num_sentences
+    soup.append(sentences_measure)
+    return soup
+
+
+def generate_tei_app_info():
+    soup = BeautifulSoup()
+    app_info = soup.new_tag('appInfo')
+    application = soup.new_tag('application', version='0.1.0', ident='AscarisEditor', when=datetime.now().date())
+    label = soup.new_tag('label')
+    label.string = 'Ascaris Editor'
+    application.append(label)
+    app_info.append(application)
+    soup.append(app_info)
+    return soup
 
 
 def generate_tei_header(data):
     # Create a BeautifulSoup object with a specified XML namespace
-    soup = BeautifulSoup('', 'xml')
+    soup = BeautifulSoup()
 
     # Create the <teiHeader> tag with the specified namespace
     tei_header = soup.new_tag('teiHeader', xmlns='http://www.tei-c.org/ns/1.0')
@@ -241,18 +264,21 @@ def generate_tei_header(data):
     # Create the child tags within <teiHeader>
     file_desc = soup.new_tag('fileDesc')
     title_stmt = soup.new_tag('titleStmt')
+    extent = soup.new_tag('extent')
     publication_stmt = soup.new_tag('publicationStmt')
     source_desc = soup.new_tag('sourceDesc')
     note_stmt = soup.new_tag('noteStmt')
     encoding_desc = soup.new_tag('encodingDesc')
     profile_desc = soup.new_tag('profileDesc')
 
-
     titles = generate_tei_titles(data=data)
     title_stmt.append(titles)
 
     responsibilities = generate_tei_responsibilities(data=data)
     title_stmt.append(responsibilities)
+
+    measures = generate_tei_extent(data=data)
+    extent.append(measures)
 
     pub_authorities = generate_tei_pub_authorities(data=data)
     publication_stmt.append(pub_authorities)
@@ -290,6 +316,9 @@ def generate_tei_header(data):
     description.append(paragraph)
     encoding_desc.append(description)
 
+    app_info = generate_tei_app_info()
+    encoding_desc.append(app_info)
+
     creation = soup.new_tag('creation')
     creation_date = soup.new_tag('date')
     creation_date.string = str(data['creationDate']['date'])
@@ -309,6 +338,7 @@ def generate_tei_header(data):
 
     # Append the child tags to their respective parents
     file_desc.append(title_stmt)
+    file_desc.append(extent)
     file_desc.append(publication_stmt)
     file_desc.append(note_stmt)
     file_desc.append(source_desc)
@@ -327,23 +357,48 @@ def generate_tei_content(data):
     # Create a BeautifulSoup object and parse the HTML
     soup = BeautifulSoup(data['document']['content'], 'html.parser')
 
-    # Split the content at <br> tags and create paragraphs
-    new_content = []
+    paragraphs = []
+    current_paragraph = []
+
+    for element in soup.descendants:
+        if element.name == 'br':
+            if current_paragraph:
+                paragraphs.append(current_paragraph)
+            current_paragraph = []
+        elif element.name == 'span' and 'entity' in element.get('class', []):
+            current_paragraph.append(element)
+        elif element.string:
+            current_paragraph.append(element.string.strip())
+
+    if current_paragraph:
+        paragraphs.append(current_paragraph)
+
+    # Create a new TEI document
+    tei_soup = BeautifulSoup()
+    tei_text = tei_soup.new_tag('text')
+    tei_soup.append(tei_text)
+
+    # Create paragraphs and reinsert marked-up entities
     paragraph_counter = 1
-    for string in soup.stripped_strings:
-        paragraph = soup.new_tag('p')
+    for paragraph_content in paragraphs:
+        paragraph = tei_soup.new_tag('p')
         paragraph['xml:id'] = f"D{data['document']['id']}P{paragraph_counter}"
         paragraph['n'] = paragraph_counter
-        paragraph.append(string)
-        new_content.append(paragraph)
+        in_span = False  # Flag to track if we are inside a <span> tag
+        for item in paragraph_content:
+            if isinstance(item, str) and not in_span:
+                paragraph.append(item)
+            elif isinstance(item, Tag) and item.name == 'span':
+                paragraph.append(item)
+                print(item)
+                if item.name == 'span':
+                    in_span = True
+            else:
+                in_span = False
+        tei_text.append(paragraph)
         paragraph_counter += 1
 
-    # Replace the original content with the new paragraphs
-    soup.clear()
-    soup.extend(new_content)
-
-    entity_spans = soup.find_all('span', class_='entity')
-
+    entity_spans = tei_soup.find_all('span', class_='entity')
     for entity in entity_spans:
         if 'date' in entity['class']:
             try:
@@ -377,5 +432,6 @@ def generate_tei_content(data):
         except:
             None
         entity.replace_with(new_tag)
-                    
-    return soup.prettify()
+
+    tei_content = tei_soup.prettify()
+    return tei_content

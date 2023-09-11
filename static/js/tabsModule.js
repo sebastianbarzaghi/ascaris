@@ -65,30 +65,30 @@ const TabsModule = (function () {
     });
 
     // Function to create a new paragraph element
-function createParagraph() {
-  const newParagraph = document.createElement('br');
-  return newParagraph;
-}
+    function createParagraph() {
+      const newParagraph = document.createElement('br');
+      return newParagraph;
+    }
 
-editableContent.addEventListener('keydown', function (event) {
-  if (event.key === 'Enter') {
-    event.preventDefault();
+    editableContent.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
 
-    // Get the current selection
-    const selection = window.getSelection();
-    const range = selection.getRangeAt(0);
+        // Get the current selection
+        const selection = window.getSelection();
+        const range = selection.getRangeAt(0);
 
-    // Create a new paragraph element
-    const newParagraph = createParagraph();
+        // Create a new paragraph element
+        const newParagraph = createParagraph();
 
-    // Insert the new paragraph before the next element
-    range.insertNode(newParagraph);
-    range.setStartBefore(newParagraph);
-    range.collapse(true);
-    selection.removeAllRanges();
-    selection.addRange(range);
-  }
-});
+        // Insert the new paragraph before the next element
+        range.insertNode(newParagraph);
+        range.setStartBefore(newParagraph);
+        range.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    });
 
     return {
       openTab,
