@@ -2,7 +2,6 @@ import { FormFieldsModule } from './formFieldsModule.js';
 
 function createPanelBlock(blockClass, iconClass, value, tabClass, type, dataLink) {
 
-
     var block = document.createElement("div");
     block.classList.add("box", "panel-block", blockClass);
     block.setAttribute("id", `entity-block-${dataLink}`);
@@ -49,19 +48,18 @@ function createPanelBlock(blockClass, iconClass, value, tabClass, type, dataLink
     accordionContent.innerHTML = FormFieldsModule.createFormFieldTemplates(type); // Function to get the form fields based on the type
     block.appendChild(accordionContent);
 
+    const form = block.children[1];
+    const entityLink = block.getAttribute("data-link");
 
     function updateEntities(field, value) {
-      const entityLink = block.getAttribute("data-link");
       const entities = document.querySelectorAll(`.entity[data-link="${entityLink}"]`);
       entities.forEach((entity) => {
           entity.setAttribute(`data-${field}`, value);
       });
     }
 
-
-    const secondChild = block.children[1];
     function injectEntityData(field, type) {
-        let fieldInput = secondChild.querySelector(`[name="${field}"]`);
+        let fieldInput = form.querySelector(`[name="${field}"]`);
         if (fieldInput) {
             fieldInput.addEventListener(type, () => {
                 const value = fieldInput.value;
@@ -69,6 +67,7 @@ function createPanelBlock(blockClass, iconClass, value, tabClass, type, dataLink
             });
         }
     }
+
     injectEntityData("name", "input");
     injectEntityData("sameAs", "input");
     injectEntityData("certainty", "change");
@@ -103,6 +102,17 @@ function createPanelBlock(blockClass, iconClass, value, tabClass, type, dataLink
     populateEntityFields("notBefore");
     populateEntityFields("notAfter");
 
+
+    const entities = document.querySelectorAll(`.entity[data-link="${entityLink}"]`);
+    for (const element of form.children) {
+      element.addEventListener("input", () => {
+        entities.forEach((entity) => {
+          if(entity.getAttribute('data-modified')) {
+            entity.setAttribute('data-modified', new Date().toISOString())
+          }
+        })
+      })
+    }
       
     // Add a click event listener to the accordion header to toggle the accordion content
     accordionHeader.addEventListener("click", function () {

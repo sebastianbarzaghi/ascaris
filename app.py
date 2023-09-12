@@ -3,8 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_migrate import Migrate
 from models import db, Document, Title, Resp, PubAuthority, PubPlace, PubDate, Identifier, Availability, Source, Note, Description, Abstract, CreationPlace, CreationDate, Language, Category
-from download import get_data, generate_tei_header, generate_tei_content
+from download import get_data, generate_tei_header, generate_tei_content, download_all_documents_as_tei_zip
 import os
+import zipfile
+from bs4 import BeautifulSoup
 from PyPDF2 import PdfReader
 from docx import Document as DocxDocument
 
@@ -496,6 +498,30 @@ def download_tei(document_id):
     response.headers['Content-Disposition'] = f'attachment; filename=document_{document_id}.xml'
 
     return response
+
+
+@app.route('/download_tei/all_documents')
+def download_all_documents_route():
+    try:
+        # Call the download function from download.py
+        zip_filename = download_all_documents_as_tei_zip()
+        
+        # Check if the file exists
+        if not os.path.isfile(zip_filename):
+            return "ZIP file not found", 404
+
+        # Open the ZIP file in binary read mode
+        with open(zip_filename, 'rb') as zip_file:
+            zip_data = zip_file.read()
+
+        # Set the appropriate headers for downloading a ZIP file
+        response = Response(zip_data)
+        response.headers['Content-Type'] = 'application/zip'
+        response.headers['Content-Disposition'] = 'attachment; filename=tei_documents.zip'
+
+        return response
+    except Exception as e:
+        return str(e), 500
 
 
 @app.route('/docta')

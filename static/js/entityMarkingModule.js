@@ -47,6 +47,8 @@ const EntityMarkingModule = (function () {
         span.classList.add("entity", buttonDetails.spanClass);
         span.contentEditable = false; // Set non-editable
         span.setAttribute("data-link", linkCounter);
+        span.setAttribute("data-created", new Date().toISOString());
+        span.setAttribute("data-modified", new Date().toISOString());
         span.addEventListener("click", function(event) {
           event.preventDefault(); // Prevent selecting the span's text
           span.classList.toggle("selected"); // Toggle the selected class

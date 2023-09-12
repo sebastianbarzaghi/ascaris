@@ -1,6 +1,6 @@
 const EntityInteractionModule = (function () {
     const entityPanel = document.querySelector(".tab-content");
-    let draggedBlock; // Define draggedBlock outside of event listeners
+    let draggedBlock;
 
     entityPanel.addEventListener("dragstart", (event) => {
     draggedBlock = event.target;
@@ -70,6 +70,7 @@ const EntityInteractionModule = (function () {
                 "data-to",
                 "data-notbefore",
                 "data-notafter",
+                "data-modified",
               ];
   
               dataAttributes.forEach((attribute) => {
