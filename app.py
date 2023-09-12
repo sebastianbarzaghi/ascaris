@@ -3,10 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_migrate import Migrate
 from models import db, Document, Title, Resp, PubAuthority, PubPlace, PubDate, Identifier, Availability, Source, Note, Description, Abstract, CreationPlace, CreationDate, Language, Category
-from download import get_data, generate_tei_header, generate_tei_content, download_all_documents_as_tei_zip
+from download_tei import get_data, generate_tei_header, generate_tei_content, download_all_documents_as_tei_zip
 import os
-import zipfile
-from bs4 import BeautifulSoup
 from PyPDF2 import PdfReader
 from docx import Document as DocxDocument
 

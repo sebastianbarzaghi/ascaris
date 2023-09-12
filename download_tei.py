@@ -3,146 +3,8 @@ import zipfile
 import os
 from bs4 import BeautifulSoup, Tag
 from datetime import datetime
-from models import db, Document, Title, Resp, PubAuthority, PubPlace, PubDate, Identifier, Availability, Source, Note, Description, Abstract, CreationPlace, CreationDate, Language, Category
-
-def get_data(document_id):
-    
-    data = {}
-
-    titles = Title.query.filter_by(document_id=document_id).all()
-    responsibilities = Resp.query.filter_by(document_id=document_id).all()
-    pubAuthorities = PubAuthority.query.filter_by(document_id=document_id).all()
-    pubPlace = PubPlace.query.filter_by(document_id=document_id).first()
-    identifiers = Identifier.query.filter_by(document_id=document_id).all()
-    pubDate = PubDate.query.filter_by(document_id=document_id).first()
-    availability = Availability.query.filter_by(document_id=document_id).first()
-    notes = Note.query.filter_by(document_id=document_id).all()
-    sources = Source.query.filter_by(document_id=document_id).all()
-    description = Description.query.filter_by(document_id=document_id).first()
-    abstract = Abstract.query.filter_by(document_id=document_id).first()
-    creationPlace = CreationPlace.query.filter_by(document_id=document_id).first()
-    creationDate = CreationDate.query.filter_by(document_id=document_id).first()
-    languages = Language.query.filter_by(document_id=document_id).all()
-    categories = Category.query.filter_by(document_id=document_id).all()
-
-    document = Document.query.filter_by(id=document_id).first()
-
-
-    if titles:
-        data['titles'] = []
-        for title in titles:
-            data['titles'].append({
-                'id': title.id,
-                'text': title.text,
-                'lang': title.lang,
-                'type': title.type,
-                'level': title.level
-            })
-    
-    if responsibilities:
-        data['responsibilities'] = []
-        for responsibility in responsibilities:
-            data['responsibilities'].append({
-                'fullName': f'{responsibility.surname}, {responsibility.name}',
-                'authority': responsibility.authority,
-                'role': responsibility.role
-            })
-
-    if pubAuthorities:
-        data['pubAuthorities'] = []
-        for pubAuthority in pubAuthorities:
-            data['pubAuthorities'].append({
-                'name': pubAuthority.name,
-                'authority': pubAuthority.authority,
-                'role': pubAuthority.role
-            })
-
-    if pubPlace:
-        data['pubPlace'] = {
-            'name': pubPlace.name,
-            'authority': pubPlace.authority
-        }
-
-    if identifiers:
-        data['identifiers'] = []
-        for identifier in identifiers:
-            data['identifiers'].append({
-                'id': identifier.id,
-                'text': identifier.text,
-                'type': identifier.type
-            })
-    
-    if pubDate:
-        data['pubDate'] = {
-            'date': pubDate.date
-        }
-
-    if availability:
-        data['availability'] = {
-            'text': availability.text,
-            'link': availability.link,
-            'status': availability.status
-        }
-
-    if notes:
-        data['notes'] = []
-        for note in notes:
-            data['notes'].append({
-                'id': note.id,
-                'text': note.text
-            })
-    
-    if sources:
-        data['sources'] = []
-        for source in sources:
-            data['sources'].append({
-                'id': source.id,
-                'text': source.text
-            })
-
-    if description:
-        data['description'] = {
-            'text': description.text
-        }
-
-    if abstract:
-        data['abstract'] = {
-            'text': abstract.text
-        }
-
-    if creationPlace:
-        data['creationPlace'] = {
-            'name': creationPlace.name,
-            'authority': creationPlace.authority
-        }
-
-    if creationDate:
-        data['creationDate'] = {
-            'date': creationDate.date
-        }
-
-    if languages:
-        data['languages'] = []
-        for language in languages:
-            data['languages'].append({
-                'text': language.text,
-                'ident': language.ident,
-                'usage': language.usage
-        })
-    
-    if categories:
-        data['categories'] = []
-        for category in categories:
-            data['categories'].append({
-                'type': category.type
-        })
-
-    if document:
-        data['document'] = {
-            'id': document.id,
-            'content': document.content
-        }
-    return data
+from models import Document
+from get_data import get_data
 
 
 def generate_tei_titles(data):
@@ -289,89 +151,86 @@ def generate_tei_header(data):
     encoding_desc = soup.new_tag('encodingDesc')
     profile_desc = soup.new_tag('profileDesc')
 
-    try:
-        if 'titles' in data:
-            titles = generate_tei_titles(data=data)
-            title_stmt.append(titles)
+    if 'titles' in data:
+        titles = generate_tei_titles(data=data)
+        title_stmt.append(titles)
 
-        if 'responsibilities' in data:
-            responsibilities = generate_tei_responsibilities(data=data)
-            title_stmt.append(responsibilities)
+    if 'responsibilities' in data:
+        responsibilities = generate_tei_responsibilities(data=data)
+        title_stmt.append(responsibilities)
 
-        if 'document' in data:
-            measures = generate_tei_extent(data=data)
-            extent.append(measures)
-            
-            app_info = generate_tei_app_info()
-            encoding_desc.append(app_info)
+    if 'document' in data:
+        measures = generate_tei_extent(data=data)
+        extent.append(measures)
         
-        if 'pubAuthorities' in data:
-            pub_authorities = generate_tei_pub_authorities(data=data)
-            publication_stmt.append(pub_authorities)
+        app_info = generate_tei_app_info()
+        encoding_desc.append(app_info)
+    
+    if 'pubAuthorities' in data:
+        pub_authorities = generate_tei_pub_authorities(data=data)
+        publication_stmt.append(pub_authorities)
 
-        if 'pubPlace' in data:
-            pub_place = soup.new_tag('pubPlace')
-            pub_place.string = data['pubPlace']['name']
-            pub_place['sameAs'] = data['pubPlace']['authority']
-            publication_stmt.append(pub_place)
+    if 'pubPlace' in data:
+        pub_place = soup.new_tag('pubPlace')
+        pub_place.string = data['pubPlace']['name']
+        pub_place['sameAs'] = data['pubPlace']['authority']
+        publication_stmt.append(pub_place)
 
-        if 'pubDate' in data:
-            pub_date = soup.new_tag('date')
-            pub_date.string = str(data['pubDate']['date'])
-            pub_date['when'] = data['pubDate']['date']
-            publication_stmt.append(pub_date)
+    if 'pubDate' in data:
+        pub_date = soup.new_tag('date')
+        pub_date.string = str(data['pubDate']['date'])
+        pub_date['when'] = data['pubDate']['date']
+        publication_stmt.append(pub_date)
 
-        if 'identifiers' in data:
-            identifiers = generate_tei_identifiers(data=data)
-            publication_stmt.append(identifiers)
+    if 'identifiers' in data:
+        identifiers = generate_tei_identifiers(data=data)
+        publication_stmt.append(identifiers)
 
-        if 'availability' in data:
-            availability = soup.new_tag('availability')
-            availability['status'] = data['availability']['status']
-            license = soup.new_tag('license')
-            license.string = data['availability']['text']
-            license['target'] = data['availability']['link']
-            availability.append(license)
-            publication_stmt.append(availability)
+    if 'availability' in data:
+        availability = soup.new_tag('availability')
+        availability['status'] = data['availability']['status']
+        license = soup.new_tag('license')
+        license.string = data['availability']['text']
+        license['target'] = data['availability']['link']
+        availability.append(license)
+        publication_stmt.append(availability)
 
-        if 'notes' in data:
-            notes = generate_tei_notes(data=data)
-            note_stmt.append(notes)
+    if 'notes' in data:
+        notes = generate_tei_notes(data=data)
+        note_stmt.append(notes)
 
-        if 'sources' in data:
-            sources = generate_tei_sources(data=data)
-            source_desc.append(sources)
+    if 'sources' in data:
+        sources = generate_tei_sources(data=data)
+        source_desc.append(sources)
 
-        if 'description' in data:
-            description = soup.new_tag('projectDesc')
-            paragraph = soup.new_tag('p')
-            paragraph.string = data['description']['text']
-            description.append(paragraph)
-            encoding_desc.append(description)
+    if 'description' in data:
+        description = soup.new_tag('projectDesc')
+        paragraph = soup.new_tag('p')
+        paragraph.string = data['description']['text']
+        description.append(paragraph)
+        encoding_desc.append(description)
 
-        if 'creationPlace' in data and 'creationDate' in data:
-            creation = soup.new_tag('creation')
-            if 'creationDate' in data:
-                creation_date = soup.new_tag('date')
-                creation_date.string = str(data['creationDate']['date'])
-                creation_date['when'] = data['creationDate']['date']
-                creation.append(creation_date)
-            if 'creationPlace' in data:
-                creation_place = soup.new_tag('placeName')
-                creation_place.string = data['creationPlace']['name']
-                creation_place['sameAs'] = data['creationPlace']['authority']
-                creation.append(creation_place)
-            profile_desc.append(creation)
+    if 'creationPlace' in data and 'creationDate' in data:
+        creation = soup.new_tag('creation')
+        if 'creationDate' in data:
+            creation_date = soup.new_tag('date')
+            creation_date.string = str(data['creationDate']['date'])
+            creation_date['when'] = data['creationDate']['date']
+            creation.append(creation_date)
+        if 'creationPlace' in data:
+            creation_place = soup.new_tag('placeName')
+            creation_place.string = data['creationPlace']['name']
+            creation_place['sameAs'] = data['creationPlace']['authority']
+            creation.append(creation_place)
+        profile_desc.append(creation)
 
-        if 'languages' in data:
-            languages = generate_tei_languages(data=data)
-            profile_desc.append(languages)
+    if 'languages' in data:
+        languages = generate_tei_languages(data=data)
+        profile_desc.append(languages)
 
-        if 'categories' in data:
-            categories = generate_tei_categories(data=data)
-            profile_desc.append(categories)
-    except Exception as e:
-        raise Exception(f"An error occurred: {e}")
+    if 'categories' in data:
+        categories = generate_tei_categories(data=data)
+        profile_desc.append(categories)
 
     # Append the child tags to their respective parents
     file_desc.append(title_stmt)
