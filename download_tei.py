@@ -333,6 +333,7 @@ def generate_tei_content(data):
     tei_content = tei_soup.prettify()
     return tei_content
 
+
 def download_all_documents_as_tei_zip():
     # Create a temporary directory to store TEI XML files
     temp_dir = 'temp_tei_files'

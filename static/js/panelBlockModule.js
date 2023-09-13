@@ -67,7 +67,6 @@ function createPanelBlock(blockClass, iconClass, value, tabClass, type, dataLink
             });
         }
     }
-
     injectEntityData("name", "input");
     injectEntityData("sameAs", "input");
     injectEntityData("certainty", "change");

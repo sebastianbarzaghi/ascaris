@@ -3,14 +3,15 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 :document a skos:Concept ;
     rdfs:label "document"@en ;
     skos:prefLabel "Document"@en ;
     skos:definition "A written or printed piece of information that serves as a record, proof, or evidence of something."@en ;
-    skos:topConceptOf :document-type-vocabulary ;
-    skos:inScheme :document-type-vocabulary ;
+    skos:topConceptOf :document-type-taxonomy ;
+    skos:inScheme :document-type-taxonomy ;
     dcterms:creator <https://orcid.org/0000-0002-0799-1527> ;
     dcterms:created "2023-08-31"^^xsd:date .
 
@@ -19,7 +20,7 @@
     skos:prefLabel "Book"@en ;
     skos:definition "A physical or digital document that contains written, printed, or illustrated content organized into pages, chapters, or sections."@en ;
     skos:broader :document ;
-    skos:inScheme :document-type-vocabulary ;
+    skos:inScheme :document-type-taxonomy ;
     dcterms:creator <https://orcid.org/0000-0002-0799-1527> ;
     dcterms:created "2023-08-31"^^xsd:date .
 
@@ -28,18 +29,19 @@
     skos:prefLabel "Letter"@en ;
     skos:definition "A physical document that contains written content, typically sent from one individual or entity to another."@en ;
     skos:broader :document ;
-    skos:inScheme :document-type-vocabulary ;
+    skos:inScheme :document-type-taxonomy ;
     dcterms:creator <https://orcid.org/0000-0002-0799-1527> ;
     dcterms:created "2023-08-31"^^xsd:date .
 
-:document-type-vocabulary a skos:ConceptScheme ;
-    rdfs:label "Document Type Vocabulary"@en ;
-    dcterms:title "Document Type Vocabulary (DocTa)"@en ;
+:document-type-taxonomy a skos:ConceptScheme ;
+    rdfs:label "Document Type Taxonomy"@en ;
+    dcterms:title "Document Type Taxonomy (DocTa)"@en ;
     dcterms:identifier "todo" ;
     dcterms:rights <https://creativecommons.org/licenses/by/4.0/> ;
     dcterms:created "2023-08-31"^^xsd:date ;
     dcterms:creator <https://orcid.org/0000-0002-0799-1527> ;
     dcterms:bibliographicCitation "todo"@en ;
-    owl:versionInfo "1.0.0" ;
-    skos:definition "A SKOS controlled vocabulary of document types."@en ;
-    skos:scopeNote "https://www.purl.org/ascaris/docta/ is the namespace of the vocabulary. Its preferred prefix is `docta`. In order to understand the meaning of any concept, please refer to its respective documentation properties, such as `skos:prefLabel`."@en .
+    vann:preferredNamespacePrefix "docta";
+    owl:versionInfo "0.1.0" ;
+    skos:definition "A SKOS controlled taxonomy of document types."@en ;
+    skos:scopeNote "https://www.purl.org/ascaris/docta/ is the namespace of the taxonomy. Its preferred prefix is `docta`. In order to understand the meaning of any concept, please refer to its respective documentation properties, such as `skos:prefLabel`."@en .
