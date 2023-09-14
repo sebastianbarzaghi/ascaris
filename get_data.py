@@ -29,7 +29,7 @@ def get_data(document_id):
             data['titles'].append({
                 'id': title.id,
                 'text': title.text,
-                'lang': title.lang,
+                'language': title.language,
                 'type': title.type,
                 'level': title.level
             })

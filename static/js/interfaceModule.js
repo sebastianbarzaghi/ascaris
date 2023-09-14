@@ -132,7 +132,7 @@ const InterfaceModule = (function () {
                         const titleLang = document.querySelector('.metadata-title-language');
                         titleInput.value = title.text;
                         for (const option of titleLang.options) {
-                            if (option.value === title.lang) {
+                            if (option.value === title.language) {
                                 option.selected = true;
                                 break;
                             }

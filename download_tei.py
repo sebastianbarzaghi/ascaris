@@ -13,7 +13,7 @@ def generate_tei_titles(data):
         title_tag = soup.new_tag('title')
         title_tag.string = title['text']
         title_tag['xml:id'] = f"title-{title['id']}"
-        title_tag['lang'] = title['lang']
+        title_tag['lang'] = title['language']
         title_tag['type'] = title['type']
         title_tag['level'] = title['level']
         soup.append(title_tag)

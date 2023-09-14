@@ -34,7 +34,7 @@ class Title(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     document_id = db.Column(db.Integer, db.ForeignKey('document.id'))
     text = db.Column(db.String)
-    lang = db.Column(db.String)
+    language = db.Column(db.String)
     type = db.Column(db.String)
     level = db.Column(db.String)
 

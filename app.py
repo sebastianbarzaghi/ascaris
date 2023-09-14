@@ -174,9 +174,9 @@ def save_metadata(id):
             if i < len(title_texts):
                 existing_title.text = title_texts[i]
                 if i < len(title_languages):
-                    existing_title.lang = title_languages[i]
+                    existing_title.language = title_languages[i]
                 else:
-                    existing_title.lang = None
+                    existing_title.language = None
             processed_titles[i] = True
 
         # Add new titles
@@ -184,9 +184,9 @@ def save_metadata(id):
             if i not in processed_titles:
                 new_title = Title(document_id=document.id, text=text)
                 if i < len(title_languages):
-                    new_title.lang = title_languages[i]
+                    new_title.language = title_languages[i]
                 else:
-                    new_title.lang = None
+                    new_title.language = None
                 db.session.add(new_title)
         
         resp_surname = request.form.get('resp-surname')
@@ -381,9 +381,9 @@ def get_existing_data(id):
     for title in existing_titles:
         existing_data['title'].append({
             'text': title.text,
-            'lang': title.lang,
+            'language': title.language,
         })
-        print(title.text, title.lang)
+        print(title.text, title.language)
     
     existing_resps = Resp.query.filter_by(document_id=id).all()
     for resp in existing_resps:
