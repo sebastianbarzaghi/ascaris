@@ -14,7 +14,7 @@ const InterfaceModule = (function () {
         });
     });
 
-    function handleAddButtonClick(field) {
+    function handleAddButtonClick(field, subfields) {
         return function (event) {
             const inputGroup = document.querySelector(`.${field}-input-group`);
             const additionalContainer = document.querySelector(`.additional-${field}`);
@@ -27,14 +27,15 @@ const InterfaceModule = (function () {
 
             if (event.target.classList.contains(`add-${field}-button`)) {
                 const clone = inputGroup.cloneNode(true);
-                const origId = inputGroup.querySelector(`.metadata-${field}`).id;
-                const origName = inputGroup.querySelector(`.metadata-${field}`).name;
                 const currentCounter = fieldCounters[field];
-                clone.querySelector(`.metadata-${field}`).value = "";
-                clone.querySelectorAll(`.metadata-${field}`).forEach(input => {
-                    input.id = `${origId}-${currentCounter}`;
-                    input.name = `${origName}-${currentCounter}`;
-                });
+                subfields.forEach((subfield) => {
+                    const origId = inputGroup.querySelector(`.metadata-${field}-${subfield}`).id;
+                    const origName = inputGroup.querySelector(`.metadata-${field}-${subfield}`).name;
+                    clone.querySelector(`.metadata-${field}-${subfield}`).value = "";
+                    clone.querySelector(`.metadata-${field}-${subfield}`).id = `${origId}-${currentCounter}`;
+                    clone.querySelector(`.metadata-${field}-${subfield}`).name = origName
+                })
+
                 const removeButton = document.createElement("span");
                 removeButton.classList.add("button", "is-danger", "is-light", `remove-${field}-button`);
                 const minusIcon = document.createElement("i");
@@ -81,48 +82,68 @@ const InterfaceModule = (function () {
         });
     };
 
+    function funzioneDellaVita(field, subfields, data) {
+        console.log(data)
+        const inputGroup = document.querySelector(`.${field}-input-group`);
+        const additionalContainer = document.querySelector(`.additional-${field}`);
 
-    function populateAdditionalFields(fieldType, existingData) {
-        const additionalContainer = document.querySelector(`.additional-${fieldType}`);
+        if (!fieldCounters[field]) {
+            fieldCounters[field] = 1;
+        } else {
+            fieldCounters[field]++;
+        }
         
-        existingData.forEach(data => {
-            const clone = additionalContainer.querySelector(`.${fieldType}-input-group`).cloneNode(true);
-            // Populate the clone with data from the existing record
-            clone.querySelector(`.metadata-${fieldType}`).value = data.text;
-            additionalContainer.appendChild(clone);
-        });
+        const clone = inputGroup.cloneNode(true);
+        const currentCounter = fieldCounters[field];
+        let index = 0;
+        subfields.forEach((subfield) => {
+            const origId = inputGroup.querySelector(`.metadata-${field}-${subfield}`).id;
+            const origName = inputGroup.querySelector(`.metadata-${field}-${subfield}`).name;
+            clone.querySelector(`.metadata-${field}-${subfield}`).value = data[subfield] ;
+            clone.querySelector(`.metadata-${field}-${subfield}`).id = `${origId}-${currentCounter}`;
+            clone.querySelector(`.metadata-${field}-${subfield}`).name = origName
+            index++;
+        })
+
+        const removeButton = document.createElement("span");
+        removeButton.classList.add("button", "is-danger", "is-light", `remove-${field}-button`);
+        const minusIcon = document.createElement("i");
+        minusIcon.classList.add("fa-solid", "fa-minus");
+        removeButton.appendChild(minusIcon);
+        clone.appendChild(removeButton);
+        additionalContainer.appendChild(clone);
+        clone.querySelector(`.add-${field}-button`).remove();
     }
 
-    
     function fetchExistingDataAndPopulate(documentId) {
         populateSKOSDropdown().then(() => {
             fetch(`/get_existing_data/${documentId}`)
             .then(response => response.json())
             .then(data => {
                 // Populate main form fields with existing data
-                const titleInput = document.querySelector('#title-text');
-                const titleLang = document.querySelector('#title-language');
-                const titleType = document.querySelector('#title-type');
-                const titleLevel = document.querySelector('#title-level');
-                titleInput.value = data.title[0].text;
-                for (const option of titleLang.options) {
-                    if (option.value === data.title[0].lang) {
-                        option.selected = true;
-                        break;
+    
+                const titles = data.title
+
+                let index = 0
+                titles.forEach((title) => {
+                    //console.log(`Index: ${index}`);
+                    if (index === 0) {
+                        const titleInput = document.querySelector('.metadata-title-text');
+                        const titleLang = document.querySelector('.metadata-title-language');
+                        titleInput.value = title.text;
+                        for (const option of titleLang.options) {
+                            if (option.value === title.lang) {
+                                option.selected = true;
+                                break;
+                            }
+                        };
                     }
-                };
-                for (const option of titleType.options) {
-                    if (option.value === data.title[0].type) {
-                        option.selected = true;
-                        break;
+                    else {
+                        funzioneDellaVita("title", ["text", "language"], title)
                     }
-                };
-                for (const option of titleLevel.options) {
-                    if (option.value === data.title[0].level) {
-                        option.selected = true;
-                        break;
-                    }
-                };
+                    index++;
+                })
+
 
                 const respSurname = document.querySelector('#resp-surname');
                 const respName = document.querySelector('#resp-name');
@@ -231,22 +252,15 @@ const InterfaceModule = (function () {
                         break;
                     }
                 };
-
-                // Populate other main form fields similarly
-    
-                // Populate additional fields
-                //populateAdditionalFields('title', data.titles);
-                //populateAdditionalFields('responsibility', data.responsibilities);
-                // ... Populate other additional fields similarly
             });    
         })
     }
     
     
-    function initializeAddButtons(field) {
+    function initializeAddButtons(field, subfield) {
         const addButtons = form.querySelectorAll(`.add-${field}-button`);
         addButtons.forEach(addButton => {
-            addButton.addEventListener("click", handleAddButtonClick(field));
+            addButton.addEventListener("click", handleAddButtonClick(field, subfield));
         });
     }
 
@@ -255,7 +269,7 @@ const InterfaceModule = (function () {
     }
 
 
-    initializeAddButtons("title");
+    initializeAddButtons("title", ["text", "language"]);
     initializeAddButtons("responsibility");
     initializeAddButtons("pubAuthority");
     initializeAddButtons("identifier");

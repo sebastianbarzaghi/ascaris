@@ -162,23 +162,32 @@ def save_metadata(id):
     
     if request.method == 'POST':
 
-        title_text = request.form.get('title-text')
-        title_language = request.form.get('title-language')
-        title_type = request.form.get('title-type')
-        title_level = request.form.get('title-level')
-        existing_title = Title.query.filter_by(document_id=document.id).first()
-        if existing_title:
-            existing_title.text = title_text
-            existing_title.lang = title_language
-            existing_title.type = title_type
-            existing_title.level = title_level
-        else:
-            title = Title(document_id=document.id, 
-                          text=title_text, 
-                          lang=title_language,
-                          type=title_type,
-                          level=title_level)
-            db.session.add(title)
+        title_texts = request.form.getlist('title-text')
+        title_languages = request.form.getlist('title-language')
+        existing_titles = Title.query.filter_by(document_id=document.id).all()
+        
+        # Create dictionaries to track processed titles
+        processed_titles = {}
+
+        # Update existing titles
+        for i, existing_title in enumerate(existing_titles):
+            if i < len(title_texts):
+                existing_title.text = title_texts[i]
+                if i < len(title_languages):
+                    existing_title.lang = title_languages[i]
+                else:
+                    existing_title.lang = None
+            processed_titles[i] = True
+
+        # Add new titles
+        for i, text in enumerate(title_texts):
+            if i not in processed_titles:
+                new_title = Title(document_id=document.id, text=text)
+                if i < len(title_languages):
+                    new_title.lang = title_languages[i]
+                else:
+                    new_title.lang = None
+                db.session.add(new_title)
         
         resp_surname = request.form.get('resp-surname')
         resp_name = request.form.get('resp-name')
@@ -373,9 +382,8 @@ def get_existing_data(id):
         existing_data['title'].append({
             'text': title.text,
             'lang': title.lang,
-            'type': title.type,
-            'level': title.level
         })
+        print(title.text, title.lang)
     
     existing_resps = Resp.query.filter_by(document_id=id).all()
     for resp in existing_resps:
