@@ -14,6 +14,7 @@ const InterfaceModule = (function () {
         });
     });
 
+
     function handleAddButtonClick(field, subfields) {
         return function (event) {
             const inputGroup = document.querySelector(`.${field}-input-group`);
@@ -32,7 +33,7 @@ const InterfaceModule = (function () {
                     const origId = inputGroup.querySelector(`.metadata-${field}-${subfield}`).id;
                     const origName = inputGroup.querySelector(`.metadata-${field}-${subfield}`).name;
                     clone.querySelector(`.metadata-${field}-${subfield}`).value = "";
-                    clone.querySelector(`.metadata-${field}-${subfield}`).id = `${origId}-${currentCounter}`;
+                    clone.querySelector(`.metadata-${field}-${subfield}`).id = `${origId}-${currentCounter + 1}`;
                     clone.querySelector(`.metadata-${field}-${subfield}`).name = origName
                 })
 
@@ -48,18 +49,36 @@ const InterfaceModule = (function () {
         };
     }
 
+
     function handleRemoveButtonClick(field) {
         return function (event) {
             const removeButton = event.target;
             if (removeButton.classList.contains(`remove-${field}-button`)) {
                 const inputGroup = removeButton.closest(`.${field}-input-group`);
-                inputGroup.remove();
-                if (fieldCounters[field]) {
-                    fieldCounters[field]--;
-                }
+                const fieldId = inputGroup.getAttribute('data-field-group-id');
+                fetch(`/delete/${field.charAt(0).toUpperCase() + field.slice(1)}/${fieldId}`, {
+                    method: 'DELETE',
+                  })
+                    .then((response) => {
+                      if (response.ok) {
+                        // If the deletion was successful, remove the field from the front-end
+                        inputGroup.remove();
+                        if (fieldCounters[field]) {
+                            fieldCounters[field]--;
+                        }
+                      } else {
+                        // Handle errors or display a message if deletion fails
+                        console.error('Deletion failed');
+                      }
+                    })
+                    .catch((error) => {
+                      console.error('Error:', error);
+                });
+                
             }
         };
     }
+
 
     function populateSKOSDropdown() {
         const skosSelect = document.getElementById("category-type");
@@ -82,8 +101,9 @@ const InterfaceModule = (function () {
         });
     };
 
+
     function funzioneDellaVita(field, subfields, data) {
-        console.log(data)
+
         const inputGroup = document.querySelector(`.${field}-input-group`);
         const additionalContainer = document.querySelector(`.additional-${field}`);
 
@@ -95,12 +115,15 @@ const InterfaceModule = (function () {
         
         const clone = inputGroup.cloneNode(true);
         const currentCounter = fieldCounters[field];
+        clone.setAttribute("data-field-group-id", `${currentCounter + 1}`)
+        console.log(clone)
+
         let index = 0;
         subfields.forEach((subfield) => {
             const origId = inputGroup.querySelector(`.metadata-${field}-${subfield}`).id;
             const origName = inputGroup.querySelector(`.metadata-${field}-${subfield}`).name;
             clone.querySelector(`.metadata-${field}-${subfield}`).value = data[subfield] ;
-            clone.querySelector(`.metadata-${field}-${subfield}`).id = `${origId}-${currentCounter}`;
+            clone.querySelector(`.metadata-${field}-${subfield}`).id = `${origId}-${currentCounter + 1}`;
             clone.querySelector(`.metadata-${field}-${subfield}`).name = origName
             index++;
         })
@@ -115,6 +138,7 @@ const InterfaceModule = (function () {
         clone.querySelector(`.add-${field}-button`).remove();
     }
 
+    
     function fetchExistingDataAndPopulate(documentId) {
         populateSKOSDropdown().then(() => {
             fetch(`/get_existing_data/${documentId}`)
@@ -126,7 +150,6 @@ const InterfaceModule = (function () {
 
                 let index = 0
                 titles.forEach((title) => {
-                    //console.log(`Index: ${index}`);
                     if (index === 0) {
                         const titleInput = document.querySelector('.metadata-title-text');
                         const titleLang = document.querySelector('.metadata-title-language');
@@ -257,12 +280,13 @@ const InterfaceModule = (function () {
     }
     
     
-    function initializeAddButtons(field, subfield) {
+    function initializeAddButtons(field, subfields) {
         const addButtons = form.querySelectorAll(`.add-${field}-button`);
         addButtons.forEach(addButton => {
-            addButton.addEventListener("click", handleAddButtonClick(field, subfield));
+            addButton.addEventListener("click", handleAddButtonClick(field, subfields));
         });
     }
+
 
     function initializeRemoveButtons(field) {
         form.addEventListener("click", handleRemoveButtonClick(field));

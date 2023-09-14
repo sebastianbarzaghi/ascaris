@@ -484,6 +484,30 @@ def get_existing_data(id):
     return jsonify(existing_data)
 
 
+@app.route('/delete/<model_name>/<int:record_id>', methods=['DELETE'])
+def delete_record(model_name, record_id):
+    try:
+        # Get the SQLAlchemy model class based on the provided model_name
+        model_class = globals().get(model_name)
+        
+        if not model_class:
+            return jsonify({'message': 'Model not found'}), 404
+
+        # Retrieve the record by its ID
+        record = model_class.query.get(record_id)
+
+        if record:
+            # Delete the record from the database
+            db.session.delete(record)
+            db.session.commit()
+            return jsonify({'message': f'{model_name} deleted successfully'}), 200
+        else:
+            return jsonify({'message': f'{model_name} not found'}), 404
+
+    except Exception as e:
+        return jsonify({'message': 'An error occurred'}), 500
+
+
 @app.route('/download_tei/<int:document_id>')
 def download_tei(document_id):
     
