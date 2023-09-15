@@ -9,12 +9,12 @@ class Document(db.Model):
     content = db.Column(db.Text, nullable=False)
     
     title = db.relationship('Title', backref='document', lazy=True)
-    resp = db.relationship('Resp', backref='document', lazy=True)
+    resp = db.relationship('Responsibility', backref='document', lazy=True)
     pubAuthority = db.relationship('PubAuthority', backref='document', lazy=True)
     pubPlace = db.relationship('PubPlace', backref='document', lazy=True)
     pubDate = db.relationship('PubDate', backref='document', lazy=True)
     identifier = db.relationship('Identifier', backref='document', lazy=True)
-    availability = db.relationship('Availability', backref='document', lazy=True)
+    license = db.relationship('License', backref='document', lazy=True)
     source = db.relationship('Source', backref='document', lazy=True)
     note = db.relationship('Note', backref='document', lazy=True)
     description = db.relationship('Description', backref='document', lazy=True)
@@ -35,10 +35,10 @@ class Title(db.Model):
     document_id = db.Column(db.Integer, db.ForeignKey('document.id'))
     text = db.Column(db.String)
     language = db.Column(db.String)
-    type = db.Column(db.String)
-    level = db.Column(db.String)
+    #type = db.Column(db.String)
+    #level = db.Column(db.String)
 
-class Resp(db.Model):
+class Responsibility(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     document_id = db.Column(db.Integer, db.ForeignKey('document.id'))
     surname = db.Column(db.String)
@@ -70,12 +70,11 @@ class Identifier(db.Model):
     text = db.Column(db.String)
     type = db.Column(db.String)
 
-class Availability(db.Model):
+class License(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     document_id = db.Column(db.Integer, db.ForeignKey('document.id'))
     text = db.Column(db.String)
     link = db.Column(db.String)
-    status = db.Column(db.String)
 
 class Source(db.Model):
     id = db.Column(db.Integer, primary_key=True)

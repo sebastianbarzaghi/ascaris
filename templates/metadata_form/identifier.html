@@ -1,0 +1,39 @@
+<label class="label">Identifier</label>
+<div class="field">
+    <div class="identifier-input-group input-group">
+        <div class="row">
+            <div class="control has-icons-left">
+                <input id="identifier-text" name="identifier-text" class="input metadata-identifier metadata-identifier-text" type="text" placeholder="Enter identifier">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-font"></i>
+                </span>
+            </div>
+            <div class="control has-icons-left">
+                <div class="select">
+                    <select id="identifier-type" name="identifier-type" class="dropdown metadata-identifier-type">
+                        <option value="">--Select--</option>
+                        <option value="isbn">ISBN</option>
+                        <option value="issn">ISSN</option>
+                        <option value="doi">DOI</option>
+                        <option value="uri">URI</option>
+                        <option value="viaf">VIAF</option>
+                        <option value="estc">ESTC</option>
+                        <option value="oclc">OCLC</option>
+                        <!-- ADD "OTHER" OPTION? -->
+                    </select>
+                </div>
+                <span class="icon is-small is-left">
+                    <i class="fas fa-language"></i>
+                </span>
+            </div>
+            <div class="control">
+                <span class="button is-success is-light add-button add-identifier-button">
+                    <i class="fa-solid fa-plus"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="field additional-identifier additional-container">
+<!-- Additional identifiers will be inserted here -->
+</div>

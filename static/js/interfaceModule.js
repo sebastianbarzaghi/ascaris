@@ -56,29 +56,37 @@ const InterfaceModule = (function () {
             if (removeButton.classList.contains(`remove-${field}-button`)) {
                 const inputGroup = removeButton.closest(`.${field}-input-group`);
                 const fieldId = inputGroup.getAttribute('data-field-group-id');
-                fetch(`/delete/${field.charAt(0).toUpperCase() + field.slice(1)}/${fieldId}`, {
-                    method: 'DELETE',
-                  })
+                // Check if the field has an associated database record before attempting to delete
+                if (!fieldId) {
+                    // If there's no database record, simply remove the field from the front-end
+                    inputGroup.remove();
+                    if (fieldCounters[field]) {
+                        fieldCounters[field]--;
+                    }
+                } else {
+                    // If a database record exists, send a delete request to delete it
+                    fetch(`/delete/${field.charAt(0).toUpperCase() + field.slice(1)}/${fieldId}`, {
+                        method: 'DELETE',
+                    })
                     .then((response) => {
-                      if (response.ok) {
-                        // If the deletion was successful, remove the field from the front-end
-                        inputGroup.remove();
-                        if (fieldCounters[field]) {
-                            fieldCounters[field]--;
+                        if (response.ok) {
+                            // If the deletion was successful, remove the field from the front-end
+                            inputGroup.remove();
+                            if (fieldCounters[field]) {
+                                fieldCounters[field]--;
+                            }
+                        } else {
+                            // Handle errors or display a message if deletion fails
+                            console.error('Deletion failed');
                         }
-                      } else {
-                        // Handle errors or display a message if deletion fails
-                        console.error('Deletion failed');
-                      }
                     })
                     .catch((error) => {
-                      console.error('Error:', error);
-                });
-                
+                        console.error('Error:', error);
+                    });
+                }
             }
         };
     }
-
 
     function populateSKOSDropdown() {
         const skosSelect = document.getElementById("category-type");
@@ -102,7 +110,7 @@ const InterfaceModule = (function () {
     };
 
 
-    function funzioneDellaVita(field, subfields, data) {
+    function cloneMetadataField(field, subfields, data) {
 
         const inputGroup = document.querySelector(`.${field}-input-group`);
         const additionalContainer = document.querySelector(`.additional-${field}`);
@@ -146,9 +154,8 @@ const InterfaceModule = (function () {
             .then(data => {
                 // Populate main form fields with existing data
     
-                const titles = data.title
-
-                let index = 0
+                const titles = data.title;
+                let index = 0;
                 titles.forEach((title) => {
                     if (index === 0) {
                         const titleInput = document.querySelector('.metadata-title-text');
@@ -162,37 +169,76 @@ const InterfaceModule = (function () {
                         };
                     }
                     else {
-                        funzioneDellaVita("title", ["text", "language"], title)
+                        cloneMetadataField("title", ["text", "language"], title);
                     }
                     index++;
                 })
 
-
-                const respSurname = document.querySelector('#resp-surname');
-                const respName = document.querySelector('#resp-name');
-                const respAuthority = document.querySelector('#resp-authority');
-                const respRole = document.querySelector('#resp-role');
-                respSurname.value = data.resp[0].surname;
-                respName.value = data.resp[0].name;
-                respAuthority.value = data.resp[0].authority;
-                for (const option of respRole.options) {
-                    if (option.value === data.resp[0].role) {
-                        option.selected = true;
-                        break;
+                const responsibilities = data.responsibility;
+                let index2 = 0;
+                responsibilities.forEach((responsibility) => {
+                    if (index2 === 0) {
+                        const respSurname = document.querySelector('.metadata-responsibility-surname');
+                        const respName = document.querySelector('.metadata-responsibility-name');
+                        const respAuthority = document.querySelector('.metadata-responsibility-authority');
+                        const respRole = document.querySelector('.metadata-responsibility-role');
+                        respSurname.value = responsibility.surname;
+                        respName.value = responsibility.name;
+                        respAuthority.value = responsibility.authority;
+                        for (const option of respRole.options) {
+                            if (option.value === responsibility.role) {
+                                option.selected = true;
+                                break;
+                            }
+                        };
                     }
-                };
-
-                const pubAuthorityName = document.querySelector('#pubAuthority-name');
-                const pubAuthorityAuthority = document.querySelector('#pubAuthority-authority');
-                const pubAuthorityRole = document.querySelector('#pubAuthority-role');
-                pubAuthorityName.value = data.pubAuthority[0].name;
-                pubAuthorityAuthority.value = data.pubAuthority[0].authority;
-                for (const option of pubAuthorityRole.options) {
-                    if (option.value === data.pubAuthority[0].role) {
-                        option.selected = true;
-                        break;
+                    else {
+                        cloneMetadataField("responsibility", ["surname", "name", "authority", "role"], responsibility);
                     }
-                };
+                    index2++;
+                })
+
+                const pubAuthorities = data.pubAuthority;
+                let index3 = 0;
+                pubAuthorities.forEach((pubAuthority) => {
+                    if (index3 === 0) {
+                        const pubAuthorityName = document.querySelector('.metadata-pubAuthority-name');
+                        const pubAuthorityAuthority = document.querySelector('.metadata-pubAuthority-authority');
+                        const pubAuthorityRole = document.querySelector('.metadata-pubAuthority-role');
+                        pubAuthorityName.value = pubAuthority.name;
+                        pubAuthorityAuthority.value = pubAuthority.authority;
+                        for (const option of pubAuthorityRole.options) {
+                            if (option.value === pubAuthority.role) {
+                                option.selected = true;
+                                break;
+                            }
+                        };
+                    }
+                    else {
+                        cloneMetadataField("pubAuthority", ["name", "authority", "role"], pubAuthority);
+                    }
+                    index3++;
+                })
+
+                const identifiers = data.identifier;
+                let index4 = 0;
+                identifiers.forEach((identifier) => {
+                    if (index4 === 0) {
+                        const identText = document.querySelector('.metadata-identifier-text');
+                        const identType = document.querySelector('.metadata-identifier-type');
+                        identText.value = identifier.text;
+                        for (const option of identType.options) {
+                            if (option.value === identifier.type) {
+                                option.selected = true;
+                                break;
+                            }
+                        };
+                    }
+                    else {
+                        cloneMetadataField("identifier", ["text", "type"], identifier);
+                    }
+                    index4++;
+                })
 
                 const pubPlaceName = document.querySelector('#pubPlace-name');
                 const pubPlaceAuthority = document.querySelector('#pubPlace-authority');
@@ -205,32 +251,16 @@ const InterfaceModule = (function () {
                     (parsedDate.getMonth() + 1) + "-" + (parsedDate.getDate() < 10 ? '0' : '') + parsedDate.getDate();
                 pubDateDate.value = formattedDate;
 
-                const identText = document.querySelector('#identifier-text');
-                const identType = document.querySelector('#identifier-type');
-                identText.value = data.ident[0].text;
-                for (const option of identType.options) {
-                    if (option.value === data.ident[0].type) {
+                const availText = document.querySelector('#license-text');
+                const availLink = document.querySelector('#license-link');
+                availText.value = data.license[0].text;
+                for (const option of availLink.options) {
+                    if (option.value === data.license[0].link) {
                         option.selected = true;
                         break;
                     }
                 };
 
-                const availText = document.querySelector('#availability-text');
-                const availLink = document.querySelector('#availability-link');
-                const availStatus = document.querySelector('#availability-status');
-                availText.value = data.availability[0].text;
-                for (const option of availLink.options) {
-                    if (option.value === data.availability[0].link) {
-                        option.selected = true;
-                        break;
-                    }
-                };
-                for (const option of availStatus.options) {
-                    if (option.value === data.availability[0].status) {
-                        option.selected = true;
-                        break;
-                    }
-                };
 
                 const sourceText = document.querySelector('#source-text');
                 sourceText.value = data.source[0].text;
@@ -294,9 +324,9 @@ const InterfaceModule = (function () {
 
 
     initializeAddButtons("title", ["text", "language"]);
-    initializeAddButtons("responsibility");
-    initializeAddButtons("pubAuthority");
-    initializeAddButtons("identifier");
+    initializeAddButtons("responsibility", ["surname", "name", "authority", "role"]);
+    initializeAddButtons("pubAuthority", ["name", "authority", "role"]);
+    initializeAddButtons("identifier", ["text", "type"]);
     initializeAddButtons("source");
     initializeAddButtons("note");
     initializeAddButtons("language");

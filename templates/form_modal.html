@@ -1,9 +1,12 @@
 <form class="metadata-form" method="POST" action="{{ url_for('save_metadata', id=document.id) }}">
 
-  {% include 'metadata_form/titleStmt.html' %}
-
-  {% include 'metadata_form/publicationStmt.html' %}
-
+  {% include 'metadata_form/title.html' %}
+  {% include 'metadata_form/responsibility.html' %}
+  {% include 'metadata_form/pubAuthority.html' %}
+  {% include 'metadata_form/pubCoverage.html' %}
+  {% include 'metadata_form/identifier.html' %}
+  {% include 'metadata_form/license.html' %}
+  
   {% include 'metadata_form/sourceDesc.html' %}
 
   {% include 'metadata_form/notesStmt.html' %}

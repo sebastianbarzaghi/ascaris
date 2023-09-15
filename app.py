@@ -2,7 +2,7 @@ from flask import Flask, Response, render_template, request, redirect, url_for, 
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_migrate import Migrate
-from models import db, Document, Title, Resp, PubAuthority, PubPlace, PubDate, Identifier, Availability, Source, Note, Description, Abstract, CreationPlace, CreationDate, Language, Category
+from models import db, Document, Title, Responsibility, PubAuthority, PubPlace, PubDate, Identifier, License, Source, Note, Description, Abstract, CreationPlace, CreationDate, Language, Category
 from download_tei import get_data, generate_tei_header, generate_tei_content, download_all_documents_as_tei_zip
 import os
 from PyPDF2 import PdfReader
@@ -165,10 +165,8 @@ def save_metadata(id):
         title_texts = request.form.getlist('title-text')
         title_languages = request.form.getlist('title-language')
         existing_titles = Title.query.filter_by(document_id=document.id).all()
-        
         # Create dictionaries to track processed titles
         processed_titles = {}
-
         # Update existing titles
         for i, existing_title in enumerate(existing_titles):
             if i < len(title_texts):
@@ -178,7 +176,6 @@ def save_metadata(id):
                 else:
                     existing_title.language = None
             processed_titles[i] = True
-
         # Add new titles
         for i, text in enumerate(title_texts):
             if i not in processed_titles:
@@ -188,39 +185,77 @@ def save_metadata(id):
                 else:
                     new_title.language = None
                 db.session.add(new_title)
-        
-        resp_surname = request.form.get('resp-surname')
-        resp_name = request.form.get('resp-name')
-        resp_authority = request.form.get('resp-authority')
-        resp_role = request.form.get('resp-role')
-        existing_resp = Resp.query.filter_by(document_id=document.id).first()
-        if existing_resp:
-            existing_resp.surname = resp_surname
-            existing_resp.name = resp_name
-            existing_resp.authority = resp_authority
-            existing_resp.role = resp_role
-        else:
-            resp = Resp(document_id=document.id,
-                        surname=resp_surname,
-                        name=resp_name,
-                        authority=resp_authority,
-                        role=resp_role)
-            db.session.add(resp)
 
-        pubAuthority_name = request.form.get('pubAuthority-name')
-        pubAuthority_authority = request.form.get('pubAuthority-authority')
-        pubAuthority_role = request.form.get('pubAuthority-role')
-        existing_pubAuthority = PubAuthority.query.filter_by(document_id=document.id).first()
-        if existing_pubAuthority:
-            existing_pubAuthority.name = pubAuthority_name
-            existing_pubAuthority.authority = pubAuthority_authority
-            existing_pubAuthority.role = pubAuthority_role
-        else:
-            pubAuthority = PubAuthority(document_id=document.id,
-                        name=pubAuthority_name,
-                        authority=pubAuthority_authority,
-                        role=pubAuthority_role)
-            db.session.add(pubAuthority)
+        resp_surnames = request.form.getlist('responsibility-surname')
+        resp_names = request.form.getlist('responsibility-name')
+        resp_authorities = request.form.getlist('responsibility-authority')
+        resp_roles = request.form.getlist('responsibility-role')
+        existing_responsibilities = Responsibility.query.filter_by(document_id=document.id).all()
+        # Create dictionaries to track processed resps
+        processed_responsibilities = {}
+        # Update existing titles
+        for i, existing_responsibility in enumerate(existing_responsibilities):
+            if i < len(resp_surnames):
+                existing_responsibility.surname = resp_surnames[i]
+                if i < len(resp_names):
+                    existing_responsibility.name = resp_names[i]
+                if i < len(resp_authorities):
+                    existing_responsibility.authority = resp_authorities[i]
+                else:
+                    existing_responsibility.authority = None
+                if i < len(resp_roles):
+                    existing_responsibility.role = resp_roles[i]
+            processed_responsibilities[i] = True
+        # Add new resps
+        for i, surname in enumerate(resp_surnames):
+            if i not in processed_responsibilities:
+                new_responsibility = Responsibility(document_id=document.id, 
+                                          surname=surname)
+                if i < len(resp_names):
+                    new_responsibility.name = resp_names[i]
+                else:
+                    new_responsibility.name = None
+                if i < len(resp_authorities):
+                    new_responsibility.authority = resp_authorities[i]
+                else:
+                    new_responsibility.authority = None
+                if i < len(resp_roles):
+                    new_responsibility.role = resp_roles[i]
+                else:
+                    new_responsibility.role = None
+                db.session.add(new_responsibility)
+
+        pubAuthority_names = request.form.getlist('pubAuthority-name')
+        pubAuthority_authorities = request.form.getlist('pubAuthority-authority')
+        pubAuthority_roles = request.form.getlist('pubAuthority-role')
+        existing_pubAuthorities = PubAuthority.query.filter_by(document_id=document.id).all()
+        # Create dictionaries to track processed pubauths
+        processed_pubAuthorities = {}
+        # Update existing pubauths
+        for i, existing_pubAuthority in enumerate(existing_pubAuthorities):
+            if i < len(pubAuthority_names):
+                existing_pubAuthority.name = pubAuthority_names[i]
+                if i < len(pubAuthority_authorities):
+                    existing_pubAuthority.authority = pubAuthority_authorities[i]
+                else:
+                    existing_pubAuthority.authority = None
+                if i < len(resp_roles):
+                    existing_pubAuthority.role = pubAuthority_roles[i]
+            processed_pubAuthorities[i] = True
+        # Add new pubauths
+        for i, name in enumerate(pubAuthority_names):
+            if i not in processed_pubAuthorities:
+                new_pubAuthority = PubAuthority(document_id=document.id, 
+                                                name=name)
+                if i < len(pubAuthority_authorities):
+                    new_pubAuthority.authority = pubAuthority_authorities[i]
+                else:
+                    new_pubAuthority.authority = None
+                if i < len(pubAuthority_roles):
+                    new_pubAuthority.role = pubAuthority_roles[i]
+                else:
+                    new_pubAuthority.role = None
+                db.session.add(new_pubAuthority)
 
         pubPlace_name = request.form.get('pubPlace-name')
         pubPlace_authority = request.form.get('pubPlace-authority')
@@ -243,32 +278,44 @@ def save_metadata(id):
                               date=pubDate_date)
             db.session.add(pubDate)
 
-        ident_text = request.form.get('identifier-text')
-        ident_type = request.form.get('identifier-type')
-        existing_identifier = Identifier.query.filter_by(document_id=document.id).first()
-        if existing_identifier:
-            existing_identifier.text = ident_text
-            existing_identifier.type = ident_type
-        else:
-            ident = Identifier(document_id=document.id,
-                               text=ident_text,
-                               type=ident_type)
-            db.session.add(ident)
 
-        availability_text = request.form.get('availability-text')
-        availability_link = request.form.get('availability-link')
-        availability_status = request.form.get('availability-status')
-        existing_availability = Availability.query.filter_by(document_id=document.id).first()
-        if existing_availability:
-            existing_availability.text = availability_text
-            existing_availability.link = availability_link
-            existing_availability.status = availability_status
+        ident_texts = request.form.getlist('identifier-text')
+        ident_types = request.form.getlist('identifier-type')
+        existing_identifiers = Identifier.query.filter_by(document_id=document.id).all()
+        # Create dictionaries to track processed ids
+        processed_identifiers = {}
+        # Update existing ids
+        for i, existing_identifier in enumerate(existing_identifiers):
+            if i < len(ident_texts):
+                existing_identifier.text = ident_texts[i]
+                if i < len(ident_types):
+                    existing_identifier.type = ident_types[i]
+                else:
+                    existing_identifier.type = None
+            processed_identifiers[i] = True
+        # Add new ids
+        for i, text in enumerate(ident_texts):
+            if i not in processed_identifiers:
+                new_ident = Identifier(document_id=document.id, 
+                                       text=text)
+                if i < len(ident_types):
+                    new_ident.type = ident_types[i]
+                else:
+                    new_ident.type = None
+                db.session.add(new_ident)
+
+
+        license_text = request.form.get('license-text')
+        license_link = request.form.get('license-link')
+        existing_license = License.query.filter_by(document_id=document.id).first()
+        if existing_license:
+            existing_license.text = license_text
+            existing_license.link = license_link
         else:
-            availability = Availability(document_id=document.id,
-                                        text=availability_text,
-                                        link=availability_link,
-                                        status=availability_status)
-            db.session.add(availability)
+            license = License(document_id=document.id,
+                                        text=license_text,
+                                        link=license_link)
+            db.session.add(license)
 
         source_text = request.form.get('source-text')
         existing_source = Source.query.filter_by(document_id=document.id).first()
@@ -360,12 +407,12 @@ def save_metadata(id):
 def get_existing_data(id):
     existing_data = {
         'title': [],
-        'resp': [],
+        'responsibility': [],
         'pubAuthority': [],
         'pubPlace': [],
         'pubDate': [],
-        'ident': [],
-        'availability': [],
+        'identifier': [],
+        'license': [],
         'source': [],
         'note': [],
         'desc': [],
@@ -385,9 +432,9 @@ def get_existing_data(id):
         })
         print(title.text, title.language)
     
-    existing_resps = Resp.query.filter_by(document_id=id).all()
+    existing_resps = Responsibility.query.filter_by(document_id=id).all()
     for resp in existing_resps:
-        existing_data['resp'].append({
+        existing_data['responsibility'].append({
             'surname': resp.surname,
             'name': resp.name,
             'authority': resp.authority,
@@ -417,17 +464,16 @@ def get_existing_data(id):
 
     existing_identifiers = Identifier.query.filter_by(document_id=id).all()
     for ident in existing_identifiers:
-        existing_data['ident'].append({
+        existing_data['identifier'].append({
             'text': ident.text,
             'type': ident.type
         })
     
-    existing_availability = Availability.query.filter_by(document_id=id).all()
-    for availability in existing_availability:
-        existing_data['availability'].append({
-            'text': availability.text,
-            'link': availability.link,
-            'status': availability.status
+    existing_license = License.query.filter_by(document_id=id).all()
+    for license in existing_license:
+        existing_data['license'].append({
+            'text': license.text,
+            'link': license.link
         })
 
     existing_sources = Source.query.filter_by(document_id=id).all()

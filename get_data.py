@@ -1,16 +1,16 @@
-from models import Document, Title, Resp, PubAuthority, PubPlace, PubDate, Identifier, Availability, Source, Note, Description, Abstract, CreationPlace, CreationDate, Language, Category
+from models import Document, Title, Responsibility, PubAuthority, PubPlace, PubDate, Identifier, License, Source, Note, Description, Abstract, CreationPlace, CreationDate, Language, Category
 
 def get_data(document_id):
     
     data = {}
 
     titles = Title.query.filter_by(document_id=document_id).all()
-    responsibilities = Resp.query.filter_by(document_id=document_id).all()
+    responsibilities = Responsibility.query.filter_by(document_id=document_id).all()
     pubAuthorities = PubAuthority.query.filter_by(document_id=document_id).all()
     pubPlace = PubPlace.query.filter_by(document_id=document_id).first()
     identifiers = Identifier.query.filter_by(document_id=document_id).all()
     pubDate = PubDate.query.filter_by(document_id=document_id).first()
-    availability = Availability.query.filter_by(document_id=document_id).first()
+    license = License.query.filter_by(document_id=document_id).first()
     notes = Note.query.filter_by(document_id=document_id).all()
     sources = Source.query.filter_by(document_id=document_id).all()
     description = Description.query.filter_by(document_id=document_id).first()
@@ -72,11 +72,10 @@ def get_data(document_id):
             'date': pubDate.date
         }
 
-    if availability:
-        data['availability'] = {
-            'text': availability.text,
-            'link': availability.link,
-            'status': availability.status
+    if license:
+        data['license'] = {
+            'text': license.text,
+            'link': license.link
         }
 
     if notes:
