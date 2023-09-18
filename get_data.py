@@ -13,11 +13,8 @@ def get_data(document_id):
     license = License.query.filter_by(document_id=document_id).first()
     notes = Note.query.filter_by(document_id=document_id).all()
     sources = Source.query.filter_by(document_id=document_id).all()
-    description = Description.query.filter_by(document_id=document_id).first()
     abstract = Abstract.query.filter_by(document_id=document_id).first()
-    creationPlace = CreationPlace.query.filter_by(document_id=document_id).first()
     creationDate = CreationDate.query.filter_by(document_id=document_id).first()
-    languages = Language.query.filter_by(document_id=document_id).all()
     categories = Category.query.filter_by(document_id=document_id).all()
 
     document = Document.query.filter_by(id=document_id).first()
@@ -94,35 +91,15 @@ def get_data(document_id):
                 'text': source.text
             })
 
-    if description:
-        data['description'] = {
-            'text': description.text
-        }
-
     if abstract:
         data['abstract'] = {
             'text': abstract.text
-        }
-
-    if creationPlace:
-        data['creationPlace'] = {
-            'name': creationPlace.name,
-            'authority': creationPlace.authority
         }
 
     if creationDate:
         data['creationDate'] = {
             'date': creationDate.date
         }
-
-    if languages:
-        data['languages'] = []
-        for language in languages:
-            data['languages'].append({
-                'text': language.text,
-                'ident': language.ident,
-                'usage': language.usage
-        })
     
     if categories:
         data['categories'] = []

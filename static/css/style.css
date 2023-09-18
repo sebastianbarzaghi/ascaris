@@ -150,6 +150,23 @@ html {
 
 .row {
   display: flex;
+  border: #7e7e7e solid 1px;
+}
+
+.move-right {
+  margin-left: auto;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.flex-2 {
+  flex: 2;
+}
+
+.flex-3 {
+  flex: 3;
 }
 
 .metadata-panel {

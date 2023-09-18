@@ -42,7 +42,8 @@ const InterfaceModule = (function () {
                 const minusIcon = document.createElement("i");
                 minusIcon.classList.add("fa-solid", "fa-minus");
                 removeButton.appendChild(minusIcon);
-                clone.appendChild(removeButton);
+                const row = clone.querySelector('.row');
+                row.appendChild(removeButton);
                 additionalContainer.appendChild(clone);
                 clone.querySelector(`.add-${field}-button`).remove();
             }
@@ -124,7 +125,6 @@ const InterfaceModule = (function () {
         const clone = inputGroup.cloneNode(true);
         const currentCounter = fieldCounters[field];
         clone.setAttribute("data-field-group-id", `${currentCounter + 1}`)
-        console.log(clone)
 
         let index = 0;
         subfields.forEach((subfield) => {
@@ -141,7 +141,8 @@ const InterfaceModule = (function () {
         const minusIcon = document.createElement("i");
         minusIcon.classList.add("fa-solid", "fa-minus");
         removeButton.appendChild(minusIcon);
-        clone.appendChild(removeButton);
+        const row = clone.querySelector('.row');
+        row.appendChild(removeButton);
         additionalContainer.appendChild(clone);
         clone.querySelector(`.add-${field}-button`).remove();
     }
@@ -261,23 +262,44 @@ const InterfaceModule = (function () {
                     }
                 };
 
+                const notes = data.note;
+                let index5 = 0;
+                notes.forEach((note) => {
+                    if (index5 === 0) {
+                        const noteText = document.querySelector('.metadata-note-text');
+                        noteText.value = note.text;
+                    }
+                    else {
+                        cloneMetadataField('note', ['text'], note);
+                    }
+                    index5++;
+                })
+                
+                const categories = data.category;
+                let index6 = 0;
+                categories.forEach((category) => {
+                    if (index6 === 0) {
+                        const category = document.querySelector('.metadata-category-type');    
+                        for (const option of category.options) {
+                            if (option.value === data.category[0].type) {
+                                option.selected = true;
+                                break;
+                            }
+                        };
+                    }
+                    else {
+                        cloneMetadataField('category', ['type'], category);
+                    }
+                })
+                
+
 
                 const sourceText = document.querySelector('#source-text');
                 sourceText.value = data.source[0].text;
 
-                const noteText = document.querySelector('#note-text');
-                noteText.value = data.note[0].text;
-
-                const descText = document.querySelector('#description-text');
-                descText.value = data.desc[0].text;
 
                 const abstractText = document.querySelector('#abstract-text');
                 abstractText.value = data.abstract[0].text;
-
-                const creationPlaceName = document.querySelector('#creationPlace-name');
-                const creationPlaceAuthority = document.querySelector('#creationPlace-authority');
-                creationPlaceName.value = data.creationPlace[0].name;
-                creationPlaceAuthority.value = data.creationPlace[0].authority;
 
                 const creationDateDate = document.querySelector('#creationDate-date');
                 let creationParsedDate = new Date(data.creationDate[0].date);
@@ -286,25 +308,7 @@ const InterfaceModule = (function () {
                     (creationParsedDate.getDate() < 10 ? '0' : '') + creationParsedDate.getDate();
                     creationDateDate.value = creationFormattedDate;
 
-                const languageText = document.querySelector('#language-text');
-                const languageIdent = document.querySelector('#language-ident');
-                const languageUsage = document.querySelector('#language-usage');
-                languageText.value = data.lang[0].text;
-                for (const option of languageIdent.options) {
-                    if (option.value === data.lang[0].ident) {
-                        option.selected = true;
-                        break;
-                    }
-                };
-                languageUsage.value = data.lang[0].usage;
-
-                const category = document.querySelector('#category-type');
-                for (const option of category.options) {
-                    if (option.value === data.category[0].type) {
-                        option.selected = true;
-                        break;
-                    }
-                };
+                
             });    
         })
     }
@@ -328,9 +332,8 @@ const InterfaceModule = (function () {
     initializeAddButtons("pubAuthority", ["name", "authority", "role"]);
     initializeAddButtons("identifier", ["text", "type"]);
     initializeAddButtons("source");
-    initializeAddButtons("note");
-    initializeAddButtons("language");
-    initializeAddButtons("category");
+    initializeAddButtons("note", ['text']);
+    initializeAddButtons("category", ["type"]);
 
     initializeRemoveButtons("title");
     initializeRemoveButtons("responsibility");
@@ -338,7 +341,6 @@ const InterfaceModule = (function () {
     initializeRemoveButtons("identifier");
     initializeRemoveButtons("source");
     initializeRemoveButtons("note");
-    initializeRemoveButtons("language");
     initializeRemoveButtons("category");
 
     fetchExistingDataAndPopulate(documentId);

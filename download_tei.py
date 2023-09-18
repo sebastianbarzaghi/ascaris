@@ -186,12 +186,11 @@ def generate_tei_header(data):
         identifiers = generate_tei_identifiers(data=data)
         publication_stmt.append(identifiers)
 
-    if 'availability' in data:
+    if 'license' in data:
         availability = soup.new_tag('availability')
-        availability['status'] = data['availability']['status']
         license = soup.new_tag('license')
-        license.string = data['availability']['text']
-        license['target'] = data['availability']['link']
+        license.string = data['license']['text']
+        license['target'] = data['license']['link']
         availability.append(license)
         publication_stmt.append(availability)
 
@@ -210,18 +209,12 @@ def generate_tei_header(data):
         description.append(paragraph)
         encoding_desc.append(description)
 
-    if 'creationPlace' in data and 'creationDate' in data:
+    if 'creationDate' in data:
         creation = soup.new_tag('creation')
-        if 'creationDate' in data:
-            creation_date = soup.new_tag('date')
-            creation_date.string = str(data['creationDate']['date'])
-            creation_date['when'] = data['creationDate']['date']
-            creation.append(creation_date)
-        if 'creationPlace' in data:
-            creation_place = soup.new_tag('placeName')
-            creation_place.string = data['creationPlace']['name']
-            creation_place['sameAs'] = data['creationPlace']['authority']
-            creation.append(creation_place)
+        creation_date = soup.new_tag('date')
+        creation_date.string = str(data['creationDate']['date'])
+        creation_date['when'] = data['creationDate']['date']
+        creation.append(creation_date)
         profile_desc.append(creation)
 
     if 'languages' in data:

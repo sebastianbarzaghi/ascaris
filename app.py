@@ -317,33 +317,21 @@ def save_metadata(id):
                                         link=license_link)
             db.session.add(license)
 
-        source_text = request.form.get('source-text')
-        existing_source = Source.query.filter_by(document_id=document.id).first()
-        if existing_source:
-            existing_source.text = source_text
-        else:
-            source = Source(document_id=document.id,
-                            text=source_text)
-            db.session.add(source)
 
-        note_text = request.form.get('note-text')
-        existing_note = Note.query.filter_by(document_id=document.id).first()
-        if existing_note:
-            existing_note.text = note_text
-        else:
-            note = Note(document_id=document.id,
-                        text=note_text)
-            db.session.add(note)
+        note_texts = request.form.getlist('note-text')
+        existing_notes = Note.query.filter_by(document_id=document.id).all()
+        processed_notes = {}
+        for i, existing_note in enumerate(existing_notes):
+            if i < len(note_texts):
+                existing_note.text = note_texts[i]
+            processed_notes[i] = True
+        for i, text in enumerate(note_texts):
+            if i not in processed_notes:
+                new_note = Note(document_id=document.id,
+                                text=text)
+                db.session.add(new_note)
 
-        description_text = request.form.get('description-text')
-        existing_description = Description.query.filter_by(document_id=document.id).first()
-        if existing_description:
-            existing_description.text = description_text
-        else:
-            description = Description(document_id=document.id,
-                                      text=description_text)
-            db.session.add(description)
-        
+
         abstract_text = request.form.get('abstract-text')
         existing_abstract = Abstract.query.filter_by(document_id=document.id).first()
         if existing_abstract:
@@ -353,50 +341,30 @@ def save_metadata(id):
                                 text=abstract_text)
             db.session.add(abstract)
 
-        creationPlace_name = request.form.get('creationPlace-name')
-        creationPlace_authority = request.form.get('creationPlace-authority')
-        existing_creationPlace = CreationPlace.query.filter_by(document_id=document.id).first()
-        if existing_creationPlace:
-            existing_creationPlace.name = creationPlace_name
-            existing_creationPlace.authority = creationPlace_authority
-        else:
-            creationPlace = CreationPlace(document_id=document.id,
-                                name=creationPlace_name,
-                                authority=creationPlace_authority)
-            db.session.add(creationPlace)
 
-        creationDate_date = datetime.strptime(request.form.get('creationDate-date'), '%Y-%m-%d').date()
-        existing_creationDate = CreationDate.query.filter_by(document_id=document.id).first()
-        if existing_creationDate:
-            existing_creationDate.date = creationDate_date
-        else:
-            creationDate = CreationDate(document_id=document.id,
-                              date=creationDate_date)
-            db.session.add(creationDate)
+        category_types = request.form.getlist('category-type')
+        existing_categories = Category.query.filter_by(document_id=document.id).all()
+        processed_categories = {}
+        for i, existing_category in enumerate(existing_categories):
+            if i < len(category_types):
+                existing_category.type = category_types[i]
+            processed_categories[i] = True
+        for i, type in enumerate(category_types):
+            if i not in processed_categories:
+                new_category = Category(document_id=document.id,
+                                type=type)
+                db.session.add(new_category)
 
-        lang_text = request.form.get('language-text')
-        lang_ident = request.form.get('language-ident')
-        lang_usage = request.form.get('language-usage')
-        existing_lang = Language.query.filter_by(document_id=document.id).first()
-        if existing_lang:
-            existing_lang.text = lang_text
-            existing_lang.ident = lang_ident
-            existing_lang.usage = lang_usage
-        else:
-            lang = Language(document_id=document.id,
-                            text=lang_text,
-                            ident=lang_ident,
-                            usage=lang_usage)
-            db.session.add(lang)
 
-        category_type = request.form.get('category-type')
-        existing_category = Category.query.filter_by(document_id=document.id).first()
-        if existing_category:
-            existing_category.type = category_type
+        source_text = request.form.get('source-text')
+        existing_source = Source.query.filter_by(document_id=document.id).first()
+        if existing_source:
+            existing_source.text = source_text
         else:
-            category = Category(document_id=document.id,
-                                type=category_type)
-            db.session.add(category)
+            source = Source(document_id=document.id,
+                            text=source_text)
+            db.session.add(source)
+
 
         db.session.commit()
 
@@ -415,12 +383,9 @@ def get_existing_data(id):
         'license': [],
         'source': [],
         'note': [],
-        'desc': [],
         'abstract': [],
-        'creationPlace': [],
-        'creationDate': [],
-        'lang': [],
         'category': [],
+        'creationDate': [],
         # Add more field types as needed
     }
 
@@ -488,37 +453,16 @@ def get_existing_data(id):
             'text': note.text
         })
     
-    existing_description = Description.query.filter_by(document_id=id).all()
-    for desc in existing_description:
-        existing_data['desc'].append({
-            'text': desc.text
-        })
-    
     existing_abstract = Abstract.query.filter_by(document_id=id).all()
     for abstract in existing_abstract:
         existing_data['abstract'].append({
             'text': abstract.text
-        })
-
-    existing_creationPlace = CreationPlace.query.filter_by(document_id=id).all()
-    for creationPlace in existing_creationPlace:
-        existing_data['creationPlace'].append({
-            'name': creationPlace.name,
-            'authority': creationPlace.authority
         })
     
     existing_creationDate = CreationDate.query.filter_by(document_id=id).all()
     for creationDate in existing_creationDate:
         existing_data['creationDate'].append({
             'date': creationDate.date
-        })
-    
-    existing_languages = Language.query.filter_by(document_id=id).all()
-    for lang in existing_languages:
-        existing_data['lang'].append({
-            'text': lang.text,
-            'ident': lang.ident,
-            'usage': lang.usage
         })
     
     existing_categories = Category.query.filter_by(document_id=id).all()
