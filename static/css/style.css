@@ -151,6 +151,11 @@ html {
 .row {
   display: flex;
   border: #7e7e7e solid 1px;
+  gap: 1rem;
+}
+
+.column {
+  flex-direction: column;
 }
 
 .move-right {
@@ -169,6 +174,14 @@ html {
   flex: 3;
 }
 
+.flex-4 {
+  flex: 4;
+}
+
+.flex-5 {
+  flex: 5;
+}
+
 .metadata-panel {
   display: none;
 }
@@ -183,4 +196,13 @@ html {
 
 .panel-block.valid-drop-target {
   border: 2px solid #007bff; /* Use the color you prefer */
+}
+
+.flex-full-width {
+  width: 100%;
+}
+
+.row textarea {
+  height: 10rem;
+  resize: vertical;
 }

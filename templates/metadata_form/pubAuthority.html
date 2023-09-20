@@ -1,41 +1,39 @@
 <label class="label">Publication authority</label>
 <div class="field">
     <div class="pubAuthority-input-group input-group">
-        <div class="row">
-            <div class="control has-icons-left">
-                <input id="pubAuthority-name" name="pubAuthority-name" class="input metadata-pubAuthority metadata-pubAuthority-name" type="text" placeholder="Enter name">
-                <span class="icon is-small is-left">
-                    <i class="fas fa-font"></i>
-                </span>
-            </div>
-        </div>
-        <div class="row">
-            <div class="control has-icons-left">
-                <input id="pubAuthority-authority" name="pubAuthority-authority" class="input metadata-pubAuthority metadata-pubAuthority-authority" type="text" placeholder="Enter authority record">
-                <span class="icon is-small is-left">
-                    <i class="fas fa-link"></i>
-                </span>
-            </div>
-        </div>
-        <div class="row">
-            <div class="control has-icons-left">
-                <div class="select">
-                    <select id="pubAuthority-role" name="pubAuthority-role" class="dropdown metadata-pubAuthority-role">
-                        <option value="">--Select--</option>
-                        <option value="publisher">Publisher</option>
-                        <option value="distributor">Distributor</option>
-                        <option value="authority">Authority</option>
-                    </select>
+        <div class="row column">
+            <div class="row">
+                <div class="control has-icons-left flex-1">
+                    <input id="pubAuthority-name" name="pubAuthority-name" class="input metadata-pubAuthority metadata-pubAuthority-name" type="text" placeholder="Enter name">
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-font"></i>
+                    </span>
                 </div>
-                <span class="icon is-small is-left">
-                    <i class="fas fa-user-gear"></i>
-                </span>
             </div>
-            <div class="control">
-                <span class="button is-success is-light add-button add-pubAuthority-button">
-                    <i class="fa-solid fa-plus"></i>
-                </span>
+            <div class="row">
+                <div class="control has-icons-left flex-5">
+                    <input id="pubAuthority-authority" name="pubAuthority-authority" class="input metadata-pubAuthority metadata-pubAuthority-authority" type="text" placeholder="Enter authority record">
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-link"></i>
+                    </span>
+                </div>
+                <div class="control has-icons-left flex-1">
+                    <div class="select">
+                        <select id="pubAuthority-role" name="pubAuthority-role" class="dropdown metadata-pubAuthority-role">
+                            <option value="">--Select--</option>
+                            <option value="publisher">Publisher</option>
+                            <option value="distributor">Distributor</option>
+                            <option value="authority">Authority</option>
+                        </select>
+                    </div>
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-user-gear"></i>
+                    </span>
+                </div>
             </div>
+            <span class="button is-success is-light add-button add-pubAuthority-button">
+                <i class="fa-solid fa-plus"></i>
+            </span>
         </div>
     </div>
 </div>
