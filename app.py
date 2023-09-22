@@ -3,11 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_migrate import Migrate
 from models import db, Document, Title, Responsibility, PubAuthority, PubPlace, PubDate, Identifier, License, Source, Note, Description, Abstract, CreationPlace, CreationDate, Language, Category
-from download_tei import get_data, generate_tei_header, generate_tei_content, download_all_documents_as_tei_zip
+from download_tei import generate_tei_header, generate_tei_content, download_all_documents_as_tei_zip
 import os
-from PyPDF2 import PdfReader
-from docx import Document as DocxDocument
-
+from manipulate_data import get_data, update_or_add_data
+from manipulate_documents import allowed_file, read_docx, read_pdf, read_txt
 
 
 app = Flask(__name__, static_url_path='/static')
@@ -39,53 +38,12 @@ def new_document():
     return render_template('new_document.html')
 
 
-ALLOWED_EXTENSIONS = {'docx', 'pdf', 'txt'}
-
-# Helper function to check allowed file extensions
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-# Helper function to read text content from a DOCX file
-def read_docx(uploaded_file):
-    try:
-        doc = DocxDocument(uploaded_file)
-        text_content = ""
-        for paragraph in doc.paragraphs:
-            text_content += paragraph.text + "\n"
-        return text_content
-    except Exception as e:
-        print(f"Error reading DOCX file: {e}")
-        return None
-
-# Helper function to read text content from a PDF file
-def read_pdf(uploaded_file):
-    try:
-        pdf = PdfReader(uploaded_file)
-        text_content = ""
-        for page_num in range(len(pdf.pages)):
-            page = pdf.pages[page_num]
-            text_content += page.extract_text() + "\n"
-        return text_content
-    except Exception as e:
-        print(f"Error reading PDF file: {e}")
-        return None
-
-# Helper function to read text content from a TXT file
-def read_txt(uploaded_file):
-    try:
-        text_content = uploaded_file.read().decode('utf-8')
-        return text_content
-    except Exception as e:
-        print(f"Error reading TXT file: {e}")
-        return None
-
 # Main route for uploading documents
 @app.route('/document/upload', methods=['GET', 'POST'])
 def upload_document():
     if request.method == 'POST':
         title = request.form['docTitle']
         uploaded_file = request.files['uploaded_file']
-
         if not title:
             flash('Please enter a title for your document.', 'error')
         elif not uploaded_file:
@@ -128,10 +86,8 @@ def save_document():
     document_id = data.get("document_id")
     title = data.get("docTitle")
     content = data.get("content")
-
     # Check if a document with the given ID already exists
     document = Document.query.filter_by(id=document_id).first()
-
     if document:
         # Update the existing document
         document.docTitle = title
@@ -159,318 +115,26 @@ def get_document(document_id):
 @app.route('/save_metadata/<int:id>', methods=['POST'])
 def save_metadata(id):
     document = Document.query.get_or_404(id)
-    
     if request.method == 'POST':
-
-        title_texts = request.form.getlist('title-text')
-        title_languages = request.form.getlist('title-language')
-        existing_titles = Title.query.filter_by(document_id=document.id).all()
-        # Create dictionaries to track processed titles
-        processed_titles = {}
-        # Update existing titles
-        for i, existing_title in enumerate(existing_titles):
-            if i < len(title_texts):
-                existing_title.text = title_texts[i]
-                if i < len(title_languages):
-                    existing_title.language = title_languages[i]
-                else:
-                    existing_title.language = None
-            processed_titles[i] = True
-        # Add new titles
-        for i, text in enumerate(title_texts):
-            if i not in processed_titles:
-                new_title = Title(document_id=document.id, text=text)
-                if i < len(title_languages):
-                    new_title.language = title_languages[i]
-                else:
-                    new_title.language = None
-                db.session.add(new_title)
-
-        resp_surnames = request.form.getlist('responsibility-surname')
-        resp_names = request.form.getlist('responsibility-name')
-        resp_authorities = request.form.getlist('responsibility-authority')
-        resp_roles = request.form.getlist('responsibility-role')
-        existing_responsibilities = Responsibility.query.filter_by(document_id=document.id).all()
-        # Create dictionaries to track processed resps
-        processed_responsibilities = {}
-        # Update existing titles
-        for i, existing_responsibility in enumerate(existing_responsibilities):
-            if i < len(resp_surnames):
-                existing_responsibility.surname = resp_surnames[i]
-                if i < len(resp_names):
-                    existing_responsibility.name = resp_names[i]
-                if i < len(resp_authorities):
-                    existing_responsibility.authority = resp_authorities[i]
-                else:
-                    existing_responsibility.authority = None
-                if i < len(resp_roles):
-                    existing_responsibility.role = resp_roles[i]
-            processed_responsibilities[i] = True
-        # Add new resps
-        for i, surname in enumerate(resp_surnames):
-            if i not in processed_responsibilities:
-                new_responsibility = Responsibility(document_id=document.id, 
-                                          surname=surname)
-                if i < len(resp_names):
-                    new_responsibility.name = resp_names[i]
-                else:
-                    new_responsibility.name = None
-                if i < len(resp_authorities):
-                    new_responsibility.authority = resp_authorities[i]
-                else:
-                    new_responsibility.authority = None
-                if i < len(resp_roles):
-                    new_responsibility.role = resp_roles[i]
-                else:
-                    new_responsibility.role = None
-                db.session.add(new_responsibility)
-
-        pubAuthority_names = request.form.getlist('pubAuthority-name')
-        pubAuthority_authorities = request.form.getlist('pubAuthority-authority')
-        pubAuthority_roles = request.form.getlist('pubAuthority-role')
-        existing_pubAuthorities = PubAuthority.query.filter_by(document_id=document.id).all()
-        # Create dictionaries to track processed pubauths
-        processed_pubAuthorities = {}
-        # Update existing pubauths
-        for i, existing_pubAuthority in enumerate(existing_pubAuthorities):
-            if i < len(pubAuthority_names):
-                existing_pubAuthority.name = pubAuthority_names[i]
-                if i < len(pubAuthority_authorities):
-                    existing_pubAuthority.authority = pubAuthority_authorities[i]
-                else:
-                    existing_pubAuthority.authority = None
-                if i < len(resp_roles):
-                    existing_pubAuthority.role = pubAuthority_roles[i]
-            processed_pubAuthorities[i] = True
-        # Add new pubauths
-        for i, name in enumerate(pubAuthority_names):
-            if i not in processed_pubAuthorities:
-                new_pubAuthority = PubAuthority(document_id=document.id, 
-                                                name=name)
-                if i < len(pubAuthority_authorities):
-                    new_pubAuthority.authority = pubAuthority_authorities[i]
-                else:
-                    new_pubAuthority.authority = None
-                if i < len(pubAuthority_roles):
-                    new_pubAuthority.role = pubAuthority_roles[i]
-                else:
-                    new_pubAuthority.role = None
-                db.session.add(new_pubAuthority)
-
-        pubPlace_name = request.form.get('pubPlace-name')
-        pubPlace_authority = request.form.get('pubPlace-authority')
-        existing_pubPlace = PubPlace.query.filter_by(document_id=document.id).first()
-        if existing_pubPlace:
-            existing_pubPlace.name = pubPlace_name
-            existing_pubPlace.authority = pubPlace_authority
-        else:
-            pubPlace = PubPlace(document_id=document.id,
-                                name=pubPlace_name,
-                                authority=pubPlace_authority)
-            db.session.add(pubPlace)
-
-        pubDate_date = datetime.strptime(request.form.get('pubDate-date'), '%Y-%m-%d').date()
-        existing_pubDate = PubDate.query.filter_by(document_id=document.id).first()
-        if existing_pubDate:
-            existing_pubDate.date = pubDate_date
-        else:
-            pubDate = PubDate(document_id=document.id,
-                              date=pubDate_date)
-            db.session.add(pubDate)
-
-
-        ident_texts = request.form.getlist('identifier-text')
-        ident_types = request.form.getlist('identifier-type')
-        existing_identifiers = Identifier.query.filter_by(document_id=document.id).all()
-        # Create dictionaries to track processed ids
-        processed_identifiers = {}
-        # Update existing ids
-        for i, existing_identifier in enumerate(existing_identifiers):
-            if i < len(ident_texts):
-                existing_identifier.text = ident_texts[i]
-                if i < len(ident_types):
-                    existing_identifier.type = ident_types[i]
-                else:
-                    existing_identifier.type = None
-            processed_identifiers[i] = True
-        # Add new ids
-        for i, text in enumerate(ident_texts):
-            if i not in processed_identifiers:
-                new_ident = Identifier(document_id=document.id, 
-                                       text=text)
-                if i < len(ident_types):
-                    new_ident.type = ident_types[i]
-                else:
-                    new_ident.type = None
-                db.session.add(new_ident)
-
-
-        license_text = request.form.get('license-text')
-        license_link = request.form.get('license-link')
-        existing_license = License.query.filter_by(document_id=document.id).first()
-        if existing_license:
-            existing_license.text = license_text
-            existing_license.link = license_link
-        else:
-            license = License(document_id=document.id,
-                                        text=license_text,
-                                        link=license_link)
-            db.session.add(license)
-
-
-        note_texts = request.form.getlist('note-text')
-        existing_notes = Note.query.filter_by(document_id=document.id).all()
-        processed_notes = {}
-        for i, existing_note in enumerate(existing_notes):
-            if i < len(note_texts):
-                existing_note.text = note_texts[i]
-            processed_notes[i] = True
-        for i, text in enumerate(note_texts):
-            if i not in processed_notes:
-                new_note = Note(document_id=document.id,
-                                text=text)
-                db.session.add(new_note)
-
-
-        abstract_text = request.form.get('abstract-text')
-        existing_abstract = Abstract.query.filter_by(document_id=document.id).first()
-        if existing_abstract:
-            existing_abstract.text = abstract_text
-        else:
-            abstract = Abstract(document_id=document.id,
-                                text=abstract_text)
-            db.session.add(abstract)
-
-
-        category_types = request.form.getlist('category-type')
-        existing_categories = Category.query.filter_by(document_id=document.id).all()
-        processed_categories = {}
-        for i, existing_category in enumerate(existing_categories):
-            if i < len(category_types):
-                existing_category.type = category_types[i]
-            processed_categories[i] = True
-        for i, type in enumerate(category_types):
-            if i not in processed_categories:
-                new_category = Category(document_id=document.id,
-                                type=type)
-                db.session.add(new_category)
-
-
-        source_text = request.form.get('source-text')
-        existing_source = Source.query.filter_by(document_id=document.id).first()
-        if existing_source:
-            existing_source.text = source_text
-        else:
-            source = Source(document_id=document.id,
-                            text=source_text)
-            db.session.add(source)
-
-
+        update_or_add_data(['title-text', 'title-language'], Title, document.id)
+        update_or_add_data(['responsibility-surname', 'responsibility-name', 'responsibility-authority', 'responsibility-role'], Responsibility, document.id)
+        update_or_add_data(['pubAuthority-name', 'pubAuthority-authority', 'pubAuthority-role'], PubAuthority, document.id)
+        update_or_add_data(['identifier-text', 'identifier-type'], Identifier, document.id)
+        update_or_add_data(['note-text'], Note, document.id)
+        update_or_add_data(['category-type'], Category, document.id)
+        update_or_add_data(['source-text'], Source, document.id)
+        update_or_add_data(['pubPlace-name', 'pubPlace-authority'], PubPlace, document.id)
+        update_or_add_data(['pubDate-date'], PubDate, document.id)
+        update_or_add_data(['license-text', 'license-link'], License, document.id)
+        update_or_add_data(['abstract-text'], Abstract, document.id)
+        update_or_add_data(['creationDate-date'], CreationDate, document.id)
         db.session.commit()
-
     return redirect(url_for('edit_document', id=document.id))
-
+        
 
 @app.route('/get_existing_data/<int:id>')
 def get_existing_data(id):
-    existing_data = {
-        'title': [],
-        'responsibility': [],
-        'pubAuthority': [],
-        'pubPlace': [],
-        'pubDate': [],
-        'identifier': [],
-        'license': [],
-        'source': [],
-        'note': [],
-        'abstract': [],
-        'category': [],
-        'creationDate': [],
-        # Add more field types as needed
-    }
-
-    existing_titles = Title.query.filter_by(document_id=id).all()
-    for title in existing_titles:
-        existing_data['title'].append({
-            'text': title.text,
-            'language': title.language,
-        })
-        print(title.text, title.language)
-    
-    existing_resps = Responsibility.query.filter_by(document_id=id).all()
-    for resp in existing_resps:
-        existing_data['responsibility'].append({
-            'surname': resp.surname,
-            'name': resp.name,
-            'authority': resp.authority,
-            'role': resp.role
-        })
-
-    existing_pubAuthorities = PubAuthority.query.filter_by(document_id=id).all()
-    for pubAuthority in existing_pubAuthorities:
-        existing_data['pubAuthority'].append({
-            'name': pubAuthority.name,
-            'authority': pubAuthority.authority,
-            'role': pubAuthority.role
-        })
-    
-    existing_pubPlace = PubPlace.query.filter_by(document_id=id).all()
-    for pubPlace in existing_pubPlace:
-        existing_data['pubPlace'].append({
-            'name': pubPlace.name,
-            'authority': pubPlace.authority
-        })
-    
-    existing_pubDate = PubDate.query.filter_by(document_id=id).all()
-    for pubDate in existing_pubDate:
-        existing_data['pubDate'].append({
-            'date': pubDate.date
-        })
-
-    existing_identifiers = Identifier.query.filter_by(document_id=id).all()
-    for ident in existing_identifiers:
-        existing_data['identifier'].append({
-            'text': ident.text,
-            'type': ident.type
-        })
-    
-    existing_license = License.query.filter_by(document_id=id).all()
-    for license in existing_license:
-        existing_data['license'].append({
-            'text': license.text,
-            'link': license.link
-        })
-
-    existing_sources = Source.query.filter_by(document_id=id).all()
-    for source in existing_sources:
-        existing_data['source'].append({
-            'text': source.text
-        })
-
-    existing_notes = Note.query.filter_by(document_id=id).all()
-    for note in existing_notes:
-        existing_data['note'].append({
-            'text': note.text
-        })
-    
-    existing_abstract = Abstract.query.filter_by(document_id=id).all()
-    for abstract in existing_abstract:
-        existing_data['abstract'].append({
-            'text': abstract.text
-        })
-    
-    existing_creationDate = CreationDate.query.filter_by(document_id=id).all()
-    for creationDate in existing_creationDate:
-        existing_data['creationDate'].append({
-            'date': creationDate.date
-        })
-    
-    existing_categories = Category.query.filter_by(document_id=id).all()
-    for cat in existing_categories:
-        existing_data['category'].append({
-            'type': cat.type
-        })
-
+    existing_data = get_data(id)
     return jsonify(existing_data)
 
 
@@ -479,13 +143,10 @@ def delete_record(model_name, record_id):
     try:
         # Get the SQLAlchemy model class based on the provided model_name
         model_class = globals().get(model_name)
-        
         if not model_class:
             return jsonify({'message': 'Model not found'}), 404
-
         # Retrieve the record by its ID
         record = model_class.query.get(record_id)
-
         if record:
             # Delete the record from the database
             db.session.delete(record)
@@ -493,18 +154,15 @@ def delete_record(model_name, record_id):
             return jsonify({'message': f'{model_name} deleted successfully'}), 200
         else:
             return jsonify({'message': f'{model_name} not found'}), 404
-
     except Exception as e:
         return jsonify({'message': 'An error occurred'}), 500
 
 
 @app.route('/download_tei/<int:document_id>')
 def download_tei(document_id):
-    
     data = get_data(document_id=document_id)
     tei_header = generate_tei_header(data=data)
     tei_content = generate_tei_content(data=data)
-
     # Create the complete TEI document
     tei_template = f"""
     <TEI xmlns="http://www.tei-c.org/ns/1.0">
@@ -512,11 +170,9 @@ def download_tei(document_id):
       {tei_content}
     </TEI>
     """
-
     # Return the TEI document as a downloadable file
     response = Response(tei_template, content_type='application/xml')
     response.headers['Content-Disposition'] = f'attachment; filename=document_{document_id}.xml'
-
     return response
 
 
@@ -525,20 +181,16 @@ def download_all_documents_route():
     try:
         # Call the download function from download.py
         zip_filename = download_all_documents_as_tei_zip()
-        
         # Check if the file exists
         if not os.path.isfile(zip_filename):
             return "ZIP file not found", 404
-
         # Open the ZIP file in binary read mode
         with open(zip_filename, 'rb') as zip_file:
             zip_data = zip_file.read()
-
         # Set the appropriate headers for downloading a ZIP file
         response = Response(zip_data)
         response.headers['Content-Type'] = 'application/zip'
         response.headers['Content-Disposition'] = 'attachment; filename=tei_documents.zip'
-
         return response
     except Exception as e:
         return str(e), 500
@@ -547,19 +199,15 @@ def download_all_documents_route():
 @app.route('/docta')
 def serve_docta():
     rdf_file_path = 'instance/docta.ttl'
-
     with open(rdf_file_path, 'rb') as f:
         rdf_content = f.read()
-
     response = app.response_class(
         response=rdf_content,
         status=200,
         mimetype='application/turtle'
     )
-
     return response
 
 
 if __name__ == '__main__':
     app.run(debug=True)
-

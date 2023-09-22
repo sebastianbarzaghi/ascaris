@@ -4,7 +4,7 @@ import os
 from bs4 import BeautifulSoup, Tag
 from datetime import datetime
 from models import Document
-from get_data import get_data
+from manipulate_data import get_data
 
 
 def generate_tei_titles(data):

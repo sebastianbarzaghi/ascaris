@@ -79,13 +79,6 @@ class License(db.Model):
 class Source(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     document_id = db.Column(db.Integer, db.ForeignKey('document.id'))
-    # authors = db.Column(db.String)
-    # editors = db.Column(db.String)
-    # title = db.Column(db.String)
-    # sourcePubDate = db.Column(db.DateTime)
-    # sourcePubPlace = db.Column(db.String)
-    # publisher = db.Column(db.String)
-    # identifier = db.Column(db.String)
     text = db.Column(db.String)
 
 class Note(db.Model):

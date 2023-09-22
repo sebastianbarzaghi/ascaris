@@ -155,7 +155,7 @@ const InterfaceModule = (function () {
             .then(data => {
                 // Populate main form fields with existing data
     
-                const titles = data.title;
+                const titles = data.titles;
                 let index = 0;
                 titles.forEach((title) => {
                     if (index === 0) {
@@ -175,7 +175,7 @@ const InterfaceModule = (function () {
                     index++;
                 })
 
-                const responsibilities = data.responsibility;
+                const responsibilities = data.responsibilities;
                 let index2 = 0;
                 responsibilities.forEach((responsibility) => {
                     if (index2 === 0) {
@@ -199,7 +199,7 @@ const InterfaceModule = (function () {
                     index2++;
                 })
 
-                const pubAuthorities = data.pubAuthority;
+                const pubAuthorities = data.pubAuthorities;
                 let index3 = 0;
                 pubAuthorities.forEach((pubAuthority) => {
                     if (index3 === 0) {
@@ -221,7 +221,7 @@ const InterfaceModule = (function () {
                     index3++;
                 })
 
-                const identifiers = data.identifier;
+                const identifiers = data.identifiers;
                 let index4 = 0;
                 identifiers.forEach((identifier) => {
                     if (index4 === 0) {
@@ -241,28 +241,7 @@ const InterfaceModule = (function () {
                     index4++;
                 })
 
-                const pubPlaceName = document.querySelector('#pubPlace-name');
-                const pubPlaceAuthority = document.querySelector('#pubPlace-authority');
-                pubPlaceName.value = data.pubPlace[0].name;
-                pubPlaceAuthority.value = data.pubPlace[0].authority;
-
-                const pubDateDate = document.querySelector('#pubDate-date');
-                let parsedDate = new Date(data.pubDate[0].date);
-                let formattedDate = parsedDate.getFullYear() + "-" + ((parsedDate.getMonth() + 1) < 10 ? '0' : '') + 
-                    (parsedDate.getMonth() + 1) + "-" + (parsedDate.getDate() < 10 ? '0' : '') + parsedDate.getDate();
-                pubDateDate.value = formattedDate;
-
-                const availText = document.querySelector('#license-text');
-                const availLink = document.querySelector('#license-link');
-                availText.value = data.license[0].text;
-                for (const option of availLink.options) {
-                    if (option.value === data.license[0].link) {
-                        option.selected = true;
-                        break;
-                    }
-                };
-
-                const notes = data.note;
+                const notes = data.notes;
                 let index5 = 0;
                 notes.forEach((note) => {
                     if (index5 === 0) {
@@ -275,13 +254,13 @@ const InterfaceModule = (function () {
                     index5++;
                 })
                 
-                const categories = data.category;
+                const categories = data.categories;
                 let index6 = 0;
                 categories.forEach((category) => {
                     if (index6 === 0) {
-                        const category = document.querySelector('.metadata-category-type');    
-                        for (const option of category.options) {
-                            if (option.value === data.category[0].type) {
+                        const categoryType = document.querySelector('.metadata-category-type');    
+                        for (const option of categoryType.options) {
+                            if (option.value === category.type) {
                                 option.selected = true;
                                 break;
                             }
@@ -290,19 +269,49 @@ const InterfaceModule = (function () {
                     else {
                         cloneMetadataField('category', ['type'], category);
                     }
+                    index6++;
                 })
                 
 
+                const sources = data.sources;
+                let index7 = 0;
+                sources.forEach((source) => {
+                    if (index7 === 0) {
+                        const sourceText = document.querySelector('.metadata-source-text');
+                        sourceText.value = source.text;
+                    }
+                    else {
+                        cloneMetadataField('source', ['text'], source);
+                    }
+                    index7++;
+                })
 
-                const sourceText = document.querySelector('#source-text');
-                sourceText.value = data.source[0].text;
+                const pubPlaceName = document.querySelector('#pubPlace-name');
+                const pubPlaceAuthority = document.querySelector('#pubPlace-authority');
+                pubPlaceName.value = data.pubPlace.name;
+                pubPlaceAuthority.value = data.pubPlace.authority;
 
+                const pubDateDate = document.querySelector('#pubDate-date');
+                let parsedDate = new Date(data.pubDate.date);
+                let formattedDate = parsedDate.getFullYear() + "-" + ((parsedDate.getMonth() + 1) < 10 ? '0' : '') + 
+                    (parsedDate.getMonth() + 1) + "-" + (parsedDate.getDate() < 10 ? '0' : '') + parsedDate.getDate();
+                pubDateDate.value = formattedDate;
 
+                const availText = document.querySelector('#license-text');
+                const availLink = document.querySelector('#license-link');
+                availText.value = data.license.text;
+                for (const option of availLink.options) {
+                    if (option.value === data.license.link) {
+                        option.selected = true;
+                        break;
+                    }
+                };                
+                
                 const abstractText = document.querySelector('#abstract-text');
-                abstractText.value = data.abstract[0].text;
+                abstractText.value = data.abstract.text;
 
                 const creationDateDate = document.querySelector('#creationDate-date');
-                let creationParsedDate = new Date(data.creationDate[0].date);
+                let creationParsedDate = new Date(data.creationDate.date);
                 let creationFormattedDate = creationParsedDate.getFullYear() + "-" + 
                     ((creationParsedDate.getMonth() + 1) < 10 ? '0' : '') + (creationParsedDate.getMonth() + 1) + "-" + 
                     (creationParsedDate.getDate() < 10 ? '0' : '') + creationParsedDate.getDate();
@@ -331,7 +340,7 @@ const InterfaceModule = (function () {
     initializeAddButtons("responsibility", ["surname", "name", "authority", "role"]);
     initializeAddButtons("pubAuthority", ["name", "authority", "role"]);
     initializeAddButtons("identifier", ["text", "type"]);
-    initializeAddButtons("source");
+    initializeAddButtons("source", ['text']);
     initializeAddButtons("note", ['text']);
     initializeAddButtons("category", ["type"]);
 
