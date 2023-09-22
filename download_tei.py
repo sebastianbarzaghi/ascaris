@@ -151,11 +151,11 @@ def generate_tei_header(data):
     encoding_desc = soup.new_tag('encodingDesc')
     profile_desc = soup.new_tag('profileDesc')
 
-    if 'titles' in data:
+    if 'title' in data:
         titles = generate_tei_titles(data=data)
         title_stmt.append(titles)
 
-    if 'responsibilities' in data:
+    if 'responsibility' in data:
         responsibilities = generate_tei_responsibilities(data=data)
         title_stmt.append(responsibilities)
 
@@ -166,7 +166,7 @@ def generate_tei_header(data):
         app_info = generate_tei_app_info()
         encoding_desc.append(app_info)
     
-    if 'pubAuthorities' in data:
+    if 'pubAuthority' in data:
         pub_authorities = generate_tei_pub_authorities(data=data)
         publication_stmt.append(pub_authorities)
 
@@ -182,7 +182,7 @@ def generate_tei_header(data):
         pub_date['when'] = data['pubDate']['date']
         publication_stmt.append(pub_date)
 
-    if 'identifiers' in data:
+    if 'identifier' in data:
         identifiers = generate_tei_identifiers(data=data)
         publication_stmt.append(identifiers)
 
@@ -194,11 +194,11 @@ def generate_tei_header(data):
         availability.append(license)
         publication_stmt.append(availability)
 
-    if 'notes' in data:
+    if 'note' in data:
         notes = generate_tei_notes(data=data)
         note_stmt.append(notes)
 
-    if 'sources' in data:
+    if 'source' in data:
         sources = generate_tei_sources(data=data)
         source_desc.append(sources)
 
@@ -221,7 +221,7 @@ def generate_tei_header(data):
         languages = generate_tei_languages(data=data)
         profile_desc.append(languages)
 
-    if 'categories' in data:
+    if 'category' in data:
         categories = generate_tei_categories(data=data)
         profile_desc.append(categories)
 

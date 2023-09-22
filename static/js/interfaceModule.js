@@ -148,6 +148,7 @@ const InterfaceModule = (function () {
     }
 
     
+    
     function fetchExistingDataAndPopulate(documentId) {
         populateSKOSDropdown().then(() => {
             fetch(`/get_existing_data/${documentId}`)
@@ -155,7 +156,7 @@ const InterfaceModule = (function () {
             .then(data => {
                 // Populate main form fields with existing data
     
-                const titles = data.titles;
+                const titles = data.title;
                 let index = 0;
                 titles.forEach((title) => {
                     if (index === 0) {
@@ -175,7 +176,7 @@ const InterfaceModule = (function () {
                     index++;
                 })
 
-                const responsibilities = data.responsibilities;
+                const responsibilities = data.responsibility;
                 let index2 = 0;
                 responsibilities.forEach((responsibility) => {
                     if (index2 === 0) {
@@ -199,7 +200,7 @@ const InterfaceModule = (function () {
                     index2++;
                 })
 
-                const pubAuthorities = data.pubAuthorities;
+                const pubAuthorities = data.pubAuthority;
                 let index3 = 0;
                 pubAuthorities.forEach((pubAuthority) => {
                     if (index3 === 0) {
@@ -221,7 +222,7 @@ const InterfaceModule = (function () {
                     index3++;
                 })
 
-                const identifiers = data.identifiers;
+                const identifiers = data.identifier;
                 let index4 = 0;
                 identifiers.forEach((identifier) => {
                     if (index4 === 0) {
@@ -241,7 +242,7 @@ const InterfaceModule = (function () {
                     index4++;
                 })
 
-                const notes = data.notes;
+                const notes = data.note;
                 let index5 = 0;
                 notes.forEach((note) => {
                     if (index5 === 0) {
@@ -254,7 +255,7 @@ const InterfaceModule = (function () {
                     index5++;
                 })
                 
-                const categories = data.categories;
+                const categories = data.category;
                 let index6 = 0;
                 categories.forEach((category) => {
                     if (index6 === 0) {
@@ -273,7 +274,7 @@ const InterfaceModule = (function () {
                 })
                 
 
-                const sources = data.sources;
+                const sources = data.source;
                 let index7 = 0;
                 sources.forEach((source) => {
                     if (index7 === 0) {

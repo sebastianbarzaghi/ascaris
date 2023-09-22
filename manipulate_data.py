@@ -23,18 +23,18 @@ def get_data(document_id):
 
 
     if titles:
-        data['titles'] = []
+        data['title'] = []
         for title in titles:
-            data['titles'].append({
+            data['title'].append({
                 'id': title.id,
                 'text': title.text,
                 'language': title.language,
             })
     
     if responsibilities:
-        data['responsibilities'] = []
+        data['responsibility'] = []
         for responsibility in responsibilities:
-            data['responsibilities'].append({
+            data['responsibility'].append({
                 'surname': responsibility.surname,
                 'name': responsibility.name,
                 'authority': responsibility.authority,
@@ -42,9 +42,9 @@ def get_data(document_id):
             })
 
     if pubAuthorities:
-        data['pubAuthorities'] = []
+        data['pubAuthority'] = []
         for pubAuthority in pubAuthorities:
-            data['pubAuthorities'].append({
+            data['pubAuthority'].append({
                 'name': pubAuthority.name,
                 'authority': pubAuthority.authority,
                 'role': pubAuthority.role
@@ -57,9 +57,9 @@ def get_data(document_id):
         }
 
     if identifiers:
-        data['identifiers'] = []
+        data['identifier'] = []
         for identifier in identifiers:
-            data['identifiers'].append({
+            data['identifier'].append({
                 'id': identifier.id,
                 'text': identifier.text,
                 'type': identifier.type
@@ -77,17 +77,17 @@ def get_data(document_id):
         }
 
     if notes:
-        data['notes'] = []
+        data['note'] = []
         for note in notes:
-            data['notes'].append({
+            data['note'].append({
                 'id': note.id,
                 'text': note.text
             })
     
     if sources:
-        data['sources'] = []
+        data['source'] = []
         for source in sources:
-            data['sources'].append({
+            data['source'].append({
                 'id': source.id,
                 'text': source.text
             })
@@ -103,9 +103,9 @@ def get_data(document_id):
         }
     
     if categories:
-        data['categories'] = []
+        data['category'] = []
         for category in categories:
-            data['categories'].append({
+            data['category'].append({
                 'type': category.type
         })
 

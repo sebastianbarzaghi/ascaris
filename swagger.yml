@@ -1,0 +1,21 @@
+# swagger.yml
+
+openapi: 3.0.0
+info:
+  title: "ASCARIS REST API"
+  description: "An API for ASCARIS, a digital semantic publishing application"
+  version: "1.0.0"
+
+servers:
+  - url: "/api"
+
+paths:
+  /document:
+    get:
+      operationId: "document.read_all"
+      tags:
+        - "Document"
+      summary: "Read the list of documents"
+      responses:
+        "200":
+          description: "Success: read document list"
