@@ -12,7 +12,7 @@
     </div>
     <div class="column is-two-thirds">
         <div class="buttons is-right">
-            <a class="button" href="{{ url_for('download_all_documents_route') }}">Download XML-TEI</a>
+            <a class="button">Download XML-TEI</a>
             <a class="button">Download HTML-RDFa</a>
             <a class="button">Download TEI and RDFa</a>
             <a class="button">Download Knowledge base</a>
@@ -44,7 +44,5 @@
         {% endfor %}
     </tbody>
 </table>
-
-<a class="button" href="{{ url_for('new_document') }}">New Document</a>
 
 {% endblock %}

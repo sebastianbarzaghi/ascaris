@@ -1,25 +1,31 @@
 from flask import Flask, Response, render_template, request, redirect, url_for, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
 from flask_migrate import Migrate
-from models import db, Document, Title, Responsibility, PubAuthority, PubPlace, PubDate, Identifier, License, Source, Note, Description, Abstract, CreationPlace, CreationDate, Language, Category
-from download_tei import generate_tei_header, generate_tei_content, download_all_documents_as_tei_zip
-import os
-from manipulate_data import get_data, update_or_add_data
+from models import Document
+#from download_tei import generate_tei_header, generate_tei_content, download_all_documents_as_tei_zip
+#from manipulate_data import get_data, update_or_add_data
 from manipulate_documents import allowed_file, read_docx, read_pdf, read_txt
+from config import app, connex_app
+import requests
+import secrets
+import title
 
 
-app = Flask(__name__, static_url_path='/static')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test2.db'
-app.secret_key = 'mysecretkey'
-db.init_app(app)
-migrate = Migrate(app, db)
+connex_app.add_api("swagger.yml")
+secret_key = secrets.token_hex(24)
+app.secret_key = secret_key
 
 
 @app.route('/')
 def index():
     documents = Document.query.order_by(Document.updated_at.desc()).all()
     return render_template('index.html', documents=documents)
+
+
+@app.route('/document/<int:id>/edit', methods=['GET', 'POST'])
+def edit_document(id):
+    document = Document.query.get_or_404(id)
+    return render_template('edit_document.html', document=document)
 
 
 @app.route('/document/new', methods=['GET', 'POST'])
@@ -30,15 +36,21 @@ def new_document():
         if not title or not content:
             flash('Please enter a title and content for your document.', 'error')
             return redirect(url_for('new_document'))
-        document = Document(docTitle=title, content=content)
-        db.session.add(document)
-        db.session.commit()
-        flash('Your document has been created successfully.', 'success')
-        return redirect(url_for('index'))
+        api_url = 'http://localhost:5000/api/v1/document'
+        payload = {
+            'docTitle': title,
+            'content': content
+        }
+        response = requests.post(api_url, json=payload)
+        # Check if the API request was successful
+        if response.status_code == 201:
+            flash('Your document has been created successfully.', 'success')
+            return redirect(url_for('index'))
+        else:
+            flash('Error creating the document. Please try again later.', 'error')
     return render_template('new_document.html')
 
 
-# Main route for uploading documents
 @app.route('/document/upload', methods=['GET', 'POST'])
 def upload_document():
     if request.method == 'POST':
@@ -51,34 +63,42 @@ def upload_document():
         elif not allowed_file(uploaded_file.filename):
             flash('Invalid file format. Please upload a supported file type.', 'error')
         else:
-            # Determine the file extension and call the appropriate function
             file_extension = uploaded_file.filename.rsplit('.', 1)[1].lower()
             if file_extension == 'docx':
-                text_content = read_docx(uploaded_file)
+                content = read_docx(uploaded_file)
             elif file_extension == 'pdf':
-                text_content = read_pdf(uploaded_file)
+                content = read_pdf(uploaded_file)
             elif file_extension == 'txt':
-                text_content = read_txt(uploaded_file)
+                content = read_txt(uploaded_file)
             else:
-                text_content = None
-            
-            if text_content is not None:
-                # Create a new Document object and save it to the database
-                document = Document(docTitle=title, content=text_content)
-                db.session.add(document)
-                db.session.commit()
-                flash('Your document has been uploaded successfully.', 'success')
-                return redirect(url_for('index'))
-
+                content = None
+            if content:
+                api_url = 'http://localhost:5000/api/v1/document'
+                payload = {
+                    'docTitle': title,
+                    'content': content
+                }
+                response = requests.post(api_url, json=payload)
+                if response.status_code == 201:
+                    flash('Your document has been created successfully.', 'success')
+                    return redirect(url_for('index'))
+                else:
+                    flash('Error creating the document. Please try again later.', 'error')
     return render_template('new_document.html')
 
 
-@app.route('/document/<int:id>/edit', methods=['GET', 'POST'])
-def edit_document(id):
-    document = Document.query.get_or_404(id)
-    return render_template('edit_document.html', document=document)
+@app.route('/title/<int:title_id>', methods=['PUT'])
+def update_document_title(title_id, title):
+    return title.update(title_id, title)
 
+@app.route('/title/<int:title_id>', methods=['DELETE'])
+def delete_document_title(title_id, title):
+    return title.delete(title_id)
 
+@app.route('/save_metadata/<int:id>', methods=['POST'])
+def save_metadata(id):
+    return id
+'''
 # Flask route to save or update a document
 @app.route("/save_document", methods=["POST"])
 def save_document():
@@ -195,7 +215,7 @@ def download_all_documents_route():
     except Exception as e:
         return str(e), 500
 
-
+'''
 @app.route('/docta')
 def serve_docta():
     rdf_file_path = 'instance/docta.ttl'

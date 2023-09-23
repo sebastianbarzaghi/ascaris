@@ -7,7 +7,49 @@ info:
   version: "1.0.0"
 
 servers:
-  - url: "/api"
+  - url: "/api/v1/"
+
+components:
+  schemas:
+    Title:
+      type: "object"
+      properties:
+        id:
+          type: "number"
+        document_id:
+          type: "number"
+        text:
+          type: "string"
+        language:
+          type: "string"
+    Document:
+      type: "object"
+      required:
+        - id
+      properties:
+        docTitle:
+          type: "string"
+        content:
+          type: "string"
+        title:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Title"
+  parameters:
+    id:
+      name: "id"
+      description: "Identifier of the document to get"
+      in: path
+      required: True
+      schema:
+        type: "number"
+    title_id:
+      name: "title_id"
+      description: "Identifier of the title"
+      in: path
+      required: True
+      schema:
+        type: "integer"
 
 paths:
   /document:
@@ -19,3 +61,130 @@ paths:
       responses:
         "200":
           description: "Success: read document list"
+    post:
+      operationId: "document.create"
+      tags:
+        - Document
+      summary: "Create a document"
+      requestBody:
+        description: "Document to create"
+        required: True
+        content:
+          application/json:
+            schema:
+              x-body-name: "document"
+              type: "object"
+              properties:
+                docTitle:
+                  type: "string"
+                content:
+                  type: "string"
+      responses:
+        "201":
+          description: "Success: document created"
+
+  /document/{id}:
+    get:
+      operationId: "document.read_one"
+      tags:
+        - Document
+      summary: "Read one document"
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: "Success: read document"
+    put:
+      tags:
+        - Document
+      operationId: "document.update"
+      summary: "Update a document"
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: "Success: updated document"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "document"
+              $ref: "#/components/schemas/Document"
+    delete:
+      tags:
+        - Document
+      operationId: "document.delete"
+      summary: "Delete a document"
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "204":
+          description: "Success: deleted document"
+
+  /title:
+    post:
+      operationId: "title.create"
+      tags:
+        - Title
+      summary: "Create a title associated with a document"
+      requestBody:
+        description: "Title to create"
+        required: True
+        content:
+          application/json:
+            schema:
+              x-body-name: "title"
+              type: "object"
+              properties:
+                document_id:
+                  type: "integer"
+                text:
+                  type: "string"
+                language:
+                  type: "string"
+      responses:
+        "201":
+          description: "Success: title created"
+
+  /title/{title_id}:
+    get:
+      operationId: "title.read_one"
+      tags:
+        - Title
+      summary: "Read a title"
+      parameters:
+        - $ref: "#/components/parameters/title_id"
+      responses:
+        "200":
+          description: "Success: read title"
+    put:
+      tags:
+        - Title
+      operationId: "title.update"
+      summary: "Update a title"
+      parameters:
+        - $ref: "#/components/parameters/title_id"
+      responses:
+        "200":
+          description: "Success: title updated"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "title"
+              type: "object"
+              properties:
+                text:
+                  type: "string"
+                language:
+                  type: "string"
+    delete:
+      tags:
+        - Title
+      operationId: "title.delete"
+      summary: "Delete a title"
+      parameters:
+        - $ref: "#/components/parameters/title_id"
+      responses:
+        "204":
+          description: "Success: title deleted"

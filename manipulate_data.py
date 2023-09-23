@@ -1,11 +1,10 @@
-from models import db, Document, Title, Responsibility, PubAuthority, PubPlace, PubDate, Identifier, License, Source, Note, Description, Abstract, CreationPlace, CreationDate, Language, Category
-from datetime import datetime
+from models import db, Document
 from flask import request
 
 def get_data(document_id):
     
     data = {}
-
+    '''
     titles = Title.query.filter_by(document_id=document_id).all()
     responsibilities = Responsibility.query.filter_by(document_id=document_id).all()
     pubAuthorities = PubAuthority.query.filter_by(document_id=document_id).all()
@@ -18,10 +17,11 @@ def get_data(document_id):
     abstract = Abstract.query.filter_by(document_id=document_id).first()
     creationDate = CreationDate.query.filter_by(document_id=document_id).first()
     categories = Category.query.filter_by(document_id=document_id).all()
+    '''
 
     document = Document.query.filter_by(id=document_id).first()
 
-
+    '''
     if titles:
         data['title'] = []
         for title in titles:
@@ -108,7 +108,7 @@ def get_data(document_id):
             data['category'].append({
                 'type': category.type
         })
-
+    '''
     if document:
         data['document'] = {
             'id': document.id,
@@ -117,7 +117,7 @@ def get_data(document_id):
 
     return data
 
-
+'''
 def update_or_add_data(fields, model, document_id):
     existing_fields = model.query.filter_by(document_id=document_id).all()
     model_fields_list = [{field: request.form.getlist(field)[i] for field in fields} for i in range(len(request.form.getlist(fields[0])))]
@@ -207,3 +207,4 @@ def update_or_add_data(fields, model, document_id):
                     new_field = CreationDate(document_id=document_id,
                                             date=datetime.strptime(model_fields_dict['creationDate-date'], '%Y-%m-%d'))
                 db.session.add(new_field)
+'''
