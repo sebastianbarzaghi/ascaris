@@ -195,12 +195,14 @@ class Document(db.Model):
         backref='document', 
         cascade="all, delete, delete-orphan",
         single_parent=True,
+        uselist=False,
         lazy=True)
     pubDate = db.relationship(
         PubDate, 
         backref='document',
         cascade="all, delete, delete-orphan",
         single_parent=True,
+        uselist=False,
         lazy=True)
     identifier = db.relationship(
         Identifier,
@@ -212,6 +214,7 @@ class Document(db.Model):
         License, 
         backref='document',
         cascade="all, delete, delete-orphan",
+        uselist=False,
         single_parent=True, 
         lazy=True)
     source = db.relationship(
@@ -230,12 +233,14 @@ class Document(db.Model):
         Abstract, 
         backref='document',
         cascade="all, delete, delete-orphan",
+        uselist=False,
         single_parent=True,
         lazy=True)
     creationDate = db.relationship(
         CreationDate, 
         backref='document',
         cascade="all, delete, delete-orphan",
+        uselist=False,
         single_parent=True,
         lazy=True)
     category = db.relationship(
@@ -260,14 +265,14 @@ class DocumentSchema(ma.SQLAlchemyAutoSchema):
     title = fields.Nested(TitleSchema, many=True)
     responsibility = fields.Nested(ResponsibilitySchema, many=True)
     pubAuthority = fields.Nested(PubAuthoritySchema, many=True)
-    pubPlace = fields.Nested(PubPlaceSchema, many=True)
-    pubDate = fields.Nested(PubDateSchema, many=True)
+    pubPlace = fields.Nested(PubPlaceSchema, many=False)
+    pubDate = fields.Nested(PubDateSchema, many=False)
     identifier = fields.Nested(IdentifierSchema, many=True)
-    license = fields.Nested(LicenseSchema, many=True)
+    license = fields.Nested(LicenseSchema, many=False)
     source = fields.Nested(SourceSchema, many=True)
     note = fields.Nested(NoteSchema, many=True)
-    abstract = fields.Nested(AbstractSchema, many=True)
-    creationDate = fields.Nested(CreationDateSchema, many=True)
+    abstract = fields.Nested(AbstractSchema, many=False)
+    creationDate = fields.Nested(CreationDateSchema, many=False)
     category = fields.Nested(CategorySchema, many=True)
 
 title_schema = TitleSchema()

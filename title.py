@@ -1,5 +1,4 @@
 from flask import abort, make_response
-
 from config import db
 from models import Title, title_schema, Document
 
