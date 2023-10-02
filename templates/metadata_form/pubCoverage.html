@@ -1,37 +1,39 @@
+<div class="container" data-type="pubPlace">
 <label class="label">Publication place</label>
-<div class="field">
-    <div class="pubPlace-input-group input-group">
+<div class="field pubPlace-input-group input-group" data-id="{{ existing_pubPlace.id }}">
         <div class="row column">
             <div class="row">
                 <div class="control has-icons-left flex-1">
-                    <input id="pubPlace-name" name="pubPlace-name" class="input metadata-pubPlace metadata-pubPlace-name" type="text" placeholder="Enter publication place name">
+                    <input type="hidden" name="existing-pubPlace-id" value="{{ existing_pubPlace.id }}">
+                    <input id="pubPlace-name" name="pubPlace-name" class="input metadata-pubPlace metadata-pubPlace-name" type="text" placeholder="Enter publication place name" value="{{ existing_pubPlace.name }}">
                     <span class="icon is-small is-left">
                         <i class="fas fa-location-dot"></i>
                     </span>
                 </div>
                 <div class="control has-icons-left flex-2">
-                    <input id="pubPlace-authority" name="pubPlace-authority" class="input metadata-pubPlace metadata-pubPlace-authority" type="text" placeholder="Enter authority record">
+                    <input id="pubPlace-authority" name="pubPlace-authority" class="input metadata-pubPlace metadata-pubPlace-authority" type="text" placeholder="Enter authority record" value="{{ existing_pubPlace.authority }}">
                     <span class="icon is-small is-left">
                         <i class="fas fa-link"></i>
                     </span>
                 </div>
             </div>
         </div>
-    </div>
+</div>
 </div>
 
+<div class="container" data-type="pubDate">
 <label class="label">Publication date</label>
-<div class="field">
-    <div class="pubDate-input-group input-group">
+<div class="field pubDate-input-group input-group" data-id="{{ existing_pubDate.id }}">
         <div class="row column">
             <div class="row">
                 <div class="control has-icons-left flex-1">
-                    <input id="pubDate-date" name="pubDate-date" class="input metadata-pubDate" type="date">
+                    <input type="hidden" name="existing-pubDate-id" value="{{ existing_pubDate.id }}">
+                    <input id="pubDate-date" name="pubDate-date" class="input metadata-pubDate" type="date" value="{{ existing_pubDate.date }}">
                     <span class="icon is-small is-left">
                         <i class="fas fa-clock"></i>
                     </span>
                 </div>
             </div>
         </div>
-    </div>
+</div>
 </div>

@@ -1,14 +1,22 @@
 from flask import Flask, Response, render_template, request, redirect, url_for, flash, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from models import Document
 #from download_tei import generate_tei_header, generate_tei_content, download_all_documents_as_tei_zip
-#from manipulate_data import get_data, update_or_add_data
 from manipulate_documents import allowed_file, read_docx, read_pdf, read_txt
 from config import app, connex_app
-import requests
 import secrets
-import title
+import title as title_api
+import responsibility as responsibility_api
+import pubAuthority as pubAuthority_api
+import source as source_api
+import pubDate as pubDate_api
+import pubPlace as pubPlace_api
+import note as note_api
+import license as license_api
+import identifier as identifier_api
+import creationDate as creationDate_api
+import abstract as abstract_api
+import document as document_api
+import category as category_api
+from datetime import datetime
 
 
 connex_app.add_api("swagger.yml")
@@ -18,14 +26,45 @@ app.secret_key = secret_key
 
 @app.route('/')
 def index():
-    documents = Document.query.order_by(Document.updated_at.desc()).all()
+    documents = document_api.read_all()
     return render_template('index.html', documents=documents)
 
 
 @app.route('/document/<int:id>/edit', methods=['GET', 'POST'])
 def edit_document(id):
-    document = Document.query.get_or_404(id)
-    return render_template('edit_document.html', document=document)
+    document = document_api.read_one(id)
+
+    concepts = category_api.get_skos_concepts()
+    existing_titles = document['title']
+    existing_responsibilities = document['responsibility']
+    existing_pubAuthorities = document['pubAuthority']
+    existing_pubPlace = document['pubPlace']
+    existing_pubDate = document['pubDate']
+    existing_identifiers = document['identifier']
+    existing_license = document['license']
+    existing_sources = document['source']
+    existing_notes = document['note']
+    existing_abstract = document['abstract']
+    existing_creationDate = document['creationDate']
+    existing_categories = document['category']
+    existing_pubDate['date'] = datetime.strptime(existing_pubDate['date'], '%Y-%m-%dT%H:%M:%S').strftime('%Y-%m-%d')
+    existing_creationDate['date'] = datetime.strptime(existing_creationDate['date'], '%Y-%m-%dT%H:%M:%S').strftime('%Y-%m-%d')
+
+    return render_template('edit_document.html', 
+                           document=document,
+                           existing_titles=existing_titles,
+                           existing_responsibilities=existing_responsibilities,
+                           existing_pubAuthorities=existing_pubAuthorities,
+                           existing_pubPlace=existing_pubPlace,
+                           existing_pubDate=existing_pubDate,
+                           existing_identifiers=existing_identifiers,
+                           existing_license=existing_license,
+                           existing_sources=existing_sources,
+                           existing_notes=existing_notes,
+                           existing_abstract=existing_abstract,
+                           existing_creationDate=existing_creationDate,
+                           existing_categories=existing_categories,
+                           concepts=concepts)
 
 
 @app.route('/document/new', methods=['GET', 'POST'])
@@ -33,21 +72,11 @@ def new_document():
     if request.method == 'POST':
         title = request.form['docTitle']
         content = request.form['content']
-        if not title or not content:
-            flash('Please enter a title and content for your document.', 'error')
-            return redirect(url_for('new_document'))
-        api_url = 'http://localhost:5000/api/v1/document'
         payload = {
             'docTitle': title,
             'content': content
         }
-        response = requests.post(api_url, json=payload)
-        # Check if the API request was successful
-        if response.status_code == 201:
-            flash('Your document has been created successfully.', 'success')
-            return redirect(url_for('index'))
-        else:
-            flash('Error creating the document. Please try again later.', 'error')
+        document_api.create(payload)
     return render_template('new_document.html')
 
 
@@ -73,32 +102,237 @@ def upload_document():
             else:
                 content = None
             if content:
-                api_url = 'http://localhost:5000/api/v1/document'
                 payload = {
                     'docTitle': title,
                     'content': content
                 }
-                response = requests.post(api_url, json=payload)
-                if response.status_code == 201:
-                    flash('Your document has been created successfully.', 'success')
-                    return redirect(url_for('index'))
-                else:
-                    flash('Error creating the document. Please try again later.', 'error')
+                document_api.create(payload)
     return render_template('new_document.html')
 
 
+@app.route('/metadata/<int:id>', methods=['PUT'])
+def save_metadata(id):
+    metadata = [
+        'title',
+        'responsibility',
+        'pubAuthority',
+        'source',
+        'pubPlace',
+        'pubDate',
+        'note',
+        'license',
+        'identifier',
+        'creationDate',
+        'category',
+        'abstract'
+    ]
+    try:
+        data = request.get_json()
+        for field_group in metadata:
+            print(field_group)
+            if data[field_group]:
+                for field in data[field_group]:
+                    field_id = field['id']
+                    del field['id']
+                    if field_group == 'title':
+                        title_api.update(field_id, field)
+                    elif field_group == 'responsibility':
+                        responsibility_api.update(field_id, field)
+                    elif field_group == 'pubAuthority':
+                        pubAuthority_api.update(field_id, field)
+                    elif field_group == 'source':
+                        source_api.update(field_id, field)
+                    elif field_group == 'pubPlace':
+                        pubPlace_api.update(field_id, field)
+                    elif field_group == 'pubDate':
+                        pubDate_api.update(field_id, field)
+                    elif field_group == 'note':
+                        note_api.update(field_id, field)
+                    elif field_group == 'license':
+                        license_api.update(field_id, field)
+                    elif field_group == 'identifier':
+                        identifier_api.update(field_id, field)
+                    elif field_group == 'creationDate':
+                        creationDate_api.update(field_id, field)
+                    elif field_group == 'category':
+                        category_api.update(field_id, field)
+                    elif field_group == 'abstract':
+                        abstract_api.update(field_id, field)
+                
+        return jsonify(data), 200  # Return a response to the client
+    except Exception as e:
+        return str(e), 400  # Handle errors and return an appropriate response
+
+
+@app.route('/title', methods=['POST'])
+def create_title():
+    data = request.json
+    return title_api.create(data)
+
 @app.route('/title/<int:title_id>', methods=['PUT'])
 def update_document_title(title_id, title):
-    return title.update(title_id, title)
+    return title_api.update(title_id, title)
 
 @app.route('/title/<int:title_id>', methods=['DELETE'])
-def delete_document_title(title_id, title):
-    return title.delete(title_id)
+def delete_document_title(title_id):
+    return title_api.delete(title_id)
 
-@app.route('/save_metadata/<int:id>', methods=['POST'])
-def save_metadata(id):
-    return id
+
+@app.route('/responsibility', methods=['POST'])
+def create_responsibility():
+    data = request.json
+    return responsibility_api.create(data)
+
+@app.route('/responsibility/<int:responsibility_id>', methods=['PUT'])
+def update_document_responsibility(responsibility_id, responsibility):
+    return responsibility_api.update(responsibility_id, responsibility)
+
+@app.route('/responsibility/<int:responsibility_id>', methods=['DELETE'])
+def delete_document_responsibility(responsibility_id):
+    return responsibility_api.delete(responsibility_id)
+
+
+@app.route('/pubAuthority', methods=['POST'])
+def create_pubAuthority():
+    data = request.json
+    return pubAuthority_api.create(data)
+
+@app.route('/pubAuthority/<int:pubAuthority_id>', methods=['PUT'])
+def update_document_pubAuthority(pubAuthority_id, pubAuthority):
+    return pubAuthority_api.update(pubAuthority_id, pubAuthority)
+
+@app.route('/pubAuthority/<int:pubAuthority_id>', methods=['DELETE'])
+def delete_document_pubAuthority(pubAuthority_id):
+    return pubAuthority_api.delete(pubAuthority_id)
+
+
+@app.route('/source', methods=['POST'])
+def create_source():
+    data = request.json
+    return source_api.create(data)
+
+@app.route('/source/<int:source_id>', methods=['PUT'])
+def update_document_source(source_id, source):
+    return source_api.update(source_id, source)
+
+@app.route('/source/<int:source_id>', methods=['DELETE'])
+def delete_document_source(source_id):
+    return source_api.delete(source_id)
+
+
+@app.route('/license', methods=['POST'])
+def create_license():
+    data = request.json
+    return license_api.create(data)
+
+@app.route('/license/<int:license_id>', methods=['PUT'])
+def update_document_license(license_id, license):
+    return license_api.update(license_id, license)
+
+@app.route('/license/<int:license_id>', methods=['DELETE'])
+def delete_document_license(license_id):
+    return license_api.delete(license_id)
+
+
+@app.route('/pubPlace', methods=['POST'])
+def create_pubPlace():
+    data = request.json
+    return pubPlace_api.create(data)
+
+@app.route('/pubPlace/<int:pubPlace_id>', methods=['PUT'])
+def update_document_pubPlace(pubPlace_id, pubPlace):
+    return pubPlace_api.update(pubPlace_id, pubPlace)
+
+@app.route('/pubPlace/<int:pubPlace_id>', methods=['DELETE'])
+def delete_document_pubPlace(pubPlace_id):
+    return pubPlace_api.delete(pubPlace_id)
+
+
+@app.route('/note', methods=['POST'])
+def create_note():
+    data = request.json
+    return note_api.create(data)
+
+@app.route('/note/<int:note_id>', methods=['PUT'])
+def update_document_note(note_id, note):
+    return note_api.update(note_id, note)
+
+@app.route('/note/<int:note_id>', methods=['DELETE'])
+def delete_document_note(note_id):
+    return note_api.delete(note_id)
+
+
+@app.route('/pubDate', methods=['POST'])
+def create_pubDate():
+    data = request.json
+    return pubDate_api.create(data)
+
+@app.route('/pubDate/<int:pubDate_id>', methods=['PUT'])
+def update_document_pubDate(pubDate_id, pubDate):
+    return pubDate_api.update(pubDate_id, pubDate)
+
+@app.route('/pubDate/<int:pubDate_id>', methods=['DELETE'])
+def delete_document_pubDate(pubDate_id):
+    return pubDate_api.delete(pubDate_id)
+
+
+@app.route('/identifier', methods=['POST'])
+def create_identifier():
+    data = request.json
+    return identifier_api.create(data)
+
+@app.route('/identifier/<int:identifier_id>', methods=['PUT'])
+def update_document_identifier(identifier_id, identifier):
+    return identifier_api.update(identifier_id, identifier)
+
+@app.route('/identifier/<int:identifier_id>', methods=['DELETE'])
+def delete_document_identifier(identifier_id):
+    return identifier_api.delete(identifier_id)
+
+
+@app.route('/creationDate', methods=['POST'])
+def create_creationDate():
+    data = request.json
+    return creationDate_api.create(data)
+
+@app.route('/creationDate/<int:creationDate_id>', methods=['PUT'])
+def update_document_creationDate(creationDate_id, creationDate):
+    return creationDate_api.update(creationDate_id, creationDate)
+
+@app.route('/creationDate/<int:creationDate_id>', methods=['DELETE'])
+def delete_document_creationDate(creationDate_id):
+    return creationDate_api.delete(creationDate_id)
+
+
+@app.route('/category', methods=['POST'])
+def create_category():
+    data = request.json
+    return category_api.create(data)
+
+@app.route('/category/<int:category_id>', methods=['PUT'])
+def update_document_category(category_id, category):
+    return category_api.update(category_id, category)
+
+@app.route('/category/<int:category_id>', methods=['DELETE'])
+def delete_document_category(category_id):
+    return category_api.delete(category_id)
+
+
+@app.route('/abstract', methods=['POST'])
+def create_abstract():
+    data = request.json
+    return abstract_api.create(data)
+
+@app.route('/abstract/<int:abstract_id>', methods=['PUT'])
+def update_document_abstract(abstract_id, abstract):
+    return abstract_api.update(abstract_id, abstract)
+
+@app.route('/abstract/<int:abstract_id>', methods=['DELETE'])
+def delete_document_abstract(abstract_id):
+    return abstract_api.delete(abstract_id)
+
 '''
+
 # Flask route to save or update a document
 @app.route("/save_document", methods=["POST"])
 def save_document():
@@ -130,32 +364,6 @@ def get_document(document_id):
         return jsonify({"docTitle": document.docTitle, "content": document.content})
     else:
         return jsonify({"error": "Document not found"}), 404
-
-
-@app.route('/save_metadata/<int:id>', methods=['POST'])
-def save_metadata(id):
-    document = Document.query.get_or_404(id)
-    if request.method == 'POST':
-        update_or_add_data(['title-text', 'title-language'], Title, document.id)
-        update_or_add_data(['responsibility-surname', 'responsibility-name', 'responsibility-authority', 'responsibility-role'], Responsibility, document.id)
-        update_or_add_data(['pubAuthority-name', 'pubAuthority-authority', 'pubAuthority-role'], PubAuthority, document.id)
-        update_or_add_data(['identifier-text', 'identifier-type'], Identifier, document.id)
-        update_or_add_data(['note-text'], Note, document.id)
-        update_or_add_data(['category-type'], Category, document.id)
-        update_or_add_data(['source-text'], Source, document.id)
-        update_or_add_data(['pubPlace-name', 'pubPlace-authority'], PubPlace, document.id)
-        update_or_add_data(['pubDate-date'], PubDate, document.id)
-        update_or_add_data(['license-text', 'license-link'], License, document.id)
-        update_or_add_data(['abstract-text'], Abstract, document.id)
-        update_or_add_data(['creationDate-date'], CreationDate, document.id)
-        db.session.commit()
-    return redirect(url_for('edit_document', id=document.id))
-        
-
-@app.route('/get_existing_data/<int:id>')
-def get_existing_data(id):
-    existing_data = get_data(id)
-    return jsonify(existing_data)
 
 
 @app.route('/delete/<model_name>/<int:record_id>', methods=['DELETE'])
@@ -216,17 +424,6 @@ def download_all_documents_route():
         return str(e), 500
 
 '''
-@app.route('/docta')
-def serve_docta():
-    rdf_file_path = 'instance/docta.ttl'
-    with open(rdf_file_path, 'rb') as f:
-        rdf_content = f.read()
-    response = app.response_class(
-        response=rdf_content,
-        status=200,
-        mimetype='application/turtle'
-    )
-    return response
 
 
 if __name__ == '__main__':

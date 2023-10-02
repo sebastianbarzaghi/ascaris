@@ -1,21 +1,31 @@
+<div class="container" data-type="license">
 <label class="label">License</label>
-<div class="field">
-    <div class="license-input-group input-group">
+<div class="field license-input-group input-group" data-id="{{ existing_license.id }}">
         <div class="row column">
             <div class="row">
                 <div class="control has-icons-left">
+                    <input type="hidden" name="existing-license-id" value="{{ existing_license.id }}">
                     <div class="select">
                         <select id="license-link" name="license-link" class="dropdown">
                             <option value="">--Select--</option>
-                            <option value="https://creativecommons.org/publicdomain/zero/1.0/">CC0 (Creative Commons Zero)</option>
-                            <option value="https://creativecommons.org/licenses/by/4.0/">CC BY (Attribution)</option>
-                            <option value="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA (Attribution-ShareAlike)</option>
-                            <option value="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC (Attribution-NonCommercial)</option>
-                            <option value="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)</option>
-                            <option value="https://opensource.org/licenses/MIT">MIT License</option>
-                            <option value="https://opensource.org/licenses/BSD-3-Clause">BSD License</option>
-                            <option value="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License (GPL)</option>
-                            <option value="https://www.gnu.org/licenses/lgpl-3.0.en.html">GNU Lesser General Public License (LGPL)</option>
+                            <option value="https://creativecommons.org/publicdomain/zero/1.0/" 
+                            {% if existing_license.link == 'https://creativecommons.org/publicdomain/zero/1.0/' %} selected {% endif %}>CC0 (Creative Commons Zero)</option>
+                            <option value="https://creativecommons.org/licenses/by/4.0/"
+                            {% if existing_license.link == 'https://creativecommons.org/licenses/by/4.0/' %} selected {% endif %}>CC BY (Attribution)</option>
+                            <option value="https://creativecommons.org/licenses/by-sa/4.0/"
+                            {% if existing_license.link == 'https://creativecommons.org/licenses/by-sa/4.0/' %} selected {% endif %}>CC BY-SA (Attribution-ShareAlike)</option>
+                            <option value="https://creativecommons.org/licenses/by-nc/4.0/"
+                            {% if existing_license.link == 'https://creativecommons.org/licenses/by-nc/4.0/' %} selected {% endif %}>CC BY-NC (Attribution-NonCommercial)</option>
+                            <option value="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+                            {% if existing_license.link == 'https://creativecommons.org/licenses/by-nc-sa/4.0/' %} selected {% endif %}>CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)</option>
+                            <option value="https://opensource.org/licenses/MIT"
+                            {% if existing_license.link == 'https://opensource.org/licenses/MIT' %} selected {% endif %}>MIT License</option>
+                            <option value="https://opensource.org/licenses/BSD-3-Clause"
+                            {% if existing_license.link == 'https://opensource.org/licenses/BSD-3-Clause' %} selected {% endif %}>BSD License</option>
+                            <option value="https://www.gnu.org/licenses/gpl-3.0.en.html"
+                            {% if existing_license.link == 'https://www.gnu.org/licenses/gpl-3.0.en.html' %} selected {% endif %}>GNU General Public License (GPL)</option>
+                            <option value="https://www.gnu.org/licenses/lgpl-3.0.en.html"
+                            {% if existing_license.link == 'https://www.gnu.org/licenses/lgpl-3.0.en.html' %} selected {% endif %}>GNU Lesser General Public License (LGPL)</option>
                             <!-- ADD "OTHER" OPTION? -->
                         </select>
                     </div>
@@ -26,12 +36,12 @@
             </div>
             <div class="row">
                 <div class="control has-icons-left flex-full-width">
-                    <textarea id="license-text" name="license-text" class="input metadata-license metadata-license-text" type="textarea" placeholder="Enter license information"></textarea>
+                    <textarea id="license-text" name="license-text" class="input metadata-license metadata-license-text" type="textarea" placeholder="Enter license information">{{ existing_license.text }}</textarea>
                     <span class="icon is-small is-left">
                         <i class="fas fa-font"></i>
                     </span>
                 </div>
             </div>
         </div>
-    </div>
+</div>
 </div>

@@ -1,9 +1,9 @@
 from flask import make_response, abort, request
 from config import db
-from models import Document, document_schema, documents_schema, Title
+from models import Document, document_schema, documents_schema
 
 def read_all():
-    documents = Document.query.all()
+    documents = Document.query.order_by(Document.updated_at.desc())
     return documents_schema.dump(documents)
 
 def read_one(id):

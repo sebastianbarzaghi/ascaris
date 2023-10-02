@@ -1,36 +1,42 @@
-<label class="label">Title</label>
-<div class="field">
-    <div class="title-input-group input-group">
-        <div class="row column">
-            <div class="row">
-            <div class="control has-icons-left flex-5">
-                <input id="title-text" name="title-text" class="input metadata-title metadata-title-text" type="text" placeholder="Enter title">
-                <span class="icon is-small is-left">
-                    <i class="fas fa-font"></i>
-                </span>
-            </div>
-            <div class="control has-icons-left flex-1">
-                <div class="select">
-                    <select id="title-language" name="title-language" class="select metadata-title metadata-title-language">
-                        <option value="">--Select--</option>
-                        <option value="en">en</option>
-                        <option value="it">it</option>
-                        <option value="es">es</option>
-                        <option value="fr">fr</option>
-                        <!-- Add more language options here -->
-                    </select>
+<div class="container" data-type="title">
+    <label class="label">Title</label>
+{% for existing_title in existing_titles %}
+    <div class="field title-input-group input-group" data-id="{{ existing_title.id }}">
+            <div class="row column">
+                <div class="row">
+                <div class="control has-icons-left flex-5">
+                    <input type="hidden" name="existing-title-id" value="{{ existing_title.id }}">
+                    <input id="title-text" name="title-text" class="input metadata metadata-title metadata-title-text" type="text" placeholder="Enter title" value="{{ existing_title.text }}">
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-font"></i>
+                    </span>
                 </div>
-                <span class="icon is-small is-left">
-                    <i class="fas fa-language"></i>
-                </span>
+                <div class="control has-icons-left flex-1">
+                    <div class="select">
+                        <select id="title-language" name="title-language" class="select metadata metadata-title metadata-title-language">
+                            <option value="">--Select--</option>
+                            <option value="en" {% if existing_title.language == 'en' %} selected {% endif %}>en</option>
+                            <option value="it" {% if existing_title.language == 'it' %} selected {% endif %}>it</option>
+                            <option value="es" {% if existing_title.language == 'es' %} selected {% endif %}>es</option>
+                            <option value="fr" {% if existing_title.language == 'fr' %} selected {% endif %}>fr</option>
+                            <!-- Add more language options here -->
+                        </select>
+                    </div>
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-language"></i>
+                    </span>
+                </div>
+                </div>
+                {% if loop.first %}
+                    <span class="button is-success is-light add-button add-title-button">
+                        <i class="fa-solid fa-plus"></i>
+                    </span>
+                {% else %}
+                    <span class="button is-danger is-light remove-button remove-title-button" data-type="title" data-id="{{ existing_title.id }}">
+                        <i class="fa-solid fa-minus"></i>
+                    </span>
+                {% endif %} 
             </div>
-            </div>
-                <span class="button is-success is-light add-button add-title-button">
-                    <i class="fa-solid fa-plus"></i>
-                </span>   
-        </div>
     </div>
-</div>
-<div class="field additional-title additional-container">
-    <!-- Additional titles will be inserted here -->
+{% endfor %}
 </div>

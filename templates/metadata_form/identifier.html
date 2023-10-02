@@ -1,39 +1,44 @@
+<div class="container" data-type="identifier">
 <label class="label">Identifier</label>
-<div class="field">
-    <div class="identifier-input-group input-group">
-        <div class="row column">
-            <div class="row">
-                <div class="control has-icons-left flex-5">
-                    <input id="identifier-text" name="identifier-text" class="input metadata-identifier metadata-identifier-text" type="text" placeholder="Enter identifier">
-                    <span class="icon is-small is-left">
-                        <i class="fas fa-font"></i>
-                    </span>
-                </div>
-                <div class="control has-icons-left flex-1">
-                    <div class="select">
-                        <select id="identifier-type" name="identifier-type" class="dropdown metadata-identifier-type">
-                            <option value="">--Select--</option>
-                            <option value="isbn">ISBN</option>
-                            <option value="issn">ISSN</option>
-                            <option value="doi">DOI</option>
-                            <option value="uri">URI</option>
-                            <option value="viaf">VIAF</option>
-                            <option value="estc">ESTC</option>
-                            <option value="oclc">OCLC</option>
-                            <!-- ADD "OTHER" OPTION? -->
-                        </select>
+{% for existing_identifier in existing_identifiers %}
+    <div class="field identifier-input-group input-group" data-id="{{ existing_identifier.id }}">
+            <div class="row column">
+                <div class="row">
+                    <div class="control has-icons-left flex-5">
+                        <input type="hidden" name="existing-identifier-id" value="{{ existing_identifier.id }}">
+                        <input id="identifier-text" name="identifier-text" class="input metadata-identifier metadata-identifier-text" type="text" placeholder="Enter identifier" value="{{ existing_identifier.text }}">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-font"></i>
+                        </span>
                     </div>
-                    <span class="icon is-small is-left">
-                        <i class="fas fa-id-card"></i>
-                    </span>
+                    <div class="control has-icons-left flex-1">
+                        <div class="select">
+                            <select id="identifier-type" name="identifier-type" class="dropdown metadata-identifier-type">
+                                <option value="">--Select--</option>
+                                <option value="isbn" {% if existing_identifier.type == 'isbn' %} selected {% endif %}>ISBN</option>
+                                <option value="issn" {% if existing_identifier.type == 'issn' %} selected {% endif %}>ISSN</option>
+                                <option value="doi" {% if existing_identifier.type == 'doi' %} selected {% endif %}>DOI</option>
+                                <option value="uri" {% if existing_identifier.type == 'uri' %} selected {% endif %}>URI</option>
+                                <option value="viaf" {% if existing_identifier.type == 'viaf' %} selected {% endif %}>VIAF</option>
+                                <option value="estc" {% if existing_identifier.type == 'estc' %} selected {% endif %}>ESTC</option>
+                                <option value="oclc" {% if existing_identifier.type == 'oclc' %} selected {% endif %}>OCLC</option>
+                            </select>
+                        </div>
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-id-card"></i>
+                        </span>
+                    </div>
                 </div>
+                {% if loop.first %}
+                    <span class="button is-success is-light add-button add-identifier-button">
+                        <i class="fa-solid fa-plus"></i>
+                    </span>
+                {% else %}
+                    <span class="button is-danger is-light remove-identifier-button">
+                        <i class="fa-solid fa-minus"></i>
+                    </span>
+                {% endif %} 
             </div>
-            <span class="button is-success is-light add-button add-identifier-button">
-                <i class="fa-solid fa-plus"></i>
-            </span>
-        </div>
     </div>
-</div>
-<div class="field additional-identifier additional-container">
-<!-- Additional identifiers will be inserted here -->
+{% endfor %}
 </div>

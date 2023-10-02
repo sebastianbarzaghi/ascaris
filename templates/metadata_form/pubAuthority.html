@@ -1,42 +1,48 @@
+<div class="container" data-type="pubAuthority">
 <label class="label">Publication authority</label>
-<div class="field">
-    <div class="pubAuthority-input-group input-group">
-        <div class="row column">
-            <div class="row">
-                <div class="control has-icons-left flex-1">
-                    <input id="pubAuthority-name" name="pubAuthority-name" class="input metadata-pubAuthority metadata-pubAuthority-name" type="text" placeholder="Enter name">
-                    <span class="icon is-small is-left">
-                        <i class="fas fa-font"></i>
-                    </span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="control has-icons-left flex-5">
-                    <input id="pubAuthority-authority" name="pubAuthority-authority" class="input metadata-pubAuthority metadata-pubAuthority-authority" type="text" placeholder="Enter authority record">
-                    <span class="icon is-small is-left">
-                        <i class="fas fa-link"></i>
-                    </span>
-                </div>
-                <div class="control has-icons-left flex-1">
-                    <div class="select">
-                        <select id="pubAuthority-role" name="pubAuthority-role" class="dropdown metadata-pubAuthority-role">
-                            <option value="">--Select--</option>
-                            <option value="publisher">Publisher</option>
-                            <option value="distributor">Distributor</option>
-                            <option value="authority">Authority</option>
-                        </select>
+{% for existing_pubAuthority in existing_pubAuthorities %}
+    <div class="field pubAuthority-input-group input-group" data-id="{{ existing_pubAuthority.id }}">
+            <div class="row column">
+                <div class="row">
+                    <div class="control has-icons-left flex-1">
+                        <input type="hidden" name="existing-pubAuthority-id" value="{{ existing_pubAuthority.id }}">
+                        <input id="pubAuthority-name" name="pubAuthority-name" class="input metadata-pubAuthority metadata-pubAuthority-name" type="text" placeholder="Enter name" value="{{ existing_pubAuthority.name }}">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-font"></i>
+                        </span>
                     </div>
-                    <span class="icon is-small is-left">
-                        <i class="fas fa-user-gear"></i>
-                    </span>
                 </div>
+                <div class="row">
+                    <div class="control has-icons-left flex-5">
+                        <input id="pubAuthority-authority" name="pubAuthority-authority" class="input metadata-pubAuthority metadata-pubAuthority-authority" type="text" placeholder="Enter authority record" value="{{ existing_pubAuthority.authority }}">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-link"></i>
+                        </span>
+                    </div>
+                    <div class="control has-icons-left flex-1">
+                        <div class="select">
+                            <select id="pubAuthority-role" name="pubAuthority-role" class="dropdown metadata-pubAuthority-role">
+                                <option value="">--Select--</option>
+                                <option value="publisher" {% if existing_pubAuthority.role == 'publisher' %} selected {% endif %}>Publisher</option>
+                                <option value="distributor" {% if existing_pubAuthority.role == 'distributor' %} selected {% endif %}>Distributor</option>
+                                <option value="authority" {% if existing_pubAuthority.role == 'authority' %} selected {% endif %}>Authority</option>
+                            </select>
+                        </div>
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-user-gear"></i>
+                        </span>
+                    </div>
+                </div>
+                {% if loop.first %}
+                    <span class="button is-success is-light add-button add-pubAuthority-button">
+                        <i class="fa-solid fa-plus"></i>
+                    </span>
+                {% else %}
+                    <span class="button is-danger is-light remove-pubAuthority-button">
+                        <i class="fa-solid fa-minus"></i>
+                    </span>
+                {% endif %} 
             </div>
-            <span class="button is-success is-light add-button add-pubAuthority-button">
-                <i class="fa-solid fa-plus"></i>
-            </span>
-        </div>
     </div>
-</div>
-<div class="field additional-pubAuthority additional-container">
-    <!-- Additional authorities will be inserted here -->
+{% endfor %}
 </div>

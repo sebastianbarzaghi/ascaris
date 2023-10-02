@@ -1,6 +1,8 @@
 from flask import abort, make_response
 from config import db
 from models import Category, category_schema, Document
+from rdflib import Graph, Namespace, RDF
+
 
 def read_one(category_id):
     category = Category.query.get(category_id)
@@ -42,3 +44,16 @@ def delete(category_id):
         return make_response("Success: category deleted")
     else:
         abort(404, f"Error: category with ID {category_id} not found")
+
+
+skos = Namespace('http://www.w3.org/2004/02/skos/core#')
+
+def get_skos_concepts():
+    g = Graph()
+    g.parse('instance/docta.ttl', format='turtle')
+    concepts = []
+    for concept in g.subjects(predicate=RDF.type, object=skos.Concept):
+        concept_label = g.value(subject=concept, predicate=skos.prefLabel)
+        if concept_label:
+            concepts.append({"value": str(concept), "label": concept_label.value})
+            return concepts

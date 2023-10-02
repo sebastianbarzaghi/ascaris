@@ -1,12 +1,17 @@
+<div class="container" data-type="category">
 <label class="label">Category</label>
-<div class="field">
-    <div class="category-input-group input-group">
+{% for existing_category in existing_categories %}
+  <div class="field category-input-group input-group" data-id="{{ existing_category.id }}">
       <div class="row column">
         <div class="row">
           <div class="control has-icons-left">
+            <input type="hidden" name="existing-category-id" value="{{ existing_category.id }}">
             <div class="select">
               <select id="category-type" name="category-type" class="dropdown metadata-category-type">
                 <option value="">--Select--</option>
+                {% for concept in concepts %}
+                    <option value="{{ concept.value }}" {% if concept.value == existing_category.type %}selected{% endif %}>{{ concept.label }}</option>
+                {% endfor %}
               </select>
             </div>
             <span class="icon is-small is-left">
@@ -18,8 +23,6 @@
           <i class="fa-solid fa-plus"></i>
         </span>
       </div>
-    </div>
-</div>
-<div class="field additional-category additional-container">
-  <!-- Additional categories will be inserted here -->
+  </div>
+{% endfor %}
 </div>

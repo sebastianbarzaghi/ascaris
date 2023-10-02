@@ -1,50 +1,56 @@
+<div class="container" data-type="responsibility">
 <label class="label">Responsibility</label>
-<div class="field">
-    <div class="responsibility-input-group input-group">
-        <div class="row column">
-            <div class="row">
-                <div class="control has-icons-left flex-1">
-                    <input id="responsibility-surname" name="responsibility-surname" class="input metadata-responsibility metadata-responsibility-surname" type="text" placeholder="Enter surname">
-                    <span class="icon is-small is-left">
-                        <i class="fas fa-people-group"></i>
-                    </span>
-                </div>
-                <div class="control has-icons-left flex-1">
-                    <input id="responsibility-name" name="responsibility-name" class="input metadata-responsibility metadata-responsibility-name" type="text" placeholder="Enter name">
-                    <span class="icon is-small is-left">
-                        <i class="fas fa-person"></i>
-                    </span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="control has-icons-left flex-5">
-                    <input id="responsibility-authority" name="responsibility-authority" class="input metadata-responsibility metadata-responsibility-authority" type="text" placeholder="Enter authority record">
-                    <span class="icon is-small is-left">
-                        <i class="fas fa-link"></i>
-                    </span>
-                </div>
-                <div class="control has-icons-left flex-1">
-                    <div class="select">
-                        <select id="responsibility-role" name="responsibility-role" class="dropdown metadata-responsibility-role">
-                            <option value="author">Author</option>
-                            <option value="editor">Editor</option>
-                            <option value="sponsor">Sponsor</option>
-                            <option value="sponsor">Founder</option>
-                            <option value="sponsor">Principal</option>
-                            <!-- Add "Other" option? -->
-                        </select>
+{% for existing_responsibility in existing_responsibilities %}
+    <div class="field responsibility-input-group input-group" data-id="{{ existing_responsibility.id }}">
+            <div class="row column">
+                <div class="row">
+                    <div class="control has-icons-left flex-1">
+                        <input type="hidden" name="existing-responsibility-id" value="{{ existing_responsibility.id }}">
+                        <input id="responsibility-surname" name="responsibility-surname" class="input metadata-responsibility metadata-responsibility-surname" type="text" placeholder="Enter surname" value="{{ existing_responsibility.surname }}">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-people-group"></i>
+                        </span>
                     </div>
-                    <span class="icon is-small is-left">
-                        <i class="fas fa-user-gear"></i>
+                    <div class="control has-icons-left flex-1">
+                        <input id="responsibility-name" name="responsibility-name" class="input metadata-responsibility metadata-responsibility-name" type="text" placeholder="Enter name" value="{{ existing_responsibility.name }}">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-person"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="control has-icons-left flex-5">
+                        <input id="responsibility-authority" name="responsibility-authority" class="input metadata-responsibility metadata-responsibility-authority" type="text" placeholder="Enter authority record" value="{{ existing_responsibility.authority }}">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-link"></i>
+                        </span>
+                    </div>
+                    <div class="control has-icons-left flex-1">
+                        <div class="select">
+                            <select id="responsibility-role" name="responsibility-role" class="dropdown metadata-responsibility-role">
+                                <option value="author" {% if existing_responsibility.role == 'author' %} selected {% endif %}>Author</option>
+                                <option value="editor" {% if existing_responsibility.role == 'editor' %} selected {% endif %}>Editor</option>
+                                <option value="sponsor" {% if existing_responsibility.role == 'sponsor' %} selected {% endif %}>Sponsor</option>
+                                <option value="founder" {% if existing_responsibility.role == 'founder' %} selected {% endif %}>Founder</option>
+                                <option value="principal" {% if existing_responsibility.role == 'principal' %} selected {% endif %}>Principal</option>
+                                <!-- Add "Other" option? -->
+                            </select>
+                        </div>
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-user-gear"></i>
+                        </span>
+                    </div>    
+                </div>
+                {% if loop.first %}
+                    <span class="button is-success is-light add-button add-responsibility-button">
+                        <i class="fa-solid fa-plus"></i>
                     </span>
-                </div>    
+                {% else %}
+                    <span class="button is-danger is-light remove-responsibility-button">
+                        <i class="fa-solid fa-minus"></i>
+                    </span>
+                {% endif %} 
             </div>
-            <span class="button is-success is-light add-button add-responsibility-button">
-                <i class="fa-solid fa-plus"></i>
-            </span>
-        </div>
     </div>
-</div>
-<div class="field additional-responsibility additional-container">
-    <!-- Additional responsibilities will be inserted here -->
+{% endfor %}
 </div>

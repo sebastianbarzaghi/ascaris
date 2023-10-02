@@ -1,119 +1,27 @@
-<label class="label">Source</label>
-<div class="field">
-    <div class="source-input-group input-group">
-        <div class="row column">
-            <div class="row">
-                <div class="control has-icons-left flex-1">
-                    <input id="source-text" name="source-text" class="input metadata-source metadata-source-text" type="text" placeholder="Enter source">
-                    <!--
-                    <div class="row">
-                    <div class="control has-icons-left">
-                        <input id="responsibility-surname" name="responsibility-surname" class="input metadata-responsibility metadata-responsibility-surname" type="text" placeholder="Enter surname">
-                        <span class="icon is-small is-left">
-                            <i class="fas fa-people-group"></i>
-                        </span>
-                    </div>
-                    <div class="control has-icons-left">
-                        <input id="responsibility-name" name="responsibility-name" class="input metadata-responsibility metadata-responsibility-name" type="text" placeholder="Enter name">
-                        <span class="icon is-small is-left">
-                            <i class="fas fa-person"></i>
-                        </span>
-                    </div>
-                    <div class="row">
-                        <div class="control has-icons-left">
-                            <input id="responsibility-authority" name="responsibility-authority" class="input metadata-responsibility metadata-responsibility-authority" type="text" placeholder="Enter authority record">
-                            <span class="icon is-small is-left">
-                                <i class="fas fa-link"></i>
-                            </span>
-                        </div>
-                    </div>
-                    </div>
-                    <div class="row">
-                    <div class="control has-icons-left">
-                        <input id="title-text" name="title-text" class="input metadata-title metadata-title-text" type="text" placeholder="Enter title">
+<div class="container" data-type="source">
+    <label class="label">Source</label>
+{% for existing_source in existing_sources %}
+    <div class="field source-input-group input-group" data-id="{{ existing_source.id }}">
+            <div class="row column">
+                <div class="row">
+                    <div class="control has-icons-left flex-1">
+                        <input type="hidden" name="existing-source-id" value="{{ existing_source.id }}">
+                        <input id="source-text" name="source-text" class="input metadata-source metadata-source-text" type="text" placeholder="Enter source" value="{{ existing_source.text }}">
                         <span class="icon is-small is-left">
                             <i class="fas fa-font"></i>
                         </span>
                     </div>
-                    </div>
-                    <div class="row">
-                    <div class="field">
-                        <div class="pubPlace-input-group input-group">
-                            <div class="control has-icons-left">
-                                <input id="pubPlace-name" name="pubPlace-name" class="input metadata-pubPlace metadata-pubPlace-name" type="text" placeholder="Enter publication place name">
-                                <span class="icon is-small is-left">
-                                    <i class="fas fa-language"></i>
-                                </span>
-                            </div>
-                            <div class="control has-icons-left">
-                                <input id="pubPlace-authority" name="pubPlace-authority" class="input metadata-pubPlace metadata-pubPlace-authority" type="text" placeholder="Enter authority record">
-                                <span class="icon is-small is-left">
-                                    <i class="fas fa-language"></i>
-                                </span>
-                            </div>
-                        </div>
-                        </div>
-                        <div class="field">
-                            <div class="control has-icons-left">
-                                <div class="pubDate-input-group input-group">
-                                    <input id="pubDate-date" name="pubDate-date" class="input metadata-pubDate" type="date">
-                                    <span class="icon is-small is-left">
-                                        <i class="fas fa-language"></i>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                    <div class="control has-icons-left">
-                        <input id="pubAuthority-name" name="pubAuthority-name" class="input metadata-pubAuthority metadata-pubAuthority-name" type="text" placeholder="Enter publisher name">
-                        <span class="icon is-small is-left">
-                            <i class="fas fa-font"></i>
-                        </span>
-                    </div>
-                    </div>
-                    <div class="row">
-                    <div class="control has-icons-left">
-                        <input id="pubAuthority-authority" name="pubAuthority-authority" class="input metadata-pubAuthority metadata-pubAuthority-authority" type="text" placeholder="Enter publisher authority record">
-                        <span class="icon is-small is-left">
-                            <i class="fas fa-font"></i>
-                        </span>
-                    </div>
-                    </div>
-                    <div class="row">
-                    <div class="control has-icons-left">
-                        <input id="pubAuthority-authority" name="pubAuthority-authority" class="input metadata-pubAuthority metadata-pubAuthority-authority" type="text" placeholder="Enter page number">
-                        <span class="icon is-small is-left">
-                            <i class="fas fa-font"></i>
-                        </span>
-                    </div>
-                    <div class="control has-icons-left">
-                        <input id="pubAuthority-authority" name="pubAuthority-authority" class="input metadata-pubAuthority metadata-pubAuthority-authority" type="text" placeholder="Enter volume">
-                        <span class="icon is-small is-left">
-                            <i class="fas fa-font"></i>
-                        </span>
-                    </div>
-                    </div>
-                    <div class="row">
-                    <div class="control has-icons-left">
-                        <input id="pubAuthority-authority" name="pubAuthority-authority" class="input metadata-pubAuthority metadata-pubAuthority-authority" type="text" placeholder="Enter DOI">
-                        <span class="icon is-small is-left">
-                            <i class="fas fa-font"></i>
-                        </span>
-                    </div>
-                    </div>
-                -->
-                <span class="icon is-small is-left">
-                    <i class="fas fa-font"></i>
-                </span>
+                </div>
+                {% if loop.first %}
+                    <span class="button is-success is-light add-button add-source-button">
+                        <i class="fa-solid fa-plus"></i>
+                    </span>
+                {% else %}
+                    <span class="button is-danger is-light remove-source-button">
+                        <i class="fa-solid fa-minus"></i>
+                    </span>
+                {% endif %}
             </div>
-        </div>
-        <span class="button is-success is-light add-button add-source-button">
-            <i class="fa-solid fa-plus"></i>
-        </span>
-      </div>
     </div>
-</div>
-<div class="field additional-source additional-container">
-  <!-- Additional identifiers will be inserted here -->
+{% endfor %}
 </div>

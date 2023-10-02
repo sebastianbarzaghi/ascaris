@@ -1,15 +1,16 @@
+<div class="container" data-type="creationDate">
 <label class="label">Creation date</label>
-<div class="field">
-  <div class="creation-date-input-group input-group">
+<div class="field creationDate-input-group input-group" data-id="{{ existing_creationDate.id }}">
     <div class="row column">
       <div class="row">
         <div class="control has-icons-left flex-full-width">
-          <input id="creationDate-date" name="creationDate-date" class="input metadata-creationDate-date" type="date">
+          <input type="hidden" name="existing-creationDate-id" value="{{ existing_creationDate.id }}">
+          <input id="creationDate-date" name="creationDate-date" class="input metadata-creationDate-date" type="date" value="{{ existing_creationDate.date }}">
           <span class="icon is-small is-left">
             <i class="fas fa-clock"></i>
           </span>
         </div>
       </div>
     </div>
-  </div>
+</div>
 </div>
