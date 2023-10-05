@@ -1,5 +1,28 @@
 <div class="container" data-type="category">
 <label class="label">Category</label>
+<div class="field category-input-group input-group">
+  <div class="row column">
+    <div class="hidden row">
+      <div class="control has-icons-left">
+        <div class="select">
+          <select id="category-type" name="category-type" class="dropdown metadata-category-type">
+            <option value="">--Select--</option>
+            {% for concept in concepts %}
+                <option value="{{ concept.value }}"</option>
+            {% endfor %}
+          </select>
+        </div>
+        <span class="icon is-small is-left">
+          <i class="fas fa-book"></i>
+        </span>
+      </div>
+    </div>
+    <span class="button is-success is-light add-button add-category-button">
+      <i class="fa-solid fa-plus"></i>
+    </span>
+  </div>
+</div>
+
 {% for existing_category in existing_categories %}
   <div class="field category-input-group input-group" data-id="{{ existing_category.id }}">
       <div class="row column">
@@ -19,9 +42,9 @@
             </span>
           </div>
         </div>
-        <span class="button is-success is-light add-button add-category-button">
-          <i class="fa-solid fa-plus"></i>
-        </span>
+        <span class="button is-danger is-light remove-button remove-category-button" data-type="category" data-id="{{ existing_category.id }}">
+          <i class="fa-solid fa-minus"></i>
+      </span>
       </div>
   </div>
 {% endfor %}

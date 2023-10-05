@@ -14,15 +14,11 @@ def read_one(abstract_id):
 def create(abstract):
     document_id = abstract.get("document_id")
     document = Document.query.get(document_id)
-    existing_abstract = Abstract.query.filter_by(document_id=document_id).one_or_none()
     if document:
-        if not existing_abstract:
-            new_abstract = abstract_schema.load(abstract, session=db.session)
-            document.abstract = new_abstract
-            db.session.commit()
-            return abstract_schema.dump(new_abstract), 201
-        else:
-            abort(409, f"Error: abstract for document with ID {document_id} already exists")
+        new_abstract = abstract_schema.load(abstract, session=db.session)
+        document.abstract.append(new_abstract)
+        db.session.commit()
+        return abstract_schema.dump(new_abstract), 201
     else:
         abort(404, f"Error: document with ID {document_id} not found")
 

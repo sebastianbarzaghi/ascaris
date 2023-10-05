@@ -44,11 +44,13 @@ def edit_document(id):
     existing_license = document['license']
     existing_sources = document['source']
     existing_notes = document['note']
-    existing_abstract = document['abstract']
+    existing_abstracts = document['abstract']
     existing_creationDate = document['creationDate']
     existing_categories = document['category']
-    existing_pubDate['date'] = datetime.strptime(existing_pubDate['date'], '%Y-%m-%dT%H:%M:%S').strftime('%Y-%m-%d')
-    existing_creationDate['date'] = datetime.strptime(existing_creationDate['date'], '%Y-%m-%dT%H:%M:%S').strftime('%Y-%m-%d')
+    if existing_pubDate and existing_pubDate.get('date'):
+        existing_pubDate['date'] = datetime.strptime(existing_pubDate['date'], '%Y-%m-%dT%H:%M:%S').strftime('%Y-%m-%d')
+    if existing_creationDate and existing_creationDate.get('date'):
+        existing_creationDate['date'] = datetime.strptime(existing_creationDate['date'], '%Y-%m-%dT%H:%M:%S').strftime('%Y-%m-%d')
 
     return render_template('edit_document.html', 
                            document=document,
@@ -61,7 +63,7 @@ def edit_document(id):
                            existing_license=existing_license,
                            existing_sources=existing_sources,
                            existing_notes=existing_notes,
-                           existing_abstract=existing_abstract,
+                           existing_abstracts=existing_abstracts,
                            existing_creationDate=existing_creationDate,
                            existing_categories=existing_categories,
                            concepts=concepts)
@@ -116,14 +118,6 @@ def save_metadata(id):
         'title',
         'responsibility',
         'pubAuthority',
-        'source',
-        'pubPlace',
-        'pubDate',
-        'note',
-        'license',
-        'identifier',
-        'creationDate',
-        'category',
         'abstract'
     ]
     try:

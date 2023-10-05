@@ -21,7 +21,11 @@ const InterfaceModule = (function () {
                 data[subfield] = input.value;
             });
             
-            clone.removeAttribute("data-id")
+            clone.removeAttribute("data-id");
+            let hiddenDivs = clone.querySelectorAll('.hidden');
+            hiddenDivs.forEach((hiddenDiv) => {
+                hiddenDiv.classList.remove('hidden');
+            })
 
             const removeButton = document.createElement("span");
             removeButton.classList.add("button", "is-danger", "is-light", `remove-${field}-button`);
@@ -42,6 +46,7 @@ const InterfaceModule = (function () {
                 body: JSON.stringify(data),
             })
             .then((response) => {
+                console.log(data)
                 if (response.ok) {
                     console.log('Addition succeeded')
                     
@@ -108,6 +113,7 @@ const InterfaceModule = (function () {
     initializeAddButtons("source", ['text']);
     initializeAddButtons("note", ['text']);
     initializeAddButtons("category", ["type"]);
+    initializeAddButtons("abstract", ["text"]);
 
     initializeRemoveButtons("title");
     initializeRemoveButtons("responsibility");
@@ -116,6 +122,7 @@ const InterfaceModule = (function () {
     initializeRemoveButtons("source");
     initializeRemoveButtons("note");
     initializeRemoveButtons("category");
+    initializeRemoveButtons("abstract");
 
     function saveMetadata() {
         const documentId = document.querySelector('.content')
@@ -140,13 +147,14 @@ const InterfaceModule = (function () {
                     }
                     inputGroupObject[name] = value;
                 })
-                containerList.push(inputGroupObject)
+                containerList.push(inputGroupObject);
             })
-            formData[containerType] = containerList
-            console.log(formData)
+            if (containerList.length > 1) {
+                containerList.shift();
+            }
+            formData[containerType] = containerList;
         })
-        
-    
+
         // Send a PUT request to update the metadata
         fetch(`/metadata/${documentIdValue}`, {
             method: 'PUT',
@@ -154,8 +162,9 @@ const InterfaceModule = (function () {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(formData), // Send the data as JSON
-        })
+            })
             .then((response) => {
+                console.log(JSON.stringify(formData))
                 if (response.ok) {
                     console.log('Metadata updated successfully');
                     // Handle success, e.g., show a success message

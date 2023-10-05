@@ -206,3 +206,7 @@ html {
   height: 10rem;
   resize: vertical;
 }
+
+.hidden {
+  display: none;
+}

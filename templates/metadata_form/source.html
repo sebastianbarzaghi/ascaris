@@ -1,5 +1,21 @@
 <div class="container" data-type="source">
     <label class="label">Source</label>
+    <div class="field source-input-group input-group">
+        <div class="row column">
+            <div class="hidden row">
+                <div class="control has-icons-left flex-1">
+                    <input id="source-text" name="source-text" class="input metadata-source metadata-source-text" type="text" placeholder="Enter source" value="">
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-font"></i>
+                    </span>
+                </div>
+            </div>
+            <span class="button is-success is-light add-button add-source-button">
+                <i class="fa-solid fa-plus"></i>
+            </span>
+        </div>
+</div>
+
 {% for existing_source in existing_sources %}
     <div class="field source-input-group input-group" data-id="{{ existing_source.id }}">
             <div class="row column">
@@ -12,15 +28,9 @@
                         </span>
                     </div>
                 </div>
-                {% if loop.first %}
-                    <span class="button is-success is-light add-button add-source-button">
-                        <i class="fa-solid fa-plus"></i>
-                    </span>
-                {% else %}
-                    <span class="button is-danger is-light remove-source-button">
-                        <i class="fa-solid fa-minus"></i>
-                    </span>
-                {% endif %}
+                <span class="button is-danger is-light remove-source-button">
+                    <i class="fa-solid fa-minus"></i>
+                </span>
             </div>
     </div>
 {% endfor %}

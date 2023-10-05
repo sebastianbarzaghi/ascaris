@@ -1,5 +1,21 @@
 <div class="container" data-type="note">
 <label class="label">Additional notes</label>
+<div class="field note-input-group input-group">
+  <div class="row column">
+    <div class="hidden row">
+      <div class="control has-icons-left flex-full-width">
+        <textarea id="note-text" name="note-text" class="input metadata-note metadata-note-text" type="textarea" placeholder="Enter additional notes"></textarea>
+        <span class="icon is-small is-left">
+          <i class="fas fa-font"></i>
+        </span>
+      </div>
+    </div>
+    <span class="button is-success is-light add-button add-note-button">
+        <i class="fa-solid fa-plus"></i>
+    </span>
+  </div>
+</div>
+
 {% for existing_note in existing_notes %}
   <div class="field note-input-group input-group" data-id="{{ existing_note.id }}">
         <div class="row column">
@@ -12,15 +28,9 @@
               </span>
             </div>
           </div>
-          {% if loop.first %}
-              <span class="button is-success is-light add-button add-note-button">
-                  <i class="fa-solid fa-plus"></i>
-              </span>
-            {% else %}
-              <span class="button is-danger is-light remove-note-button">
-                  <i class="fa-solid fa-minus"></i>
-              </span>
-          {% endif %}
+          <span class="button is-danger is-light remove-note-button">
+              <i class="fa-solid fa-minus"></i>
+          </span>
         </div>
   </div>
 {% endfor %}
