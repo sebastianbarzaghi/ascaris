@@ -3,62 +3,74 @@ const InterfaceModule = (function () {
     // Button functionalities
 
     function handleAddButtonClick(field, subfields) {
-        return function(event) {
-            const documentId = document.querySelector('.content')
-            const documentIdValue = documentId.getAttribute('data-documentId')
-
+        return async function(event) {
             const addButton = event.target;
             const inputGroup = addButton.closest(`.${field}-input-group`);
             const container = addButton.closest('.container');
             const clone = inputGroup.cloneNode(true);
             
-            let data = {};
-            data['document_id'] = documentIdValue;
-            
-            subfields.forEach((subfield) => {
-                const input = clone.querySelector(`[name="${field}-${subfield}"`);
-                input.value = "";
-                data[subfield] = input.value;
-            });
-            
-            clone.removeAttribute("data-id");
-            let hiddenDivs = clone.querySelectorAll('.hidden');
-            hiddenDivs.forEach((hiddenDiv) => {
-                hiddenDiv.classList.remove('hidden');
-            })
+            try {
+                const response = await fetch(`/${field}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        document_id: document.querySelector('.content').getAttribute('data-documentId')
+                    }),
+                });
 
-            const removeButton = document.createElement("span");
-            removeButton.classList.add("button", "is-danger", "is-light", `remove-${field}-button`);
-            const minusIcon = document.createElement("i");
-            minusIcon.classList.add("fa-solid", "fa-minus");
-            removeButton.appendChild(minusIcon);
-            removeButton.addEventListener("click", handleRemoveButtonClick(field, clone));
-            const row = clone.querySelector('.row');
-            row.appendChild(removeButton);
-            container.appendChild(clone);
-            clone.querySelector(`.add-${field}-button`).remove();
+                console.log(response)
 
-            fetch(`/${field}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-            .then((response) => {
-                console.log(data)
                 if (response.ok) {
-                    console.log('Addition succeeded')
+                    const data = await response.json();
+                    console.log('data:', data)
+                    const metadataId = data.id;
+                    console.log('metadata id', metadataId)
+
+                    clone.setAttribute('data-id', metadataId);
+
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.setAttribute('type', 'hidden');
+                    hiddenInput.setAttribute('name', `${field}-id`);
+                    hiddenInput.setAttribute('value', `${metadataId}`);
+                    clone.appendChild(hiddenInput);
+
+                    subfields.forEach((subfield) => {
+                        const input = clone.querySelector(`[name="${field}-${subfield}"`);
+                        input.value = "";
+                    });
+
+                    const hiddenDivs = clone.querySelectorAll('.hidden');
+                    hiddenDivs.forEach((hiddenDiv) => {
+                        hiddenDiv.classList.remove('hidden');
+                    })
+
+                    const removeButton = document.createElement("span");
+                    removeButton.classList.add("button", "is-danger", "is-light", `remove-${field}-button`);
+                    const minusIcon = document.createElement("i");
+                    minusIcon.classList.add("fa-solid", "fa-minus");
+                    removeButton.appendChild(minusIcon);
+                    removeButton.addEventListener("click", handleRemoveButtonClick(field, clone));
+
+                    const row = clone.querySelector('.row');
+                    row.appendChild(removeButton);
+
+                    const activeFields = container.querySelector('.active-fields');
+                    activeFields.appendChild(clone);
+
+                    clone.querySelector(`.add-${field}-button`).remove();
                     
+                    console.log('Addition succeeded');
+
                 } else {
                     console.log('Response Status:', response.status);
                     console.log('Response Status Text:', response.statusText);
+                    console.error('Addition failed');
                 }
-            })
-            .catch((error) => {
+            } catch (error) {
                 console.error('Error:', error);
-            });
-            
+            }
         };
     }
 
@@ -114,6 +126,10 @@ const InterfaceModule = (function () {
     initializeAddButtons("note", ['text']);
     initializeAddButtons("category", ["type"]);
     initializeAddButtons("abstract", ["text"]);
+    initializeAddButtons("pubPlace", ["name", "authority"]);
+    initializeAddButtons("pubDate", ["date"]);
+    initializeAddButtons("creationDate", ["date"]);
+    initializeAddButtons("license", ["link", "text"]);
 
     initializeRemoveButtons("title");
     initializeRemoveButtons("responsibility");
@@ -123,6 +139,10 @@ const InterfaceModule = (function () {
     initializeRemoveButtons("note");
     initializeRemoveButtons("category");
     initializeRemoveButtons("abstract");
+    initializeRemoveButtons("pubPlace");
+    initializeRemoveButtons("pubDate");
+    initializeRemoveButtons("creationDate");
+    initializeRemoveButtons("license");
 
     function saveMetadata() {
         const documentId = document.querySelector('.content')
@@ -135,7 +155,8 @@ const InterfaceModule = (function () {
         containers.forEach((container) => {
             const containerType = container.getAttribute('data-type')
             const containerList = []
-            const inputGroups = container.querySelectorAll('.input-group')
+            const activeFields = container.querySelector('.active-fields');
+            const inputGroups = activeFields.querySelectorAll('.input-group');
             inputGroups.forEach((inputGroup) => {
                 const inputGroupObject = {}
                 inputGroup.querySelectorAll('input, select, textarea').forEach((element) => {
@@ -149,9 +170,7 @@ const InterfaceModule = (function () {
                 })
                 containerList.push(inputGroupObject);
             })
-            if (containerList.length > 1) {
-                containerList.shift();
-            }
+
             formData[containerType] = containerList;
         })
 
@@ -164,7 +183,7 @@ const InterfaceModule = (function () {
             body: JSON.stringify(formData), // Send the data as JSON
             })
             .then((response) => {
-                console.log(JSON.stringify(formData))
+                console.log('DATA:', JSON.stringify(formData))
                 if (response.ok) {
                     console.log('Metadata updated successfully');
                     // Handle success, e.g., show a success message

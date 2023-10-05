@@ -47,7 +47,6 @@ def delete(category_id):
 
 
 skos = Namespace('http://www.w3.org/2004/02/skos/core#')
-
 def get_skos_concepts():
     g = Graph()
     g.parse('instance/docta.ttl', format='turtle')
@@ -56,4 +55,4 @@ def get_skos_concepts():
         concept_label = g.value(subject=concept, predicate=skos.prefLabel)
         if concept_label:
             concepts.append({"value": str(concept), "label": concept_label.value})
-            return concepts
+    return concepts

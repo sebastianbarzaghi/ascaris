@@ -14,15 +14,11 @@ def read_one(pubPlace_id):
 def create(pubPlace):
     document_id = pubPlace.get("document_id")
     document = Document.query.get(document_id)
-    existing_pubPlace = PubPlace.query.filter_by(document_id=document_id).one_or_none()
     if document:
-        if not existing_pubPlace:
-            new_pubPlace = pubPlace_schema.load(pubPlace, session=db.session)
-            document.pubPlace = new_pubPlace
-            db.session.commit()
-            return pubPlace_schema.dump(new_pubPlace), 201
-        else:
-            abort(409, f"Error: pubPlace for document with ID {document_id} already exists")
+        new_pubPlace = pubPlace_schema.load(pubPlace, session=db.session)
+        document.pubPlace.append(new_pubPlace)
+        db.session.commit()
+        return pubPlace_schema.dump(new_pubPlace), 201
     else:
         abort(404, f"Error: document with ID {document_id} not found")
 

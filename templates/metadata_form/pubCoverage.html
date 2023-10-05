@@ -1,5 +1,29 @@
 <div class="container" data-type="pubPlace">
 <label class="label">Publication place</label>
+<div class="field pubPlace-input-group input-group">
+    <div class="row column">
+        <div class="hidden row">
+            <div class="control has-icons-left flex-1">
+                <input id="pubPlace-name" name="pubPlace-name" class="input metadata-pubPlace metadata-pubPlace-name" type="text" placeholder="Enter publication place name" value="">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-location-dot"></i>
+                </span>
+            </div>
+            <div class="control has-icons-left flex-2">
+                <input id="pubPlace-authority" name="pubPlace-authority" class="input metadata-pubPlace metadata-pubPlace-authority" type="text" placeholder="Enter authority record" value="">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-link"></i>
+                </span>
+            </div>
+        </div>
+        <span class="button is-success is-light add-button add-pubPlace-button">
+            <i class="fa-solid fa-plus"></i>
+        </span>
+    </div>
+</div>
+
+<div class="active-fields">
+    {% for existing_pubPlace in existing_pubPlaces %}
 <div class="field pubPlace-input-group input-group" data-id="{{ existing_pubPlace.id }}">
         <div class="row column">
             <div class="row">
@@ -17,12 +41,36 @@
                     </span>
                 </div>
             </div>
+            <span class="button is-danger is-light remove-pubPlace-button">
+                <i class="fa-solid fa-minus"></i>
+            </span>
         </div>
+    </div>
+{% endfor %}
 </div>
 </div>
 
+
 <div class="container" data-type="pubDate">
 <label class="label">Publication date</label>
+<div class="field pubDate-input-group input-group">
+    <div class="row column">
+        <div class="hidden row">
+            <div class="control has-icons-left flex-1">
+                <input id="pubDate-date" name="pubDate-date" class="input metadata-pubDate" type="date" value="">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-clock"></i>
+                </span>
+            </div>
+        </div>
+        <span class="button is-success is-light add-button add-pubDate-button">
+            <i class="fa-solid fa-plus"></i>
+        </span>
+    </div>
+</div>
+
+<div class="active-fields">
+    {% for existing_pubDate in existing_pubDates %}
 <div class="field pubDate-input-group input-group" data-id="{{ existing_pubDate.id }}">
         <div class="row column">
             <div class="row">
@@ -34,6 +82,11 @@
                     </span>
                 </div>
             </div>
+            <span class="button is-danger is-light remove-pubDate-button">
+                <i class="fa-solid fa-minus"></i>
+            </span>
         </div>
+    </div>
+    {% endfor %}
 </div>
 </div>

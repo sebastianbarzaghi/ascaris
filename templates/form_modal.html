@@ -1,5 +1,8 @@
 <form class="metadata-form" method="PUT">
-
+  <div class="row move-right is-fixed-top">
+    <button id="save-metadata-button" class="button" type="submit">Save Changes</button>
+  </div>
+  
   {% include 'metadata_form/title.html' %}
   {% include 'metadata_form/responsibility.html' %}
   {% include 'metadata_form/abstract.html' %}
@@ -12,5 +15,4 @@
   {% include 'metadata_form/source.html' %}
   {% include 'metadata_form/note.html' %}
 
-  <button id="save-metadata-button" type="submit">Save Changes</button>
 </form>

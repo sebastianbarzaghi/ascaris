@@ -38,33 +38,37 @@ def edit_document(id):
     existing_titles = document['title']
     existing_responsibilities = document['responsibility']
     existing_pubAuthorities = document['pubAuthority']
-    existing_pubPlace = document['pubPlace']
-    existing_pubDate = document['pubDate']
+    existing_pubPlaces = document['pubPlace']
+    existing_pubDates = document['pubDate']
     existing_identifiers = document['identifier']
-    existing_license = document['license']
+    existing_licenses = document['license']
     existing_sources = document['source']
     existing_notes = document['note']
     existing_abstracts = document['abstract']
-    existing_creationDate = document['creationDate']
+    existing_creationDates = document['creationDate']
     existing_categories = document['category']
-    if existing_pubDate and existing_pubDate.get('date'):
-        existing_pubDate['date'] = datetime.strptime(existing_pubDate['date'], '%Y-%m-%dT%H:%M:%S').strftime('%Y-%m-%d')
-    if existing_creationDate and existing_creationDate.get('date'):
-        existing_creationDate['date'] = datetime.strptime(existing_creationDate['date'], '%Y-%m-%dT%H:%M:%S').strftime('%Y-%m-%d')
+    if existing_pubDates:
+        for existing_pubDate in existing_pubDates:
+            if existing_pubDate.get('date'):
+                existing_pubDate['date'] = datetime.strptime(existing_pubDate['date'], '%Y-%m-%dT%H:%M:%S').strftime('%Y-%m-%d')
+    if existing_creationDates:
+        for existing_creationDate in existing_creationDates:
+            if existing_creationDate.get('date'):
+                existing_creationDate['date'] = datetime.strptime(existing_creationDate['date'], '%Y-%m-%dT%H:%M:%S').strftime('%Y-%m-%d')
 
     return render_template('edit_document.html', 
                            document=document,
                            existing_titles=existing_titles,
                            existing_responsibilities=existing_responsibilities,
                            existing_pubAuthorities=existing_pubAuthorities,
-                           existing_pubPlace=existing_pubPlace,
-                           existing_pubDate=existing_pubDate,
+                           existing_pubPlaces=existing_pubPlaces,
+                           existing_pubDates=existing_pubDates,
                            existing_identifiers=existing_identifiers,
-                           existing_license=existing_license,
+                           existing_licenses=existing_licenses,
                            existing_sources=existing_sources,
                            existing_notes=existing_notes,
                            existing_abstracts=existing_abstracts,
-                           existing_creationDate=existing_creationDate,
+                           existing_creationDates=existing_creationDates,
                            existing_categories=existing_categories,
                            concepts=concepts)
 
@@ -118,6 +122,14 @@ def save_metadata(id):
         'title',
         'responsibility',
         'pubAuthority',
+        'source',
+        'pubPlace',
+        'pubDate',
+        'note',
+        'license',
+        'identifier',
+        'creationDate',
+        'category',
         'abstract'
     ]
     try:
@@ -326,7 +338,6 @@ def delete_document_abstract(abstract_id):
     return abstract_api.delete(abstract_id)
 
 '''
-
 # Flask route to save or update a document
 @app.route("/save_document", methods=["POST"])
 def save_document():

@@ -14,15 +14,11 @@ def read_one(license_id):
 def create(license):
     document_id = license.get("document_id")
     document = Document.query.get(document_id)
-    existing_license = License.query.filter_by(document_id=document_id).one_or_none()
     if document:
-        if not existing_license:
-            new_license = license_schema.load(license, session=db.session)
-            document.license = new_license
-            db.session.commit()
-            return license_schema.dump(new_license), 201
-        else:
-            abort(409, f"Error: license for document with ID {document_id} already exists")
+        new_license = license_schema.load(license, session=db.session)
+        document.license.append(new_license)
+        db.session.commit()
+        return license_schema.dump(new_license), 201
     else:
         abort(404, f"Error: document with ID {document_id} not found")
 

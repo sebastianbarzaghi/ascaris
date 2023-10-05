@@ -14,15 +14,11 @@ def read_one(creationDate_id):
 def create(creationDate):
     document_id = creationDate.get("document_id")
     document = Document.query.get(document_id)
-    existing_creationDate = creationDate.query.filter_by(document_id=document_id).one_or_none()
     if document:
-        if not existing_creationDate:
-            new_creationDate = creationDate_schema.load(creationDate, session=db.session)
-            document.creationDate = new_creationDate
-            db.session.commit()
-            return creationDate_schema.dump(new_creationDate), 201
-        else:
-            abort(404, f"Error: creationDate for document with ID {document_id} already exists")
+        new_creationDate = creationDate_schema.load(creationDate, session=db.session)
+        document.creationDate.append(new_creationDate)
+        db.session.commit()
+        return creationDate_schema.dump(new_creationDate), 201
     else:
         abort(404, f"Error: document with ID {document_id} not found")
 

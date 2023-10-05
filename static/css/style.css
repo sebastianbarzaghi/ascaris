@@ -159,7 +159,7 @@ html {
 }
 
 .move-right {
-  margin-left: auto;
+  justify-content: flex-end;
 }
 
 .flex-1 {

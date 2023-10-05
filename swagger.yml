@@ -88,6 +88,58 @@ components:
           type: "number"
         type:
           type: "string"
+    PubDate:
+      type: "object"
+      properties:
+        id:
+          type: "number"
+        document_id:
+          type: "number"
+        date:
+          type: "string"
+          format: "date-time"
+    PubPlace:
+      type: "object"
+      properties:
+        id:
+          type: "number"
+        document_id:
+          type: "number"
+        name:
+          type: "string"
+        authority:
+          type: "string"
+    License:
+      type: "object"
+      properties:
+        id:
+          type: "number"
+        document_id:
+          type: "number"
+        text:
+          type: "string"
+        link:
+          type: "string"
+    Abstract:
+      type: "object"
+      properties:
+        id:
+          type: "number"
+        document_id:
+          type: "number"
+        text:
+          type: "string"
+    CreationDate:
+      type: "object"
+      properties:
+        id:
+          type: "number"
+        document_id:
+          type: "number"
+        date:
+          type: "string"
+          format: "date-time"
+      
     Document:
       type: "object"
       required:
@@ -126,36 +178,26 @@ components:
           items:
             $ref: "#/components/schemas/Category"
         pubDate:
-          type: "object"
-          properties:
-            date:
-              type: "string"
-              format: "date-time"
+          type: "array"
+          items:
+            $ref: "#/components/schemas/PubDate"
         pubPlace:
-          type: "object"
-          properties:
-            name:
-              type: "string"
-            authority:
-              type: "string"
+          type: "array"
+          items:
+            $ref: "#/components/schemas/PubPlace"
         license:
-          type: "object"
-          properties:
-            text:
-              type: "string"
-            link:
-              type: "string"
+          type: "array"
+          items:
+            $ref: "#/components/schemas/License"
         abstract:
-          type: "object"
-          properties:
-            text:
-              type: "string"
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Abstract"
         creationDate:
-          type: "object"
-          properties:
-            date:
-              type: "string"
-              format: "date-time"
+          type: "array"
+          items:
+            $ref: "#/components/schemas/CreationDate"
+          
 
   parameters:
     id:

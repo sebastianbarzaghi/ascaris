@@ -1,5 +1,23 @@
 <div class="container" data-type="creationDate">
 <label class="label">Creation date</label>
+<div class="field creationDate-input-group input-group">
+  <div class="row column">
+    <div class="hidden row">
+      <div class="control has-icons-left flex-full-width">
+        <input id="creationDate-date" name="creationDate-date" class="input metadata-creationDate-date" type="date" value="">
+        <span class="icon is-small is-left">
+          <i class="fas fa-clock"></i>
+        </span>
+      </div>
+    </div>
+    <span class="button is-success is-light add-button add-creationDate-button">
+      <i class="fa-solid fa-plus"></i>
+    </span>
+  </div>
+</div>
+
+<div class="active-fields">
+  {% for existing_creationDate in existing_creationDates %}
 <div class="field creationDate-input-group input-group" data-id="{{ existing_creationDate.id }}">
     <div class="row column">
       <div class="row">
@@ -11,6 +29,11 @@
           </span>
         </div>
       </div>
+      <span class="button is-danger is-light remove-creationDate-button">
+        <i class="fa-solid fa-minus"></i>
+      </span>
     </div>
+  </div>
+  {% endfor %}
 </div>
 </div>
