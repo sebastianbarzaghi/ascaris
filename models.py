@@ -2,6 +2,62 @@ from datetime import datetime
 from config import db, ma
 from marshmallow_sqlalchemy import fields
 
+class Annotation(db.Model):
+    __tablename__ = "annotation"
+    id = db.Column(db.Integer, primary_key=True)
+    document_id = db.Column(db.Integer, db.ForeignKey("document.id"))
+    reference_id = db.Column(db.Integer, db.ForeignKey("reference.id"))
+    text = db.Column(db.String)
+    motivation = db.Column(db.String)
+    language = db.Column(db.String)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+class AnnotationSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Annotation
+        load_instance = True
+        sqla_session = db.session
+        include_fk = True
+
+class Reference(db.Model):
+    __tablename__ = "reference"
+    id = db.Column(db.Integer, primary_key=True)
+    document_id = db.Column(db.Integer, db.ForeignKey("document.id"))
+    entity_id = db.Column(db.Integer, db.ForeignKey("entity.id"))
+    text = db.Column(db.String)
+    type = db.Column(db.String)
+
+class ReferenceSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Reference
+        load_instance = True
+        sqla_session = db.session
+        include_fk = True
+    annotation = fields.Nested(AnnotationSchema, many=True)
+
+class Entity(db.Model):
+    __tablename__ = "entity"
+    id = db.Column(db.Integer, primary_key=True)
+    document_id = db.Column(db.Integer, db.ForeignKey("document.id"))
+    type = db.Column(db.String)
+    label = db.Column(db.String)
+    authority = db.Column(db.String)
+    reference = db.relationship(
+        Reference,
+        backref="reference",
+        cascade="all, delete, delete-orphan",
+        single_parent=True,
+        lazy=True)
+
+class EntitySchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Entity
+        load_instance = True
+        sqla_session = db.session
+        include_fk = True
+    reference = fields.Nested(ReferenceSchema, many=True)
+
 class Title(db.Model):
     __tablename__ = "title"
     id = db.Column(db.Integer, primary_key=True)
@@ -244,6 +300,18 @@ class Document(db.Model):
         cascade="all, delete, delete-orphan",
         single_parent=True,
         lazy=True)
+    entity = db.relationship(
+        Entity,
+        backref='document',
+        cascade='all, delete, delete-orphan',
+        single_parent=True,
+        lazy=True)
+    reference = db.relationship(
+        Reference,
+        backref='document',
+        cascade="all, delete, delete-orphan",
+        single_parent=True,
+        lazy=True)
     
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -269,6 +337,8 @@ class DocumentSchema(ma.SQLAlchemyAutoSchema):
     abstract = fields.Nested(AbstractSchema, many=True)
     creationDate = fields.Nested(CreationDateSchema, many=True)
     category = fields.Nested(CategorySchema, many=True)
+    entity = fields.Nested(EntitySchema, many=True)
+    reference = fields.Nested(ReferenceSchema, many=True)
 
 title_schema = TitleSchema()
 responsibility_schema = ResponsibilitySchema()
@@ -282,6 +352,10 @@ note_schema = NoteSchema()
 abstract_schema = AbstractSchema()
 creationDate_schema = CreationDateSchema()
 category_schema = CategorySchema()
+
+entity_schema = EntitySchema()
+reference_schema = ReferenceSchema()
+annotation_schema = AnnotationSchema()
 
 document_schema = DocumentSchema()
 documents_schema = DocumentSchema(many=True)
