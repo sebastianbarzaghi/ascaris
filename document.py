@@ -29,6 +29,10 @@ def update(id, document):
     if existing_document:
         update_document = document_schema.load(document, session=db.session)
         existing_document.docTitle = update_document.docTitle
+
+        print(existing_document.content)
+        print(update_document.content)
+
         existing_document.content = update_document.content
         db.session.merge(existing_document)
         db.session.commit()

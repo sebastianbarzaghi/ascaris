@@ -7,6 +7,8 @@ import { InterfaceModule } from './interfaceModule.js'
 import { EntityInteractionModule } from './entityInteractionModule.js'
 import { DownloadModule } from './downloadModule.js'
 
+const documentId = document.querySelector('#editableContent').getAttribute('data-documentId');
+
 // main code
 document.addEventListener("DOMContentLoaded", function () {
   // Initialize the Tabs module
@@ -16,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
   SidePanelModule.populateSidePanel();
 
   // Initialize the Save Document module
-  SaveDocumentModule.initializeModule();
+  SaveDocumentModule.startAutoSave(documentId);
 
   // Initialize the Auto Markup module
   // AutoMarkUpModule();

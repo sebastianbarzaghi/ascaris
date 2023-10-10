@@ -6,37 +6,7 @@
 
 <div class="columns">
     <div class="column">
-            <div class="tabs">
-                <ul>
-                    <li class="tab people-tab is-active" data-name="people"><a>People</a></li>
-                    <li class="tab places-tab" data-name="places"><a>Places</a></li>
-                    <li class="tab works-tab" data-name="works"><a>Works</a></li>
-                    <li class="tab organizations-tab" data-name="organizations"><a>Organizations</a></li>
-                    <li class="tab dates-tab" data-name="dates"><a>Dates</a></li>
-                </ul>
-            </div>
-            <div class="tab-content">
-              <div class="people-content panel-content">
-                <!-- People Content -->
-                <div class="people-panel-blocks"></div>
-              </div>
-              <div class="places-content panel-content hidden">
-                <!-- Places Content -->
-                <div class="places-panel-blocks"></div>
-              </div>
-              <div class="works-content panel-content hidden">
-                <!-- Works Content -->
-                <div class="works-panel-blocks"></div>
-              </div>
-              <div class="organizations-content panel-content hidden">
-                <!-- Organizations Content -->
-                <div class="organizations-panel-blocks"></div>
-              </div>
-              <div class="dates-content panel-content hidden">
-                <!-- Dates Content -->
-                <div class="dates-panel-blocks"></div>
-              </div>
-            </div>
+      {% include 'entity_panel.html' %}
     </div>
     <div class="column is-two-thirds">
       <div class="tabs is-right">
@@ -51,42 +21,7 @@
       </div>
 
       <div class="editor-panel">
-        <div class="editor">
-          <nav class="navbar" role="navigation" aria-label="main navigation">
-            <div class="toolbar navbar-menu">
-              <div class="navbar-start">
-                <button class="navbar-item button entity-button person-button" data-class="person" data-icon="user">Person</button>
-                <button class="navbar-item button entity-button place-button" data-class="place" data-icon="map-marker-alt">Place</button>
-                <button class="navbar-item button entity-button work-button" data-class="work" data-icon="book">Work</button>
-                <button class="navbar-item button entity-button organization-button" data-class="organization" data-icon="building">Organization</button>
-                <button class="navbar-item button entity-button date-button" data-class="date" data-icon="calendar-alt">Date</button>
-              </div>
-              <div class="navbar-end">
-                <div class="buttons navbar-item">
-                    <a class="button is-light" id="saveButton">
-                        Save
-                    </a>
-                </div>
-                <div class="navbar-item has-dropdown is-hoverable">
-                  <a class="navbar-link">
-                    Download
-                  </a>
-                  <div class="navbar-dropdown">
-                    <a class="navbar-item" id="xml-tei-download">
-                      XML-TEI
-                    </a>
-                    <a class="navbar-item" id="html-rdfa-download">
-                      HTML-RDFa
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </nav>
-          <div class="content" contenteditable="true" id="editableContent" data-documentId="{{ document.id }}">
-            {{ document.content | safe }}
-          </div>
-        </div>
+        {% include 'editor_panel.html' %}
       </div>
     </div>
 </div>

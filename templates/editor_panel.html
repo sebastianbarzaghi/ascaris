@@ -1,0 +1,36 @@
+<div class="editor">
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="toolbar navbar-menu">
+        <div class="navbar-start">
+          <button class="navbar-item button entity-button person-button" data-class="person" data-icon="user">Person</button>
+          <button class="navbar-item button entity-button place-button" data-class="place" data-icon="map-marker-alt">Place</button>
+          <button class="navbar-item button entity-button work-button" data-class="work" data-icon="book">Work</button>
+          <button class="navbar-item button entity-button organization-button" data-class="organization" data-icon="building">Organization</button>
+          <button class="navbar-item button entity-button date-button" data-class="date" data-icon="calendar-alt">Date</button>
+        </div>
+        <div class="navbar-end">
+          <div class="buttons navbar-item">
+              <a class="button is-light" id="saveButton">
+                  Save
+              </a>
+          </div>
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              Download
+            </a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" id="xml-tei-download">
+                XML-TEI
+              </a>
+              <a class="navbar-item" id="html-rdfa-download">
+                HTML-RDFa
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="content" contenteditable="true" id="editableContent" data-documentId="{{ document.id }}">
+      {{ document.content | safe }}
+    </div>
+  </div>

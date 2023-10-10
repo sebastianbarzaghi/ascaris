@@ -3,6 +3,8 @@ from flask import Flask, Response, render_template, request, redirect, url_for, 
 from manipulate_documents import allowed_file, read_docx, read_pdf, read_txt
 from config import app, connex_app
 import secrets
+import reference as reference_api
+import entity as entity_api
 import title as title_api
 import responsibility as responsibility_api
 import pubAuthority as pubAuthority_api
@@ -29,6 +31,9 @@ def index():
     documents = document_api.read_all()
     return render_template('index.html', documents=documents)
 
+@app.route('/document/<int:id>')
+def get_document(id):
+    return document_api.read_one(id)
 
 @app.route('/document/<int:id>/edit', methods=['GET', 'POST'])
 def edit_document(id):
@@ -116,6 +121,14 @@ def upload_document():
     return render_template('new_document.html')
 
 
+@app.route("/save_document", methods=["POST"])
+def save_document():
+    data = request.get_json()
+    document_id = data.get("id")
+    print(data)
+    return document_api.update(document_id, {'docTitle': data.get('docTitle'), 'content': data.get('content')})
+
+
 @app.route('/metadata/<int:id>', methods=['PUT'])
 def save_metadata(id):
     metadata = [
@@ -168,6 +181,34 @@ def save_metadata(id):
         return jsonify(data), 200  # Return a response to the client
     except Exception as e:
         return str(e), 400  # Handle errors and return an appropriate response
+
+
+@app.route('/reference', methods=['POST'])
+def create_reference():
+    data = request.json
+    return reference_api.create(data)
+
+@app.route('/reference/<int:reference_id>', methods=['PUT'])
+def update_reference(reference_id, reference):
+    return reference_api.update(reference_id, reference)
+
+@app.route('/reference/<int:reference_id>', methods=['DELETE'])
+def delete_reference(reference_id):
+    return reference_api.delete(reference_id)
+
+
+@app.route('/entity', methods=['POST'])
+def create_entity():
+    data = request.json
+    return entity_api.create(data)
+
+@app.route('/entity/<int:entity_id>', methods=['PUT'])
+def update_entity(entity_id, entity):
+    return entity_api.update(entity_id, entity)
+
+@app.route('/entity/<int:entity_id>', methods=['DELETE'])
+def delete_entity(entity_id):
+    return entity_api.delete(entity_id)
 
 
 @app.route('/title', methods=['POST'])
@@ -336,6 +377,8 @@ def update_document_abstract(abstract_id, abstract):
 @app.route('/abstract/<int:abstract_id>', methods=['DELETE'])
 def delete_document_abstract(abstract_id):
     return abstract_api.delete(abstract_id)
+
+
 
 '''
 # Flask route to save or update a document
