@@ -27,6 +27,12 @@ class Reference(db.Model):
     entity_id = db.Column(db.Integer, db.ForeignKey("entity.id"))
     text = db.Column(db.String)
     type = db.Column(db.String)
+    annotation = db.relationship(
+        Annotation,
+        backref="annotation",
+        cascade="all, delete, delete-orphan",
+        single_parent=True,
+        lazy=True)
 
 class ReferenceSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -306,12 +312,6 @@ class Document(db.Model):
         cascade='all, delete, delete-orphan',
         single_parent=True,
         lazy=True)
-    reference = db.relationship(
-        Reference,
-        backref='document',
-        cascade="all, delete, delete-orphan",
-        single_parent=True,
-        lazy=True)
     
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -354,6 +354,7 @@ creationDate_schema = CreationDateSchema()
 category_schema = CategorySchema()
 
 entity_schema = EntitySchema()
+entities_schema = EntitySchema(many=True)
 reference_schema = ReferenceSchema()
 annotation_schema = AnnotationSchema()
 

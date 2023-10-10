@@ -139,7 +139,57 @@ components:
         date:
           type: "string"
           format: "date-time"
-      
+
+    Annotation:
+      type: "object"
+      properties:
+        id: 
+          type: "number"
+        document_id:
+          type: "number"
+        reference_id:
+          type: "number"
+        text:
+          type: "string"
+        motivation:
+          type: "string"
+        language:
+          type: "string"
+    Reference:
+      type: "object"
+      properties:
+        id:
+          type: "number"
+        document_id:
+          type: "number"
+        entity_id:
+          type: "number"
+        text:
+          type: "string"
+        type:
+          type: "string"
+        annotation:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Annotation"
+    Entity:
+      type: "object"
+      properties:
+        id:
+          type: "number"
+        document_id:
+          type: "number"
+        type:
+          type: "string"
+        label:
+          type: "string"
+        authority:
+          type: "string"
+        reference:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Reference"
+
     Document:
       type: "object"
       required:
@@ -149,6 +199,16 @@ components:
           type: "string"
         content:
           type: "string"
+          
+        entity:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Entity"
+        reference:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Reference"
+
         title:
           type: "array"
           items:
@@ -198,11 +258,31 @@ components:
           items:
             $ref: "#/components/schemas/CreationDate"
           
-
   parameters:
     id:
       name: "id"
       description: "Identifier of the document to get"
+      in: path
+      required: True
+      schema:
+        type: "number"
+    entity_id:
+      name: "entity_id"
+      description: "Identifier of the entity"
+      in: path
+      required: True
+      schema:
+        type: "number"
+    reference_id:
+      name: "reference_id"
+      description: "Identifier of the reference"
+      in: path
+      required: True
+      schema:
+        type: "number"
+    annotation_id:
+      name: "annotation_id"
+      description: "Identifier of the annotation"
       in: path
       required: True
       schema:
@@ -293,6 +373,7 @@ components:
         type: "integer"
 
 paths:
+
   /document:
     get:
       operationId: "document.read_all"
@@ -361,6 +442,230 @@ paths:
       responses:
         "204":
           description: "Success: deleted document"
+
+  /entity:
+    get:
+      operationId: "entity.read_all"
+      tags:
+        - "Entity"
+      summary: "Read the list of entities"
+      responses:
+        "200":
+          description: "Success: read entity list"
+    post:
+      operationId: "entity.create"
+      tags:
+        - Entity
+      summary: "Create an entity"
+      requestBody:
+        description: "Entity to create"
+        required: True
+        content:
+          application/json:
+            schema:
+              x-body-name: "entity"
+              type: "object"
+              properties:
+                document_id:
+                  type: "number"
+                type:
+                  type: "string"
+                label:
+                  type: "string"
+                authority:
+                  type: "string"
+      responses:
+        "201":
+          description: "Success: entity created"
+  
+  /entity/{entity_id}:
+    get:
+      operationId: "entity.read_one"
+      tags:
+        - Entity
+      summary: "Read one entity"
+      parameters:
+        - $ref: "#/components/parameters/entity_id"
+      responses:
+        "200":
+          description: "Success: read entity"
+    put:
+      tags:
+        - Entity
+      operationId: "entity.update"
+      summary: "Update an entity"
+      parameters:
+        - $ref: "#/components/parameters/entity_id"
+      responses:
+        "200":
+          description: "Success: updated entity"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "entity"
+              type: "object"
+              properties:
+                label:
+                  type: "string"
+                authority:
+                  type: "string"
+                type:
+                  type: "string"
+    delete:
+      tags:
+        - Entity
+      operationId: "entity.delete"
+      summary: "Delete an entity"
+      parameters:
+        - $ref: "#/components/parameters/entity_id"
+      responses:
+        "204":
+          description: "Success: deleted entity"
+
+  /reference:
+    post:
+      operationId: "reference.create"
+      tags:
+        - Reference
+      summary: "Create a reference"
+      requestBody:
+        description: "Reference to create"
+        required: True
+        content:
+          application/json:
+            schema:
+              x-body-name: "reference"
+              type: "object"
+              properties:
+                document_id:
+                  type: "number"
+                entity_id:
+                  type: "number"
+                type:
+                  type: "string"
+                text:
+                  type: "string"
+      responses:
+        "201":
+          description: "Success: reference created"
+  
+  /reference/{reference_id}:
+    get:
+      operationId: "reference.read_one"
+      tags:
+        - Reference
+      summary: "Read one reference"
+      parameters:
+        - $ref: "#/components/parameters/reference_id"
+      responses:
+        "200":
+          description: "Success: read reference"
+    put:
+      tags:
+        - Reference
+      operationId: "reference.update"
+      summary: "Update a reference"
+      parameters:
+        - $ref: "#/components/parameters/reference_id"
+      responses:
+        "200":
+          description: "Success: updated reference"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "reference"
+              type: "object"
+              properties:
+                text:
+                  type: "string"
+                type:
+                  type: "string"
+    delete:
+      tags:
+        - Reference
+      operationId: "reference.delete"
+      summary: "Delete a reference"
+      parameters:
+        - $ref: "#/components/parameters/reference_id"
+      responses:
+        "204":
+          description: "Success: deleted reference"
+
+  /annotation:
+    post:
+      operationId: "annotation.create"
+      tags:
+        - Annotation
+      summary: "Create a annotation"
+      requestBody:
+        description: "annotation to create"
+        required: True
+        content:
+          application/json:
+            schema:
+              x-body-name: "annotation"
+              type: "object"
+              properties:
+                document_id:
+                  type: "number"
+                reference_id:
+                  type: "number"
+                text:
+                  type: "string"
+                motivation:
+                  type: "string"
+                language:
+                  type: "string"
+      responses:
+        "201":
+          description: "Success: annotation created"
+  
+  /annotation/{annotation_id}:
+    get:
+      operationId: "annotation.read_one"
+      tags:
+        - Annotation
+      summary: "Read one annotation"
+      parameters:
+        - $ref: "#/components/parameters/annotation_id"
+      responses:
+        "200":
+          description: "Success: read annotation"
+    put:
+      tags:
+        - Annotation
+      operationId: "annotation.update"
+      summary: "Update a annotation"
+      parameters:
+        - $ref: "#/components/parameters/annotation_id"
+      responses:
+        "200":
+          description: "Success: updated annotation"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "annotation"
+              type: "object"
+              properties:
+                text:
+                  type: "string"
+                motivation:
+                  type: "string"
+                language:
+                  type: "string"
+    delete:
+      tags:
+        - Annotation
+      operationId: "annotation.delete"
+      summary: "Delete a annotation"
+      parameters:
+        - $ref: "#/components/parameters/annotation_id"
+      responses:
+        "204":
+          description: "Success: deleted annotation"
 
   /title:
     post:
