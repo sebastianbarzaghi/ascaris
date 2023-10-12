@@ -1,0 +1,42 @@
+<div 
+class="box panel-block {{ entity.type }}-block" 
+id="entity-{{ entity.id }}" 
+data-id="{{ entity.id }}" 
+draggable="true">
+    <div class="header-wrapper">
+        <a class="accordion-header" role="button" aria-expanded="false">
+            <span class="panel-icon">
+                <i class="fas fa-{{ entity.type }}"></i>
+            </span>
+            <span class="panel-text">
+                {% for reference in entity.reference %}
+                    {{ reference.text }}
+                {% endfor %}
+            </span>
+        </a>
+        <div class="accordion-utilities">
+            <span class="counter tag is-info is-light">
+                1
+            </span>
+            <button class="delete-button">
+                <i class="fas fa-remove"></i>
+            </button>
+        </div>
+    </div>
+    <div class="accordion-content is-hidden">
+        <form action="PUT">
+            <div class="field">
+                <label class="label">Label</label>
+                <div class="control">
+                    <input class="input" type="text" name="{{ entity.label }}">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Authority record</label>
+                <div class="control">
+                    <input class="input" type="text" name="{{ entity.authority }}">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

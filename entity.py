@@ -2,8 +2,8 @@ from flask import make_response, abort, request
 from config import db
 from models import Document, Entity, entity_schema, entities_schema
 
-def read_all():
-    entities = Entity.query
+def read_all(document_id):
+    entities = Entity.query.filter_by(document_id=document_id).all()
     return entities_schema.dump(entities)
 
 def read_one(entity_id):

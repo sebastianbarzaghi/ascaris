@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
   TabsModule.initializeTabs();
 
   // Initialize the Side Panel module
-  SidePanelModule.populateSidePanel();
+  //SidePanelModule.populateSidePanel();
 
   // Initialize the Save Document module
   SaveDocumentModule.startAutoSave(documentId);

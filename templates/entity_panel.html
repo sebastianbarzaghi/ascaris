@@ -9,23 +9,38 @@
 </div>
 <div class="tab-content">
   <div class="people-content panel-content">
-    <!-- People Content -->
-    <div class="people-panel-blocks"></div>
+    <div class="people-panel-blocks">
+      {% for entity in entities if entity.type == "person" %}
+        {% include 'entity_box.html' %}
+      {% endfor %}
+    </div>
   </div>
   <div class="places-content panel-content hidden">
-    <!-- Places Content -->
-    <div class="places-panel-blocks"></div>
+    <div class="places-panel-blocks">
+      {% for entity in entities if entity.type == "place" %}
+        {% include 'entity_box.html' %}
+      {% endfor %}
+    </div>
   </div>
   <div class="works-content panel-content hidden">
-    <!-- Works Content -->
-    <div class="works-panel-blocks"></div>
+    <div class="works-panel-blocks">
+      {% for entity in entities if entity.type == "work" %}
+        {% include 'entity_box.html' %}
+      {% endfor %}
+    </div>
   </div>
   <div class="organizations-content panel-content hidden">
-    <!-- Organizations Content -->
-    <div class="organizations-panel-blocks"></div>
+    <div class="organizations-panel-blocks">
+      {% for entity in entities if entity.type == "organization" %}
+        {% include 'entity_box.html' %}
+      {% endfor %}
+    </div>
   </div>
   <div class="dates-content panel-content hidden">
-    <!-- Dates Content -->
-    <div class="dates-panel-blocks"></div>
+    <div class="dates-panel-blocks">
+      {% for entity in entities if entity.type == "date" %}
+        {% include entity_box.html %}
+      {% endfor %}
+    </div>
   </div>
 </div>

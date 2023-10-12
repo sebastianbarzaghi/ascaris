@@ -39,6 +39,8 @@ def get_document(id):
 def edit_document(id):
     document = document_api.read_one(id)
 
+    entities = entity_api.read_all(id)
+
     concepts = category_api.get_skos_concepts()
     existing_titles = document['title']
     existing_responsibilities = document['responsibility']
@@ -63,6 +65,7 @@ def edit_document(id):
 
     return render_template('edit_document.html', 
                            document=document,
+                           entities=entities,
                            existing_titles=existing_titles,
                            existing_responsibilities=existing_responsibilities,
                            existing_pubAuthorities=existing_pubAuthorities,
