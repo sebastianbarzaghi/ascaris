@@ -35,8 +35,6 @@ const EntityMarkingModule = (function () {
     }
   ];
 
-  let linkCounter = parseInt(localStorage.getItem("linkCounter")) || 1;
-
   const documentId = document.querySelector('#editableContent').getAttribute('data-documentId');
 
   buttons.forEach(buttonDetails => {
@@ -54,7 +52,6 @@ const EntityMarkingModule = (function () {
           type: buttonDetails.spanClass,
           authority: null
         };
-        console.log(entityData)
 
         // Make an HTTP POST request to create the entity
         fetch('/entity', {
@@ -65,14 +62,12 @@ const EntityMarkingModule = (function () {
             body: JSON.stringify(entityData)
         })
         .then(entityResponse => entityResponse.json())
-        .then(entityData => {
-            // Handle the response data for the entity if needed
-            console.log('Entity created:', entityData);
-
+        .then(entityDataResponse => {
+            
             // Create the reference data
             const referenceData = {
                 document_id: documentId,
-                entity_id: entityData.id,
+                entity_id: entityDataResponse.id,
                 text: selectedText,
                 type: buttonDetails.spanClass
             };
@@ -85,11 +80,32 @@ const EntityMarkingModule = (function () {
                 },
                 body: JSON.stringify(referenceData)
             })
-            .then(referenceResponse => referenceResponse.json())
-            .then(referenceData => {
-                // Handle the response data for the reference if needed
-                console.log('Reference created:', referenceData);
+            .then((referenceResponse) => referenceResponse.json())
+            .then((referenceDataResponse) => {
+              const span = document.createElement("span");
+              span.classList.add("button", "reference", referenceDataResponse.type);
+              span.contentEditable = false;
+              span.setAttribute("id", `reference-${referenceDataResponse.id}`)
+              span.setAttribute("data-entity", referenceDataResponse.entity_id);
+
+              span.addEventListener("click", function(event) {
+                event.preventDefault();
+                span.classList.toggle("selected");
+              });
+
+              range.surroundContents(span);
+              const icon = document.createElement("i");
+              icon.classList.add("tag-icon", "fas", `fa-${referenceDataResponse.type}`);
+              span.appendChild(icon);
+              
+              // Create entity box
+              console.log(entityDataResponse)
+              const block = createPanelBlock(entityDataResponse);
+              const panelContent = document.querySelector(`.${buttonDetails.panelClass}`);
+              panelContent.appendChild(block);
+
             })
+            
             .catch(referenceError => {
                 console.error('Error creating reference:', referenceError);
             });
@@ -98,40 +114,6 @@ const EntityMarkingModule = (function () {
             console.error('Error creating entity:', entityError);
         });
 
-        const span = document.createElement("span");
-        span.classList.add("entity", buttonDetails.spanClass);
-        span.contentEditable = false; // Set non-editable
-
-        span.setAttribute("data-link", linkCounter);
-
-        span.setAttribute("data-created", new Date().toISOString());
-        span.setAttribute("data-modified", new Date().toISOString());
-        
-        span.addEventListener("click", function(event) {
-          event.preventDefault(); // Prevent selecting the span's text
-          span.classList.toggle("selected"); // Toggle the selected class
-        });
-        range.surroundContents(span);
-  
-        const icon = document.createElement("i");
-        icon.classList.add("tag-icon", "fas", `fa-${buttonDetails.iconClass}`);
-        span.appendChild(icon);
-  
-        const panelBlock = createPanelBlock(
-          `${buttonDetails.spanClass}-block`,
-          buttonDetails.iconClass,
-          range.toString(),
-          buttonDetails.panelClass,
-          buttonDetails.spanClass,
-          span.getAttribute("data-link")
-        );
-
-        const panelContent = document.querySelector(`.${buttonDetails.panelClass}`);
-        panelContent.appendChild(panelBlock);
-
-        linkCounter++;
-
-        localStorage.setItem("linkCounter", linkCounter.toString());
       }
     });
   });

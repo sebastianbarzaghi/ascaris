@@ -1,6 +1,6 @@
 import { TabsModule } from './tabsModule.js';
-import { EntityMarkingModule } from './entityMarkingModule.js';
 import { createPanelBlock } from './panelBlockModule.js';
+import { EntityMarkingModule } from './entityMarkingModule.js'
 import { SidePanelModule } from './sidePanelModule.js';
 import { SaveDocumentModule } from './saveDocumentModule.js';
 import { InterfaceModule } from './interfaceModule.js'
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
   TabsModule.initializeTabs();
 
   // Initialize the Side Panel module
-  //SidePanelModule.populateSidePanel();
+  SidePanelModule.populateSidePanel();
 
   // Initialize the Save Document module
   SaveDocumentModule.startAutoSave(documentId);

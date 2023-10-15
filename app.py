@@ -1,4 +1,4 @@
-from flask import Flask, Response, render_template, request, redirect, url_for, flash, jsonify
+from flask import render_template, request, flash, jsonify, send_from_directory
 #from download_tei import generate_tei_header, generate_tei_content, download_all_documents_as_tei_zip
 from manipulate_documents import allowed_file, read_docx, read_pdf, read_txt
 from config import app, connex_app
@@ -475,7 +475,9 @@ def download_all_documents_route():
         return str(e), 500
 
 '''
-
+@app.route('/templates/<path:filename>')
+def serve_template(filename):
+    return send_from_directory('templates', filename)
 
 if __name__ == '__main__':
     app.run(debug=True)

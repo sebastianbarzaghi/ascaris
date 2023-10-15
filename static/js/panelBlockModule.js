@@ -1,56 +1,120 @@
 import { FormFieldsModule } from './formFieldsModule.js';
 
-function createPanelBlock(blockClass, iconClass, value, tabClass, type, dataLink) {
+function createPanelBlock(entityData) {
 
-    var block = document.createElement("div");
-    block.classList.add("box", "panel-block", blockClass);
-    block.setAttribute("id", `entity-block-${dataLink}`);
-    block.setAttribute("data-value", value);
-    block.setAttribute("data-link", dataLink);
-    block.setAttribute("draggable", true);
+  let block = document.createElement("div");
+  block.classList.add(
+    "box", 
+    "panel-block", 
+    `${entityData.type}-block`
+    );
+  block.setAttribute("id", `entity-${entityData.id}`);
+  block.setAttribute("data-id", entityData.id);
+  block.setAttribute("draggable", true);
+
+  let headerWrapper = document.createElement("div");
+  headerWrapper.classList.add("header-wrapper");
+
+  let panelIcon = document.createElement("span");
+  panelIcon.classList.add("panel-icon");
+
+  let icon = document.createElement("i");
+  icon.classList.add("fas", `fa-${entityData.type}`);
+  panelIcon.appendChild(icon);
+
+  headerWrapper.appendChild(panelIcon);
+  console.log(entityData)
+  let accordionHeader = document.createElement("a");
+  accordionHeader.classList.add("accordion-header");
+  accordionHeader.setAttribute("role", "button");
+  accordionHeader.setAttribute("aria-expanded", false);
+  entityData.reference.forEach((reference) => {
+    accordionHeader.textContent += reference;
+  })
+  headerWrapper.appendChild(accordionHeader);
   
+  let accordionUtilities = document.createElement("div");
+  accordionUtilities.classList.add("accordion-utilities");
 
-    var accordionHeader = document.createElement("a");
-    accordionHeader.classList.add("accordion-header");
-    accordionHeader.setAttribute("role", "button");
-    accordionHeader.setAttribute("aria-expanded", "false");
-    accordionHeader.innerHTML = '<span class="panel-icon"><i class="fas fa-' + iconClass + '"></i></span>';
-    accordionHeader.innerHTML += '<span class="panel-text">' + value + '</span>';
+  let entityReferenceCounter = document.createElement("span");
+  entityReferenceCounter.classList.add(
+    "counter", 
+    "tag", 
+    "is-info", 
+    "is-light"
+  );
+  entityReferenceCounter.textContent = entityData.reference.length;
+  console.log(entityData.reference.length)
+  accordionUtilities.appendChild(entityReferenceCounter);
+
+  let entityDeleteButton = document.createElement("button");
+  entityDeleteButton.classList.add("delete-button");
+
+  let deleteIcon = document.createElement("i");
+  deleteIcon.classList.add("fas", "fa-remove");
+  entityDeleteButton.appendChild(deleteIcon);
+  accordionUtilities.appendChild(entityDeleteButton);
+
+  headerWrapper.appendChild(accordionUtilities);
   
+  block.appendChild(headerWrapper);
 
-    // Add the delete button to the accordion header
-    var deleteButton = document.createElement("button");
-    deleteButton.innerHTML = '<i class="fas fa-remove"></i>';
-    deleteButton.classList.add("delete-button");
+  let accordionContent = document.createElement("div");
+  accordionContent.classList.add("accordion-content", "is-hidden");
+
+  let accordionForm = document.createElement("form");
+  accordionForm.classList.add("entity-form");
+  accordionForm.setAttribute("action", "PUT");
+
+  let entityLabelField = document.createElement("div");
+  entityLabelField.classList.add("field", "entity-label");
+
+  let labelLabel = document.createElement("label");
+  labelLabel.classList.add("label");
+  labelLabel.textContent = "Label";
+  entityLabelField.appendChild(labelLabel);
+
+  let controlLabel = document.createElement("div");
+  controlLabel.classList.add("control");
   
+  let labelInput = document.createElement("input");
+  labelInput.classList.add("input");
+  labelInput.setAttribute("type", "text");
+  labelInput.setAttribute("name", entityData.label);
+  labelInput.setAttribute("placeholder", "Enter entity's label")
+  controlLabel.appendChild(labelInput);
 
-    // Add the counter element to the accordion header
-    var counter = document.createElement("span");
-    counter.classList.add("counter", "tag", "is-info", "is-light");
-    counter.textContent = "1";
+  entityLabelField.appendChild(controlLabel);
+
+  let entityAuthorityField = document.createElement("div");
+  entityAuthorityField.classList.add("field", "entity-authority");
+
+  let labelAuthority = document.createElement("label");
+  labelAuthority.classList.add("label");
+  labelAuthority.textContent = "Authority record";
+  entityAuthorityField.appendChild(labelAuthority);
+
+  let controlAuthority = document.createElement("div");
+  controlAuthority.classList.add("control");
   
+  let authorityInput = document.createElement("input");
+  authorityInput.classList.add("input");
+  authorityInput.setAttribute("type", "text");
+  authorityInput.setAttribute("name", entityData.authority);
+  authorityInput.setAttribute("placeholder", "Enter entity's authority")
+  controlAuthority.appendChild(authorityInput);
 
-    var accordionUtilities = document.createElement("div");
-    accordionUtilities.classList.add("accordion-utilities");
-    accordionUtilities.appendChild(counter);
-    accordionUtilities.appendChild(deleteButton);
+  entityAuthorityField.appendChild(controlAuthority);
+
+  accordionForm.appendChild(entityLabelField);
+  accordionForm.appendChild(entityAuthorityField);
+
+  accordionContent.appendChild(accordionForm);
+
+  block.appendChild(accordionContent);
+  
+    /*
     
-
-    var headerWrapper = document.createElement("div");
-    headerWrapper.classList.add("header-wrapper");
-    headerWrapper.appendChild(accordionHeader);
-    headerWrapper.appendChild(accordionUtilities);
-    block.appendChild(headerWrapper);
-  
-
-    var accordionContent = document.createElement("div");
-    accordionContent.classList.add("accordion-content", "is-hidden"); // Add is-hidden class to keep it closed by default
-    accordionContent.innerHTML = FormFieldsModule.createFormFieldTemplates(type); // Function to get the form fields based on the type
-    block.appendChild(accordionContent);
-
-    const form = block.children[1];
-    const entityLink = block.getAttribute("data-link");
-
     function updateEntities(field, value) {
       const entities = document.querySelectorAll(`.entity[data-link="${entityLink}"]`);
       entities.forEach((entity) => {
@@ -100,6 +164,7 @@ function createPanelBlock(blockClass, iconClass, value, tabClass, type, dataLink
     populateEntityFields("to");
     populateEntityFields("notBefore");
     populateEntityFields("notAfter");
+    
 
 
     const entities = document.querySelectorAll(`.entity[data-link="${entityLink}"]`);
@@ -112,18 +177,7 @@ function createPanelBlock(blockClass, iconClass, value, tabClass, type, dataLink
         })
       })
     }
-      
-    // Add a click event listener to the accordion header to toggle the accordion content
-    accordionHeader.addEventListener("click", function () {
-      var isExpanded = accordionHeader.getAttribute("aria-expanded");
-      if (isExpanded === "false") {
-        accordionHeader.setAttribute("aria-expanded", "true");
-      } else {
-        accordionHeader.setAttribute("aria-expanded", "false");
-      }
-      accordionContent.classList.toggle("is-hidden");
-    });
-  
+    
 
     // Add a click event listener to the delete button to remove the block and the parent span
     deleteButton.addEventListener("click", function (event) {
@@ -137,16 +191,31 @@ function createPanelBlock(blockClass, iconClass, value, tabClass, type, dataLink
           }
       });
     });
-
+    */
 
     block.addEventListener("dragstart", (event) => {
       event.dataTransfer.setData("text/plain", block.id); // Set data to be transferred
     });
-
-
-  
+    
     return block;
   
     }
+
+    // Add a click event listener to the common ancestor of all accordions
+    const entityPanel = document.querySelector('.entity-panel')
+    entityPanel.addEventListener("click", function (event) {
+      if (event.target.classList.contains("accordion-header")) {
+        var header = event.target;
+        var content = header.parentNode.nextElementSibling;
+        
+        var isExpanded = header.getAttribute("aria-expanded");
+        if (isExpanded === "false") {
+          header.setAttribute("aria-expanded", "true");
+        } else {
+          header.setAttribute("aria-expanded", "false");
+        }
+        content.classList.toggle("is-hidden");
+      }
+    });
 
   export { createPanelBlock };
