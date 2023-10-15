@@ -1,7 +1,6 @@
 import { TabsModule } from './tabsModule.js';
 import { createPanelBlock } from './panelBlockModule.js';
 import { EntityMarkingModule } from './entityMarkingModule.js'
-import { SidePanelModule } from './sidePanelModule.js';
 import { SaveDocumentModule } from './saveDocumentModule.js';
 import { InterfaceModule } from './interfaceModule.js'
 import { EntityInteractionModule } from './entityInteractionModule.js'
@@ -13,9 +12,6 @@ const documentId = document.querySelector('#editableContent').getAttribute('data
 document.addEventListener("DOMContentLoaded", function () {
   // Initialize the Tabs module
   TabsModule.initializeTabs();
-
-  // Initialize the Side Panel module
-  SidePanelModule.populateSidePanel();
 
   // Initialize the Save Document module
   SaveDocumentModule.startAutoSave(documentId);

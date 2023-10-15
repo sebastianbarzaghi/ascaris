@@ -205,6 +205,10 @@ def create_entity():
     data = request.json
     return entity_api.create(data)
 
+@app.route('/entity/<int:entity_id>', methods=['GET'])
+def read_entity(entity_id):
+    return entity_api.read_one(entity_id)
+
 @app.route('/entity/<int:entity_id>', methods=['PUT'])
 def update_entity(entity_id, entity):
     return entity_api.update(entity_id, entity)
@@ -475,9 +479,6 @@ def download_all_documents_route():
         return str(e), 500
 
 '''
-@app.route('/templates/<path:filename>')
-def serve_template(filename):
-    return send_from_directory('templates', filename)
 
 if __name__ == '__main__':
     app.run(debug=True)

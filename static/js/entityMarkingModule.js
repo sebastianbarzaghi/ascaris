@@ -44,7 +44,7 @@ const EntityMarkingModule = (function () {
       if (selection.toString().trim() !== "") {
         const range = selection.getRangeAt(0);
         const selectedText = range.toString();
-
+        
         // Create the entity data
         const entityData = {
           document_id: documentId,
@@ -97,14 +97,25 @@ const EntityMarkingModule = (function () {
               const icon = document.createElement("i");
               icon.classList.add("tag-icon", "fas", `fa-${referenceDataResponse.type}`);
               span.appendChild(icon);
+
+                    // Make an HTTP POST request to create the entity
+              fetch(`/entity/${referenceDataResponse.entity_id}`, {
+                  method: 'GET',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+              })
+            
+            .then(entityGetResponse => entityGetResponse.json())
+            .then(entityGetDataResponse => {
               
               // Create entity box
-              console.log(entityDataResponse)
-              const block = createPanelBlock(entityDataResponse);
+              const block = createPanelBlock(entityGetDataResponse, entityGetDataResponse.reference);
               const panelContent = document.querySelector(`.${buttonDetails.panelClass}`);
               panelContent.appendChild(block);
 
             })
+          })
             
             .catch(referenceError => {
                 console.error('Error creating reference:', referenceError);

@@ -1,6 +1,5 @@
-import { FormFieldsModule } from './formFieldsModule.js';
 
-function createPanelBlock(entityData) {
+function createPanelBlock(entityData, entityReferences) {
 
   let block = document.createElement("div");
   block.classList.add(
@@ -23,13 +22,12 @@ function createPanelBlock(entityData) {
   panelIcon.appendChild(icon);
 
   headerWrapper.appendChild(panelIcon);
-  console.log(entityData)
   let accordionHeader = document.createElement("a");
   accordionHeader.classList.add("accordion-header");
   accordionHeader.setAttribute("role", "button");
   accordionHeader.setAttribute("aria-expanded", false);
-  entityData.reference.forEach((reference) => {
-    accordionHeader.textContent += reference;
+  entityReferences.forEach((reference) => {
+    accordionHeader.textContent += reference.text;
   })
   headerWrapper.appendChild(accordionHeader);
   
@@ -43,8 +41,8 @@ function createPanelBlock(entityData) {
     "is-info", 
     "is-light"
   );
-  entityReferenceCounter.textContent = entityData.reference.length;
-  console.log(entityData.reference.length)
+  entityReferenceCounter.textContent = entityReferences.length;
+  console.log(entityReferences.length)
   accordionUtilities.appendChild(entityReferenceCounter);
 
   let entityDeleteButton = document.createElement("button");
@@ -112,86 +110,6 @@ function createPanelBlock(entityData) {
   accordionContent.appendChild(accordionForm);
 
   block.appendChild(accordionContent);
-  
-    /*
-    
-    function updateEntities(field, value) {
-      const entities = document.querySelectorAll(`.entity[data-link="${entityLink}"]`);
-      entities.forEach((entity) => {
-          entity.setAttribute(`data-${field}`, value);
-      });
-    }
-
-    function injectEntityData(field, type) {
-        let fieldInput = form.querySelector(`[name="${field}"]`);
-        if (fieldInput) {
-            fieldInput.addEventListener(type, () => {
-                const value = fieldInput.value;
-                updateEntities(field, value);
-            });
-        }
-    }
-    injectEntityData("name", "input");
-    injectEntityData("sameAs", "input");
-    injectEntityData("certainty", "change");
-    injectEntityData("evidence", "change");
-    injectEntityData("note", "input");
-    injectEntityData("when", "input");
-    injectEntityData("from", "input");
-    injectEntityData("to", "input");
-    injectEntityData("notBefore", "input");
-    injectEntityData("notAfter", "input");
-
-
-    function populateEntityFields(field) {
-      const entityLink = block.getAttribute("data-link");
-      const entitySpan = document.querySelector(`.entity[data-link="${entityLink}"]`);
-      if (entitySpan) {
-        const value = entitySpan.getAttribute(`data-${field}`);
-        const fieldInput = block.querySelector(`[name="${field}"]`);
-        if (fieldInput && value) {
-          fieldInput.value = value;
-        }
-      }
-    }
-    populateEntityFields("name");
-    populateEntityFields("sameAs");
-    populateEntityFields("certainty");
-    populateEntityFields("evidence");
-    populateEntityFields("note");
-    populateEntityFields("when");
-    populateEntityFields("from");
-    populateEntityFields("to");
-    populateEntityFields("notBefore");
-    populateEntityFields("notAfter");
-    
-
-
-    const entities = document.querySelectorAll(`.entity[data-link="${entityLink}"]`);
-    for (const element of form.children) {
-      element.addEventListener("input", () => {
-        entities.forEach((entity) => {
-          if(entity.getAttribute('data-modified')) {
-            entity.setAttribute('data-modified', new Date().toISOString())
-          }
-        })
-      })
-    }
-    
-
-    // Add a click event listener to the delete button to remove the block and the parent span
-    deleteButton.addEventListener("click", function (event) {
-      event.stopPropagation();
-      block.remove();
-      // Find the parent span of the accordion header, which represents the marked-up text
-      var spans = document.querySelectorAll(".entity");
-      spans.forEach(function (span) {
-          if (span.getAttribute("data-link") === block.getAttribute("data-link")) {
-              span.outerHTML = span.textContent; // Replace the span with its inner text content
-          }
-      });
-    });
-    */
 
     block.addEventListener("dragstart", (event) => {
       event.dataTransfer.setData("text/plain", block.id); // Set data to be transferred
@@ -205,16 +123,29 @@ function createPanelBlock(entityData) {
     const entityPanel = document.querySelector('.entity-panel')
     entityPanel.addEventListener("click", function (event) {
       if (event.target.classList.contains("accordion-header")) {
-        var header = event.target;
-        var content = header.parentNode.nextElementSibling;
+        let header = event.target;
+        let content = header.parentNode.nextElementSibling;
         
-        var isExpanded = header.getAttribute("aria-expanded");
+        let isExpanded = header.getAttribute("aria-expanded");
         if (isExpanded === "false") {
           header.setAttribute("aria-expanded", "true");
         } else {
           header.setAttribute("aria-expanded", "false");
         }
         content.classList.toggle("is-hidden");
+      } else if (event.target.classList.contains("delete-button")) {
+        const deleteButton = event.target;
+        const block = deleteButton.parentNode.parentNode.parentNode;
+        console.log(block)
+        /*
+        block.remove();
+        let spans = document.querySelectorAll(".reference");
+        spans.forEach(function (span) {
+            if (span.getAttribute("data-link") === block.getAttribute("data-link")) {
+                span.outerHTML = span.textContent; // Replace the span with its inner text content
+            }
+        });
+        */
       }
     });
 
