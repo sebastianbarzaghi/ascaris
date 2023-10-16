@@ -9,6 +9,7 @@ function createPanelBlock(entityData, entityReferences) {
     );
   block.setAttribute("id", `entity-${entityData.id}`);
   block.setAttribute("data-id", entityData.id);
+  block.setAttribute("data-type", entityData.type);
   block.setAttribute("draggable", true);
 
   let headerWrapper = document.createElement("div");
@@ -62,7 +63,7 @@ function createPanelBlock(entityData, entityReferences) {
 
   let accordionForm = document.createElement("form");
   accordionForm.classList.add("entity-form");
-  accordionForm.setAttribute("action", "PUT");
+  accordionForm.setAttribute("method", "PUT");
 
   let entityLabelField = document.createElement("div");
   entityLabelField.classList.add("field", "entity-label");
@@ -76,9 +77,10 @@ function createPanelBlock(entityData, entityReferences) {
   controlLabel.classList.add("control");
   
   let labelInput = document.createElement("input");
-  labelInput.classList.add("input");
+  labelInput.classList.add("input", "entity-label-input");
   labelInput.setAttribute("type", "text");
-  labelInput.setAttribute("name", entityData.label);
+  labelInput.setAttribute("value", entityData.label);
+  labelInput.setAttribute("name", "entity-label");
   labelInput.setAttribute("placeholder", "Enter entity's label")
   controlLabel.appendChild(labelInput);
 
@@ -96,57 +98,121 @@ function createPanelBlock(entityData, entityReferences) {
   controlAuthority.classList.add("control");
   
   let authorityInput = document.createElement("input");
-  authorityInput.classList.add("input");
+  authorityInput.classList.add("input", "entity-authority-input");
   authorityInput.setAttribute("type", "text");
-  authorityInput.setAttribute("name", entityData.authority);
+  authorityInput.setAttribute("name", "entity-authority");
   authorityInput.setAttribute("placeholder", "Enter entity's authority")
   controlAuthority.appendChild(authorityInput);
 
   entityAuthorityField.appendChild(controlAuthority);
+  
+  let submitButtonField = document.createElement("div");
+  submitButtonField.classList.add("field");
+
+  let submitButtonControl = document.createElement("div");
+  submitButtonControl.classList.add("control");
+
+  let submitButton = document.createElement("button");
+  submitButton.classList.add("button", "is-link", "update-entity");
+  submitButton.setAttribute("type", "submit");
+  submitButton.textContent = "Submit";
+  submitButtonControl.appendChild(submitButton);
+
+  submitButtonField.appendChild(submitButtonControl);
 
   accordionForm.appendChild(entityLabelField);
   accordionForm.appendChild(entityAuthorityField);
+  accordionForm.appendChild(submitButtonField);
 
   accordionContent.appendChild(accordionForm);
 
   block.appendChild(accordionContent);
 
-    block.addEventListener("dragstart", (event) => {
-      event.dataTransfer.setData("text/plain", block.id); // Set data to be transferred
-    });
-    
-    return block;
+  block.addEventListener("dragstart", (event) => {
+    event.dataTransfer.setData("text/plain", block.id); // Set data to be transferred
+  });
   
+  return block;
+}
+
+
+// Add a click event listener to the common ancestor of all accordions
+const entityPanel = document.querySelector('.entity-panel')
+entityPanel.addEventListener("click", function (event) {
+  if (event.target.classList.contains("accordion-header")) {
+    let header = event.target;
+    let content = header.parentNode.nextElementSibling;
+    let isExpanded = header.getAttribute("aria-expanded");
+    if (isExpanded === "false") {
+      header.setAttribute("aria-expanded", "true");
+    } else {
+      header.setAttribute("aria-expanded", "false");
     }
-
-    // Add a click event listener to the common ancestor of all accordions
-    const entityPanel = document.querySelector('.entity-panel')
-    entityPanel.addEventListener("click", function (event) {
-      if (event.target.classList.contains("accordion-header")) {
-        let header = event.target;
-        let content = header.parentNode.nextElementSibling;
-        
-        let isExpanded = header.getAttribute("aria-expanded");
-        if (isExpanded === "false") {
-          header.setAttribute("aria-expanded", "true");
-        } else {
-          header.setAttribute("aria-expanded", "false");
-        }
-        content.classList.toggle("is-hidden");
-      } else if (event.target.classList.contains("delete-button")) {
-        const deleteButton = event.target;
-        const block = deleteButton.parentNode.parentNode.parentNode;
-        console.log(block)
-        /*
-        block.remove();
-        let spans = document.querySelectorAll(".reference");
-        spans.forEach(function (span) {
-            if (span.getAttribute("data-link") === block.getAttribute("data-link")) {
-                span.outerHTML = span.textContent; // Replace the span with its inner text content
-            }
-        });
-        */
+    content.classList.toggle("is-hidden");
+  } 
+  
+  else if (event.target.classList.contains("delete-button")) {
+    const deleteButton = event.target;
+    const block = deleteButton.parentNode.parentNode.parentNode;
+    fetch(`/entity/${block.getAttribute("data-id")}`, {
+      method: 'DELETE',
+      headers: {
+          'Content-Type': 'application/json'
       }
+    })
+    .then(response => {
+      if (response.ok) {
+          console.log('Entity and references deleted successfully');
+      } else {
+          console.error('Error deleting entity and references');
+      }
+    })
+    .catch(error => {
+        console.error('Error deleting entity and references', error);
     });
+    block.remove();
+    let references = document.querySelectorAll(".reference");
+    references.forEach(function (reference) {
+        if (reference.getAttribute("data-entity") === block.getAttribute("data-id")) {
+            reference.outerHTML = reference.textContent;
+        }
+    });
+  }
+});
 
-  export { createPanelBlock };
+
+const entityForms = document.querySelectorAll(".entity-form");
+entityForms.forEach(function (form) {
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    const block = form.parentElement.parentElement;
+    const entityId = Number(block.getAttribute("data-id"));
+    const entityType = block.getAttribute("data-type");
+    const entityLabel = form.querySelector(".entity-label-input").value;
+    const entityAuthority = form.querySelector(".entity-authority-input").value;
+    const entityData = {
+      label: entityLabel,
+      authority: entityAuthority,
+      type: entityType,
+    };
+    // Send a PUT request to update the entity
+    fetch(`/entity/${entityId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(entityData),
+    })
+    .then(response => {
+      console.log(response)
+        if (response.ok) {
+            console.log('Entity updated successfully');
+          }
+    })
+    .catch(error => {
+        console.error('Error updating entity', error);
+    });
+  });
+});
+
+export { createPanelBlock };

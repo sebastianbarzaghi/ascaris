@@ -1,7 +1,8 @@
 <div 
 class="box panel-block {{ entity.type }}-block" 
 id="entity-{{ entity.id }}" 
-data-id="{{ entity.id }}" 
+data-id="{{ entity.id }}"
+data-type="{{ entity.type }}"
 draggable="true">
     <div class="header-wrapper">
         <span class="panel-icon">
@@ -22,17 +23,22 @@ draggable="true">
         </div>
     </div>
     <div class="accordion-content is-hidden">
-        <form action="PUT" class="entity-form">
+        <form method="PUT" class="entity-form">
             <div class="field entity-label">
                 <label class="label">Label</label>
                 <div class="control">
-                    <input class="input" type="text" name="{{ entity.label }}" placeholder="Enter entity's label">
+                    <input class="input entity-label-input" type="text" name="entity-label" value="{{ entity.label }}" placeholder="Enter entity's label">
                 </div>
             </div>
             <div class="field entity-authority">
                 <label class="label">Authority record</label>
                 <div class="control">
-                    <input class="input" type="text" name="{{ entity.authority }}" placeholder="Enter entity's authority">
+                    <input class="input entity-authority-input" type="text" name="entity-authority" value="{{ entity.authority }}" placeholder="Enter entity's authority">
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                  <button class="button is-link update-entity" type="submit">Submit</button>
                 </div>
             </div>
         </form>

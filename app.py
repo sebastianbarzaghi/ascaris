@@ -128,7 +128,6 @@ def upload_document():
 def save_document():
     data = request.get_json()
     document_id = data.get("id")
-    print(data)
     return document_api.update(document_id, {'docTitle': data.get('docTitle'), 'content': data.get('content')})
 
 
@@ -210,8 +209,9 @@ def read_entity(entity_id):
     return entity_api.read_one(entity_id)
 
 @app.route('/entity/<int:entity_id>', methods=['PUT'])
-def update_entity(entity_id, entity):
-    return entity_api.update(entity_id, entity)
+def update_entity(entity_id):
+    data = request.get_json()
+    return entity_api.update(entity_id, data)
 
 @app.route('/entity/<int:entity_id>', methods=['DELETE'])
 def delete_entity(entity_id):

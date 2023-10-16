@@ -85,7 +85,7 @@ const EntityMarkingModule = (function () {
               const span = document.createElement("span");
               span.classList.add("button", "reference", referenceDataResponse.type);
               span.contentEditable = false;
-              span.setAttribute("id", `reference-${referenceDataResponse.id}`)
+              span.setAttribute("id", `reference-${referenceDataResponse.id}`);
               span.setAttribute("data-entity", referenceDataResponse.entity_id);
 
               span.addEventListener("click", function(event) {
@@ -127,6 +127,23 @@ const EntityMarkingModule = (function () {
 
       }
     });
+    
+    const references = document.querySelectorAll(".reference");
+    references.forEach((reference) => {
+      const modal = document.querySelector(".annotation-modal");
+      reference.addEventListener("click", function(event) {
+        event.preventDefault();
+        reference.classList.toggle("selected");
+        if (reference.classList.contains("selected")) {
+          // Show the modal
+          modal.style.display = "block";
+        } else {
+          // Hide the modal
+          modal.style.display = "none";
+        }
+      });
+    })
+
   });
 
 })();
