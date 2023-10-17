@@ -43,7 +43,6 @@ function createPanelBlock(entityData, entityReferences) {
     "is-light"
   );
   entityReferenceCounter.textContent = entityReferences.length;
-  console.log(entityReferences.length)
   accordionUtilities.appendChild(entityReferenceCounter);
 
   let entityDeleteButton = document.createElement("button");

@@ -41,6 +41,8 @@ def edit_document(id):
 
     entities = entity_api.read_all(id)
 
+    print(entities)
+
     concepts = category_api.get_skos_concepts()
     existing_titles = document['title']
     existing_responsibilities = document['responsibility']
@@ -189,6 +191,10 @@ def save_metadata(id):
 def create_reference():
     data = request.json
     return reference_api.create(data)
+
+@app.route('/reference/<int:reference_id>', methods=['GET'])
+def read_reference(reference_id):
+    return reference_api.read_one(reference_id)
 
 @app.route('/reference/<int:reference_id>', methods=['PUT'])
 def update_reference(reference_id, reference):

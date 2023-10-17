@@ -5,6 +5,7 @@ import { SaveDocumentModule } from './saveDocumentModule.js';
 import { InterfaceModule } from './interfaceModule.js'
 import { EntityInteractionModule } from './entityInteractionModule.js'
 import { DownloadModule } from './downloadModule.js'
+import { ModalModule } from './modalModule.js'
 
 const documentId = document.querySelector('#editableContent').getAttribute('data-documentId');
 

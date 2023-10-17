@@ -155,6 +155,8 @@ components:
           type: "string"
         language:
           type: "string"
+        license:
+          type: "string"
     Reference:
       type: "object"
       properties:
@@ -618,6 +620,8 @@ paths:
                   type: "string"
                 language:
                   type: "string"
+                license:
+                  type: "string"
       responses:
         "201":
           description: "Success: annotation created"
@@ -655,6 +659,8 @@ paths:
                 motivation:
                   type: "string"
                 language:
+                  type: "string"
+                license:
                   type: "string"
     delete:
       tags:

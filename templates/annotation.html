@@ -1,0 +1,110 @@
+<div class="card">
+    <header class="card-header">
+      <p class="card-header-title">
+        Annotation ANNOTATION.ID
+      </p>
+      <button class="card-header-icon" aria-label="more options">
+        <span class="icon">
+          <i class="fas fa-angle-down" aria-hidden="true"></i>
+        </span>
+      </button>
+    </header>
+    <div class="card-content">
+      <div class="content">
+        <form action="">
+            <div class="field">
+                <label class="label">Label</label>
+                <div class="control">
+                    <textarea class="textarea" placeholder="Enter annotation content">
+                        ANNOTATION.TEXT
+                    </textarea>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Language</label>
+                <div class="control">
+                    <div class="select">
+                        <select>
+                          <option>--Select--</option>
+                          <option value="it">it</option>
+                          <option value="en">en</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Motivation</label>
+                <div class="control">
+                    <div class="select">
+                        <select>
+                            <option>--Select--</option>
+                            <option value="assessing"
+                            >assessing</option>
+                            <option value="bookmarking"
+                            >bookmarking</option>
+                            <option value="classifying"
+                            >classifying</option>
+                            <option value="commenting"
+                            >commenting</option>
+                            <option value="describing"
+                            >describing</option>
+                            <option value="editing"
+                            >editing</option>
+                            <option value="highlighting"
+                            >highlighting</option>
+                            <option value="identifying"
+                            >identifying</option>
+                            <option value="linking"
+                            >linking</option>
+                            <option value="moderating"
+                            >moderating</option>
+                            <option value="questioning"
+                            >questioning</option>
+                            <option value="replying"
+                            >replying</option>
+                            <option value="tagging"
+                            >tagging</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Rights</label>
+                <div class="control">
+                    <div class="select">
+                        <select id="license-link" name="license-link" class="dropdown">
+                            <option value="">--Select--</option>
+                            <option value="https://creativecommons.org/publicdomain/zero/1.0/"
+                            >CC0 (Creative Commons Zero)</option>
+                            <option value="https://creativecommons.org/licenses/by/4.0/"
+                            >CC BY (Attribution)</option>
+                            <option value="https://creativecommons.org/licenses/by-sa/4.0/"
+                            >CC BY-SA (Attribution-ShareAlike)</option>
+                            <option value="https://creativecommons.org/licenses/by-nc/4.0/"
+                            >CC BY-NC (Attribution-NonCommercial)</option>
+                            <option value="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+                            >CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="annotation-dates">
+                <div class="annotation-created">
+                    <p>Created: ANNOTATION.CREATED_AT</p>
+                </div>
+                <div class="annotation-modified">
+                    <p>Created: ANNOTATION_UPDATED_AT</p>
+                </div>
+            </div>
+            <div class="field is-grouped">
+                <div class="control">
+                  <button class="button is-link">Submit</button>
+                </div>
+                <div class="control">
+                  <button class="button is-link is-light">Delete</button>
+                </div>
+            </div>
+        </form>
+      </div>
+    </div>
+</div>

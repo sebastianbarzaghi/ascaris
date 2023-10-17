@@ -35,6 +35,8 @@ def update(annotation_id, annotation):
                                          session=db.session)
         existing_annotation.text = update_annotation.text
         existing_annotation.type = update_annotation.type
+        existing_annotation.motivation = update_annotation.motivation
+        existing_annotation.license = update_annotation.license
         db.session.merge(existing_annotation)
         db.session.commit()
         return annotation_schema.dump(existing_annotation), 201

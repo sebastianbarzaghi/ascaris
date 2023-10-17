@@ -1,4 +1,5 @@
 import { createPanelBlock } from './panelBlockModule.js';
+import { ModalModule } from './modalModule.js';
 
 const EntityMarkingModule = (function () {
 
@@ -86,6 +87,7 @@ const EntityMarkingModule = (function () {
               span.classList.add("button", "reference", referenceDataResponse.type);
               span.contentEditable = false;
               span.setAttribute("id", `reference-${referenceDataResponse.id}`);
+              span.setAttribute("data-id", referenceDataResponse.id);
               span.setAttribute("data-entity", referenceDataResponse.entity_id);
 
               span.addEventListener("click", function(event) {
@@ -130,17 +132,27 @@ const EntityMarkingModule = (function () {
     
     const references = document.querySelectorAll(".reference");
     references.forEach((reference) => {
-      const modal = document.querySelector(".annotation-modal");
       reference.addEventListener("click", function(event) {
+        const modal = document.querySelector("#annotation-modal");
         event.preventDefault();
-        reference.classList.toggle("selected");
-        if (reference.classList.contains("selected")) {
-          // Show the modal
-          modal.style.display = "block";
-        } else {
-          // Hide the modal
-          modal.style.display = "none";
-        }
+        modal.classList.add('is-active');
+        
+        fetch(`/reference/${reference.getAttribute("data-id")}`, {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+        })
+        .then(response => response.json())
+        .then(referenceData => {
+            const annotationData = referenceData.annotation;
+
+            console.log(annotationData)
+
+        })
+        .catch(error => {
+            console.error("Error fetching reference data: ", error);
+        });
       });
     })
 

@@ -10,6 +10,7 @@ class Annotation(db.Model):
     text = db.Column(db.String)
     motivation = db.Column(db.String)
     language = db.Column(db.String)
+    license = db.Column(db.String)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
