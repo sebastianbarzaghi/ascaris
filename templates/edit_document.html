@@ -26,7 +26,11 @@
     </div>
 </div>
 
-{% include 'annotation_modal.html' %}
+{% for entity in entities %}
+  {% for reference in entity.reference %}
+    {% include 'annotation_modal.html' %}
+  {% endfor %}
+{% endfor %}
 
 <script type="module" src="{{ url_for('static', filename='js/editor.js') }}"></script>
 <script src="{{ url_for('static', filename='node_modules/rdflib/dist/rdflib.min.js') }}"></script>

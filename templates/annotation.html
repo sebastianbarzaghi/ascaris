@@ -1,68 +1,98 @@
 <div class="card">
-    <header class="card-header">
+    <header class="card-header annotation-header">
       <p class="card-header-title">
-        Annotation ANNOTATION.ID
+        Annotation {{reference.id}}-{{ annotation.id }}
       </p>
       <button class="card-header-icon" aria-label="more options">
         <span class="icon">
-          <i class="fas fa-angle-down" aria-hidden="true"></i>
+          <i class="fas fa-angle-down annotation-icon" aria-hidden="true"></i>
         </span>
       </button>
     </header>
-    <div class="card-content">
+    <div class="card-content annotation-content">
       <div class="content">
-        <form action="">
+        <form method="PUT">
             <div class="field">
-                <label class="label">Label</label>
+                <label class="label">Text</label>
                 <div class="control">
                     <textarea class="textarea" placeholder="Enter annotation content">
-                        ANNOTATION.TEXT
+                        {{ annotation.text }}
                     </textarea>
                 </div>
             </div>
-            <div class="field">
-                <label class="label">Language</label>
+            <div class="field is-grouped">
                 <div class="control">
+                    <label class="label">Language</label>
                     <div class="select">
                         <select>
-                          <option>--Select--</option>
-                          <option value="it">it</option>
-                          <option value="en">en</option>
+                          <option value="">--Select--</option>
+                          <option 
+                          value="it"
+                          {% if annotation.language == 'it' %} selected {% endif %}
+                          >it</option>
+                          <option 
+                          value="en"
+                          {% if annotation.language == 'en' %} selected {% endif %}
+                          >en</option>
                         </select>
                     </div>
                 </div>
-            </div>
-            <div class="field">
-                <label class="label">Motivation</label>
                 <div class="control">
+                    <label class="label">Motivation</label>
                     <div class="select">
                         <select>
-                            <option>--Select--</option>
-                            <option value="assessing"
+                            <option value="">--Select--</option>
+                            <option 
+                            value="assessing"
+                            {% if annotation.motivation == 'assessing' %} selected {% endif %}
                             >assessing</option>
-                            <option value="bookmarking"
+                            <option 
+                            value="bookmarking"
+                            {% if annotation.motivation == 'bookmarking' %} selected {% endif %}
                             >bookmarking</option>
-                            <option value="classifying"
+                            <option 
+                            value="classifying"
+                            {% if annotation.motivation == 'classifying' %} selected {% endif %}
                             >classifying</option>
-                            <option value="commenting"
+                            <option
+                            value="commenting"
+                            {% if annotation.motivation == 'commenting' %} selected {% endif %}
                             >commenting</option>
-                            <option value="describing"
+                            <option 
+                            value="describing"
+                            {% if annotation.motivation == 'describing' %} selected {% endif %}
                             >describing</option>
-                            <option value="editing"
+                            <option 
+                            value="editing"
+                            {% if annotation.motivation == 'editing' %} selected {% endif %}
                             >editing</option>
-                            <option value="highlighting"
+                            <option 
+                            value="highlighting"
+                            {% if annotation.motivation == 'highlighting' %} selected {% endif %}
                             >highlighting</option>
-                            <option value="identifying"
+                            <option 
+                            value="identifying"
+                            {% if annotation.motivation == 'identifying' %} selected {% endif %}
                             >identifying</option>
-                            <option value="linking"
+                            <option 
+                            value="linking"
+                            {% if annotation.motivation == 'linking' %} selected {% endif %}
                             >linking</option>
-                            <option value="moderating"
+                            <option 
+                            value="moderating"
+                            {% if annotation.motivation == 'moderating' %} selected {% endif %}
                             >moderating</option>
-                            <option value="questioning"
+                            <option 
+                            value="questioning"
+                            {% if annotation.motivation == 'questioning' %} selected {% endif %}
                             >questioning</option>
-                            <option value="replying"
+                            <option 
+                            value="replying"
+                            {% if annotation.motivation == 'replying' %} selected {% endif %}
                             >replying</option>
-                            <option value="tagging"
+                            <option 
+                            value="tagging"
+                            {% if annotation.motivation == 'tagging' %} selected {% endif %}
                             >tagging</option>
                         </select>
                     </div>
@@ -74,37 +104,49 @@
                     <div class="select">
                         <select id="license-link" name="license-link" class="dropdown">
                             <option value="">--Select--</option>
-                            <option value="https://creativecommons.org/publicdomain/zero/1.0/"
+                            <option 
+                            value="https://creativecommons.org/publicdomain/zero/1.0/"
+                            {% if annotation.license == 'https://creativecommons.org/publicdomain/zero/1.0/' %} selected {% endif %}
                             >CC0 (Creative Commons Zero)</option>
-                            <option value="https://creativecommons.org/licenses/by/4.0/"
+                            <option 
+                            value="https://creativecommons.org/licenses/by/4.0/"
+                            {% if annotation.license == 'https://creativecommons.org/licenses/by/4.0/' %} selected {% endif %}
                             >CC BY (Attribution)</option>
-                            <option value="https://creativecommons.org/licenses/by-sa/4.0/"
+                            <option 
+                            value="https://creativecommons.org/licenses/by-sa/4.0/"
+                            {% if annotation.license == 'https://creativecommons.org/licenses/by-sa/4.0/' %} selected {% endif %}
                             >CC BY-SA (Attribution-ShareAlike)</option>
-                            <option value="https://creativecommons.org/licenses/by-nc/4.0/"
+                            <option 
+                            value="https://creativecommons.org/licenses/by-nc/4.0/"
+                            {% if annotation.license == 'https://creativecommons.org/licenses/by-nc/4.0/' %} selected {% endif %}
                             >CC BY-NC (Attribution-NonCommercial)</option>
-                            <option value="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+                            <option 
+                            value="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+                            {% if annotation.license == 'https://creativecommons.org/licenses/by-nc-sa/4.0/' %} selected {% endif %}
                             >CC BY-NC-SA (Attribution-NonCommercial-ShareAlike)</option>
                         </select>
                     </div>
                 </div>
             </div>
-            <div class="annotation-dates">
-                <div class="annotation-created">
-                    <p>Created: ANNOTATION.CREATED_AT</p>
-                </div>
-                <div class="annotation-modified">
-                    <p>Created: ANNOTATION_UPDATED_AT</p>
-                </div>
-            </div>
             <div class="field is-grouped">
                 <div class="control">
-                  <button class="button is-link">Submit</button>
+                    <label class="label">Created at</label>
+                    <p>{{ annotation.created_at }}</p>
                 </div>
                 <div class="control">
-                  <button class="button is-link is-light">Delete</button>
+                    <label class="label">Modified at</label>
+                    <p>{{ annotation.updated_at }}</p>
                 </div>
             </div>
         </form>
       </div>
+      <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-link update-annotation-button">Submit</button>
+        </div>
+        <div class="control">
+          <button class="button is-link is-light delete-annotation-button">Delete</button>
+        </div>
+    </div>
     </div>
 </div>

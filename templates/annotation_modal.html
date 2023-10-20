@@ -1,20 +1,17 @@
-<div id="annotation-modal" class="modal">
+<div class="modal annotation-modal" data-reference="{{ reference.id }}">
     <div class="modal-background"></div>
     <div class="modal-card">
       <header class="modal-card-head">
-        <div>
-            <p class="modal-card-title">Annotations for REFERENCE LABEL</p>
+            <p class="modal-card-title">Annotations for {{ reference.text }} </p>
             <button class="delete" aria-label="close"></button>
-        </div>
-        <div>
-            <button class="button add-annotation-button">
-                Add
-            </button>
-        </div>
       </header>
       <section class="modal-card-body">
-        FOR ANNOTATION IN REFERENCE.ANNOTATION
-            {% include 'annotation.html' %}
+        {% for annotation in reference.annotation %}
+          {% include 'annotation.html' %}
+        {% endfor %}
       </section>
+      <footer class="modal-card-foot">
+        <button class="button is-link add-annotation-button">Add</button>
+      </footer>
     </div>
 </div>

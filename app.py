@@ -3,6 +3,7 @@ from flask import render_template, request, flash, jsonify, send_from_directory
 from manipulate_documents import allowed_file, read_docx, read_pdf, read_txt
 from config import app, connex_app
 import secrets
+import annotation as annotation_api
 import reference as reference_api
 import entity as entity_api
 import title as title_api
@@ -40,8 +41,6 @@ def edit_document(id):
     document = document_api.read_one(id)
 
     entities = entity_api.read_all(id)
-
-    print(entities)
 
     concepts = category_api.get_skos_concepts()
     existing_titles = document['title']
@@ -185,6 +184,24 @@ def save_metadata(id):
         return jsonify(data), 200  # Return a response to the client
     except Exception as e:
         return str(e), 400  # Handle errors and return an appropriate response
+
+
+@app.route('/annotation', methods=['POST'])
+def create_annotation():
+    data = request.json
+    return annotation_api.create(data)
+
+@app.route('/annotation/<int:annotation_id>', methods=['GET'])
+def read_annotation(annotation_id):
+    return annotation_api.read_one(annotation_id)
+
+@app.route('/annotation/<int:annotation_id>', methods=['PUT'])
+def update_annotation(annotation_id, annotation):
+    return annotation_api.update(annotation_id, annotation)
+
+@app.route('/annotation/<int:annotation_id>', methods=['DELETE'])
+def delete_annotation(annotation_id):
+    return annotation_api.delete(annotation_id)
 
 
 @app.route('/reference', methods=['POST'])
