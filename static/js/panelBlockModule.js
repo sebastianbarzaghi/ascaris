@@ -1,6 +1,7 @@
 
 function createPanelBlock(entityData, entityReferences) {
 
+  console.log(entityReferences[0].text)
   let block = document.createElement("div");
   block.classList.add(
     "box", 
@@ -12,120 +13,43 @@ function createPanelBlock(entityData, entityReferences) {
   block.setAttribute("data-type", entityData.type);
   block.setAttribute("draggable", true);
 
-  let headerWrapper = document.createElement("div");
-  headerWrapper.classList.add("header-wrapper");
-
-  let panelIcon = document.createElement("span");
-  panelIcon.classList.add("panel-icon");
-
-  let icon = document.createElement("i");
-  icon.classList.add("fas", `fa-${entityData.type}`);
-  panelIcon.appendChild(icon);
-
-  headerWrapper.appendChild(panelIcon);
-  let accordionHeader = document.createElement("a");
-  accordionHeader.classList.add("accordion-header");
-  accordionHeader.setAttribute("role", "button");
-  accordionHeader.setAttribute("aria-expanded", false);
-  entityReferences.forEach((reference) => {
-    accordionHeader.textContent += reference.text;
-  })
-  headerWrapper.appendChild(accordionHeader);
+  const entityHTML = `
+    <div class="header-wrapper">
+      <span class="panel-icon">
+          <i class="fas fa-${entityData.type}"></i>
+      </span>
+      <a class="accordion-header" role="button" aria-expanded="false">${entityReferences[0].text}</a>
+      <div class="accordion-utilities">
+          <span class="counter tag is-info is-light">${entityReferences.length}</span>
+          <button class="button delete-button">
+              <i class="fas fa-remove"></i>
+          </button>
+      </div>
+    </div>
+    <div class="accordion-content is-hidden">
+      <form class="entity-form" method="PUT">
+          <div class="field entity-label">
+              <label class="label">Label</label>
+              <div class="control">
+                  <input class="input entity-label-input" type="text" value="${entityReferences[0].text}" name="entity-label" placeholder="Enter entity's label">
+              </div>
+          </div>
+          <div class="field entity-authority">
+              <label class="label">Authority record</label>
+              <div class="control">
+                  <input class="input entity-authority-input" type="text" name="entity-authority" placeholder="Enter entity's authority">
+              </div>
+          </div>
+          <div class="field">
+              <div class="control">
+                  <button class="button is-link update-entity" type="submit">Submit</button>
+              </div>
+          </div>
+      </form>
+    </div>
+  `;
   
-  let accordionUtilities = document.createElement("div");
-  accordionUtilities.classList.add("accordion-utilities");
-
-  let entityReferenceCounter = document.createElement("span");
-  entityReferenceCounter.classList.add(
-    "counter", 
-    "tag", 
-    "is-info", 
-    "is-light"
-  );
-  entityReferenceCounter.textContent = entityReferences.length;
-  accordionUtilities.appendChild(entityReferenceCounter);
-
-  let entityDeleteButton = document.createElement("button");
-  entityDeleteButton.classList.add("delete-button");
-
-  let deleteIcon = document.createElement("i");
-  deleteIcon.classList.add("fas", "fa-remove");
-  entityDeleteButton.appendChild(deleteIcon);
-  accordionUtilities.appendChild(entityDeleteButton);
-
-  headerWrapper.appendChild(accordionUtilities);
-  
-  block.appendChild(headerWrapper);
-
-  let accordionContent = document.createElement("div");
-  accordionContent.classList.add("accordion-content", "is-hidden");
-
-  let accordionForm = document.createElement("form");
-  accordionForm.classList.add("entity-form");
-  accordionForm.setAttribute("method", "PUT");
-
-  let entityLabelField = document.createElement("div");
-  entityLabelField.classList.add("field", "entity-label");
-
-  let labelLabel = document.createElement("label");
-  labelLabel.classList.add("label");
-  labelLabel.textContent = "Label";
-  entityLabelField.appendChild(labelLabel);
-
-  let controlLabel = document.createElement("div");
-  controlLabel.classList.add("control");
-  
-  let labelInput = document.createElement("input");
-  labelInput.classList.add("input", "entity-label-input");
-  labelInput.setAttribute("type", "text");
-  labelInput.setAttribute("value", entityData.label);
-  labelInput.setAttribute("name", "entity-label");
-  labelInput.setAttribute("placeholder", "Enter entity's label")
-  controlLabel.appendChild(labelInput);
-
-  entityLabelField.appendChild(controlLabel);
-
-  let entityAuthorityField = document.createElement("div");
-  entityAuthorityField.classList.add("field", "entity-authority");
-
-  let labelAuthority = document.createElement("label");
-  labelAuthority.classList.add("label");
-  labelAuthority.textContent = "Authority record";
-  entityAuthorityField.appendChild(labelAuthority);
-
-  let controlAuthority = document.createElement("div");
-  controlAuthority.classList.add("control");
-  
-  let authorityInput = document.createElement("input");
-  authorityInput.classList.add("input", "entity-authority-input");
-  authorityInput.setAttribute("type", "text");
-  authorityInput.setAttribute("name", "entity-authority");
-  authorityInput.setAttribute("placeholder", "Enter entity's authority")
-  controlAuthority.appendChild(authorityInput);
-
-  entityAuthorityField.appendChild(controlAuthority);
-  
-  let submitButtonField = document.createElement("div");
-  submitButtonField.classList.add("field");
-
-  let submitButtonControl = document.createElement("div");
-  submitButtonControl.classList.add("control");
-
-  let submitButton = document.createElement("button");
-  submitButton.classList.add("button", "is-link", "update-entity");
-  submitButton.setAttribute("type", "submit");
-  submitButton.textContent = "Submit";
-  submitButtonControl.appendChild(submitButton);
-
-  submitButtonField.appendChild(submitButtonControl);
-
-  accordionForm.appendChild(entityLabelField);
-  accordionForm.appendChild(entityAuthorityField);
-  accordionForm.appendChild(submitButtonField);
-
-  accordionContent.appendChild(accordionForm);
-
-  block.appendChild(accordionContent);
+  block.innerHTML = entityHTML;
 
   block.addEventListener("dragstart", (event) => {
     event.dataTransfer.setData("text/plain", block.id); // Set data to be transferred
@@ -134,8 +58,7 @@ function createPanelBlock(entityData, entityReferences) {
   return block;
 }
 
-
-// Add a click event listener to the common ancestor of all accordions
+// Add a click event listener to the common ancestor of all entity accordions
 const entityPanel = document.querySelector('.entity-panel')
 entityPanel.addEventListener("click", function (event) {
   if (event.target.classList.contains("accordion-header")) {
@@ -173,6 +96,8 @@ entityPanel.addEventListener("click", function (event) {
     let references = document.querySelectorAll(".reference");
     references.forEach(function (reference) {
         if (reference.getAttribute("data-entity") === block.getAttribute("data-id")) {
+            const counter = reference.querySelector(".counter");
+            counter.textContent = "";
             reference.outerHTML = reference.textContent;
         }
     });
