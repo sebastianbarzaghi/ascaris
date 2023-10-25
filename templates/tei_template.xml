@@ -1,0 +1,49 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+    <teiHeader xml:id="header">
+        <fileDesc>
+            <titleStmt>
+            </titleStmt>
+            <extent>
+                <!--
+                measure
+                    @unit
+                    @quantity
+                    text
+                -->
+            </extent>
+            <publicationStmt>
+            </publicationStmt>
+            <notesStmt>
+            </notesStmt>
+            <sourceDesc>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+            <appInfo>
+                <application 
+                version="1.0.0"
+                ident="Ascaris">
+                    <label>Ascaris</label>
+                    <ptr target="#header"/>
+                    <ptr target="#text"/>
+                </application>
+            </appInfo>
+        </encodingDesc>
+        <profileDesc>
+            <creation>
+            </creation>
+            <textClass>
+            </textClass>
+        </profileDesc>
+        <xenoData>
+            <rdf:RDF>
+            </rdf:RDF>
+        </xenoData>
+    </teiHeader>
+    <text xml:id="text">
+    </text>
+    <standOff>
+        <listAnnotation>
+        </listAnnotation>
+    </standOff>
+</TEI>

@@ -1,8 +1,8 @@
-from flask import render_template, request, flash, jsonify, send_from_directory
-#from download_tei import generate_tei_header, generate_tei_content, download_all_documents_as_tei_zip
+from flask import Response, render_template, request, flash, jsonify, send_from_directory
+from download_tei import generate_tei, generate_tei_mass
 from manipulate_documents import allowed_file, read_docx, read_pdf, read_txt
 from config import app, connex_app
-import secrets
+import secrets, os
 import annotation as annotation_api
 import reference as reference_api
 import entity as entity_api
@@ -196,8 +196,9 @@ def read_annotation(annotation_id):
     return annotation_api.read_one(annotation_id)
 
 @app.route('/annotation/<int:annotation_id>', methods=['PUT'])
-def update_annotation(annotation_id, annotation):
-    return annotation_api.update(annotation_id, annotation)
+def update_annotation(annotation_id):
+    data = request.get_json()
+    return annotation_api.update(annotation_id, data)
 
 @app.route('/annotation/<int:annotation_id>', methods=['DELETE'])
 def delete_annotation(annotation_id):
@@ -409,41 +410,32 @@ def delete_document_abstract(abstract_id):
     return abstract_api.delete(abstract_id)
 
 
+@app.route('/download_tei/<int:document_id>')
+def download_tei(document_id):
+    document = get_document(document_id)
+    tei_document = generate_tei(document)
+    response = Response(tei_document, content_type='application/xml')
+    response.headers['Content-Disposition'] = f'attachment; filename=document_{document_id}.xml'
+    return response
+
+
+@app.route('/download_tei/all_documents')
+def download_all_documents_route():
+    try:
+        zip_filename = generate_tei_mass()
+        if not os.path.isfile(zip_filename):
+            return "ZIP file not found", 404
+        with open(zip_filename, 'rb') as zip_file:
+            zip_data = zip_file.read()
+        response = Response(zip_data)
+        response.headers['Content-Type'] = 'application/zip'
+        response.headers['Content-Disposition'] = 'attachment; filename=tei_documents.zip'
+        return response
+    except Exception as e:
+        return str(e), 500
+
 
 '''
-# Flask route to save or update a document
-@app.route("/save_document", methods=["POST"])
-def save_document():
-    data = request.get_json()
-    document_id = data.get("document_id")
-    title = data.get("docTitle")
-    content = data.get("content")
-    # Check if a document with the given ID already exists
-    document = Document.query.filter_by(id=document_id).first()
-    if document:
-        # Update the existing document
-        document.docTitle = title
-        document.content = content
-        document.updated_at = datetime.utcnow()
-    else:
-        # Create a new document
-        new_document = Document(docTitle=title, content=content)
-        db.session.add(new_document)
-
-    db.session.commit()
-    return jsonify({"message": "Document saved successfully!"})
-
-
-# Flask route to fetch a document by its ID
-@app.route("/get_document/<int:document_id>")
-def get_document(document_id):
-    document = Document.query.get(document_id)
-    if document:
-        return jsonify({"docTitle": document.docTitle, "content": document.content})
-    else:
-        return jsonify({"error": "Document not found"}), 404
-
-
 @app.route('/delete/<model_name>/<int:record_id>', methods=['DELETE'])
 def delete_record(model_name, record_id):
     try:
@@ -462,45 +454,6 @@ def delete_record(model_name, record_id):
             return jsonify({'message': f'{model_name} not found'}), 404
     except Exception as e:
         return jsonify({'message': 'An error occurred'}), 500
-
-
-@app.route('/download_tei/<int:document_id>')
-def download_tei(document_id):
-    data = get_data(document_id=document_id)
-    tei_header = generate_tei_header(data=data)
-    tei_content = generate_tei_content(data=data)
-    # Create the complete TEI document
-    tei_template = f"""
-    <TEI xmlns="http://www.tei-c.org/ns/1.0">
-      {tei_header}
-      {tei_content}
-    </TEI>
-    """
-    # Return the TEI document as a downloadable file
-    response = Response(tei_template, content_type='application/xml')
-    response.headers['Content-Disposition'] = f'attachment; filename=document_{document_id}.xml'
-    return response
-
-
-@app.route('/download_tei/all_documents')
-def download_all_documents_route():
-    try:
-        # Call the download function from download.py
-        zip_filename = download_all_documents_as_tei_zip()
-        # Check if the file exists
-        if not os.path.isfile(zip_filename):
-            return "ZIP file not found", 404
-        # Open the ZIP file in binary read mode
-        with open(zip_filename, 'rb') as zip_file:
-            zip_data = zip_file.read()
-        # Set the appropriate headers for downloading a ZIP file
-        response = Response(zip_data)
-        response.headers['Content-Type'] = 'application/zip'
-        response.headers['Content-Disposition'] = 'attachment; filename=tei_documents.zip'
-        return response
-    except Exception as e:
-        return str(e), 500
-
 '''
 
 if __name__ == '__main__':

@@ -1,7 +1,6 @@
 
 function createPanelBlock(entityData, entityReferences) {
 
-  console.log(entityReferences[0].text)
   let block = document.createElement("div");
   block.classList.add(
     "box", 
@@ -96,8 +95,10 @@ entityPanel.addEventListener("click", function (event) {
     let references = document.querySelectorAll(".reference");
     references.forEach(function (reference) {
         if (reference.getAttribute("data-entity") === block.getAttribute("data-id")) {
-            const counter = reference.querySelector(".counter");
-            counter.textContent = "";
+          /*  
+          const counter = reference.querySelector(".counter");
+          counter.textContent = "";
+          */
             reference.outerHTML = reference.textContent;
         }
     });
@@ -128,7 +129,6 @@ entityForms.forEach(function (form) {
         body: JSON.stringify(entityData),
     })
     .then(response => {
-      console.log(response)
         if (response.ok) {
             console.log('Entity updated successfully');
           }

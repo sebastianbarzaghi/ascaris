@@ -1,4 +1,6 @@
-<div class="card">
+<div 
+class="card annotation"
+data-id="{{ annotation.id }}">
     <header class="card-header annotation-header">
       <p class="card-header-title">
         Annotation {{reference.id}}-{{ annotation.id }}
@@ -9,22 +11,22 @@
         </span>
       </button>
     </header>
-    <div class="card-content annotation-content">
+    <div class="card-content annotation-content" data-id="{{ annotation.id }}">
       <div class="content">
-        <form method="PUT">
+        <form method="PUT" class="annotation-form">
             <div class="field">
                 <label class="label">Text</label>
                 <div class="control">
-                    <textarea class="textarea" placeholder="Enter annotation content">
-                        {{ annotation.text }}
-                    </textarea>
+                    <textarea 
+                    class="textarea annotation-text annotation-form-field" 
+                    placeholder="Enter annotation content">{{ annotation.text }}</textarea>
                 </div>
             </div>
             <div class="field is-grouped">
                 <div class="control">
                     <label class="label">Language</label>
                     <div class="select">
-                        <select>
+                        <select class="annotation-language annotation-form-field">
                           <option value="">--Select--</option>
                           <option 
                           value="it"
@@ -40,7 +42,7 @@
                 <div class="control">
                     <label class="label">Motivation</label>
                     <div class="select">
-                        <select>
+                        <select class="annotation-motivation annotation-form-field">
                             <option value="">--Select--</option>
                             <option 
                             value="assessing"
@@ -102,7 +104,7 @@
                 <label class="label">Rights</label>
                 <div class="control">
                     <div class="select">
-                        <select id="license-link" name="license-link" class="dropdown">
+                        <select class="annotation-license annotation-form-field">
                             <option value="">--Select--</option>
                             <option 
                             value="https://creativecommons.org/publicdomain/zero/1.0/"
@@ -131,22 +133,22 @@
             <div class="field is-grouped">
                 <div class="control">
                     <label class="label">Created at</label>
-                    <p>{{ annotation.created_at }}</p>
+                    <p class="annotation-created">{{ annotation.created_at }}</p>
                 </div>
                 <div class="control">
                     <label class="label">Modified at</label>
-                    <p>{{ annotation.updated_at }}</p>
+                    <p class="annotation-modified">{{ annotation.updated_at }}</p>
+                </div>
+            </div>
+            <div class="field is-grouped">
+                <div class="control">
+                  <button class="button is-link update-annotation-button" type="submit">Submit</button>
+                </div>
+                <div class="control">
+                  <button class="button is-link is-light delete-annotation-button">Delete</button>
                 </div>
             </div>
         </form>
       </div>
-      <div class="field is-grouped">
-        <div class="control">
-          <button class="button is-link update-annotation-button">Submit</button>
-        </div>
-        <div class="control">
-          <button class="button is-link is-light delete-annotation-button">Delete</button>
-        </div>
-    </div>
     </div>
 </div>

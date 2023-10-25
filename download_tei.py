@@ -4,372 +4,218 @@ import os
 from bs4 import BeautifulSoup, Tag
 from datetime import datetime
 from models import Document
-from manipulate_data import get_data
+import requests
 
 
-def generate_tei_titles(data):
-    soup = BeautifulSoup()
-    for title in data['titles']:
-        title_tag = soup.new_tag('title')
-        title_tag.string = title['text']
-        title_tag['xml:id'] = f"title-{title['id']}"
-        title_tag['lang'] = title['language']
-        title_tag['type'] = title['type']
-        title_tag['level'] = title['level']
-        soup.append(title_tag)
-    return soup
+def read_template():
+    xml_file_path = "templates/tei_template.xml"
+    xml_content = ""
+    try:
+        with open(xml_file_path, 'r', encoding='utf-8') as file:
+            xml_content = file.read()
+            return xml_content
+    except FileNotFoundError:
+        print(f"File not found: {xml_file_path}")
+    except Exception as e:
+        print(f"An error occurred while reading the file: {e}")
 
 
-def generate_tei_responsibilities(data):
-    soup = BeautifulSoup()
-    for responsibility in data['responsibilities']:
-        if responsibility['role'] == 'other':
-            print("other responsibility: TO DO")
-        else:
-            resp_tag = soup.new_tag(responsibility['role'])
-        resp_tag.string = responsibility['fullName']
-        resp_tag['sameAs'] = responsibility['authority']
-        soup.append(resp_tag)
-    return soup
-
-
-def generate_tei_pub_authorities(data):
-    soup = BeautifulSoup()
-    for pub_authority in data['pubAuthorities']:
-        if pub_authority['role'] == 'other':
-            print("other responsibility: TO DO")
-        else:
-            pub_authority_tag = soup.new_tag(pub_authority['role'])
-        pub_authority_tag.string = pub_authority['name']
-        pub_authority_tag['sameAs'] = pub_authority['authority']
-        soup.append(pub_authority_tag)
-    return soup
-            
-
-def generate_tei_identifiers(data):
-    soup = BeautifulSoup()
-    for identifier in data['identifiers']:
-        identifier_tag = soup.new_tag('idno')
-        identifier_tag.string = identifier['text']
-        identifier_tag['xml:id'] = f"identifier-{identifier['id']}"
-        identifier_tag['type'] = identifier['type'].upper()
-        soup.append(identifier_tag)
-    return soup
-
-
-def generate_tei_notes(data):
-    soup = BeautifulSoup()
-    for note in data['notes']:
-        note_tag = soup.new_tag('note')
-        note_tag.string = note['text']
-        note_tag['xml:id'] = f"note-{note['id']}"
-        soup.append(note_tag)
-    return soup
-
-
-def generate_tei_sources(data):
-    soup = BeautifulSoup()
-    for source in data['sources']:
-        source_tag = soup.new_tag('bibl')
-        source_tag.string = source['text']
-        source_tag['xml:id'] = f"source-{source['id']}"
-        soup.append(source_tag)
-    return soup
-
-
-def generate_tei_languages(data):
-    soup = BeautifulSoup()
-    lang_usage = soup.new_tag('langUsage')
-    for language in data['languages']:
-        language_tag = soup.new_tag('language')
-        language_tag.string = language['text']
-        language_tag['ident'] = language['ident']
-        language_tag['usage'] = language['usage']
-        lang_usage.append(language_tag)
-    soup.append(lang_usage)
-    return soup
-
-
-def generate_tei_categories(data):
-    soup = BeautifulSoup()
-    text_class = soup.new_tag('textClass')
-    for category in data['categories']:
-        category_tag = soup.new_tag('catRef')
-        category_tag['target'] = category['type']
-        text_class.append(category_tag)
-    soup.append(text_class)
-    return soup
-
-
-def generate_tei_extent(data):
-    soup = BeautifulSoup()
-    original_soup = BeautifulSoup(data['document']['content'], 'html.parser')
-    original_text = original_soup.get_text()
-    num_characters = len(original_text)
-    words = re.findall(r'\w+', original_text)
-    num_words = len(words)
-    sentences = re.split(r'[.!?]', original_text)
-    num_sentences = len([s for s in sentences if s.strip() != ''])
-    characters_measure = soup.new_tag('measure', unit='characters', quantity=num_characters)
-    characters_measure.string = str(num_characters)
-    soup.append(characters_measure)
-    words_measure = soup.new_tag('measure', unit='words', quantity=num_words)
-    words_measure.string = str(num_words)
-    soup.append(words_measure)
-    sentences_measure = soup.new_tag('measure', unit='sentences', quantity=num_sentences)
-    sentences_measure.string = str(num_sentences)
-    soup.append(sentences_measure)
-    return soup
-
-
-def generate_tei_app_info():
-    soup = BeautifulSoup()
-    app_info = soup.new_tag('appInfo')
-    application = soup.new_tag('application', version='0.1.0', ident='AscarisEditor', when=datetime.now().date())
-    label = soup.new_tag('label')
-    label.string = 'Ascaris Editor'
-    application.append(label)
-    app_info.append(application)
-    soup.append(app_info)
-    return soup
-
-
-def generate_tei_header(data):
-    # Create a BeautifulSoup object with a specified XML namespace
-    soup = BeautifulSoup()
-
-    # Create the <teiHeader> tag with the specified namespace
-    tei_header = soup.new_tag('teiHeader', xmlns='http://www.tei-c.org/ns/1.0')
-
-    # Create the child tags within <teiHeader>
-    file_desc = soup.new_tag('fileDesc')
-    title_stmt = soup.new_tag('titleStmt')
-    extent = soup.new_tag('extent')
-    publication_stmt = soup.new_tag('publicationStmt')
-    source_desc = soup.new_tag('sourceDesc')
-    note_stmt = soup.new_tag('noteStmt')
-    encoding_desc = soup.new_tag('encodingDesc')
-    profile_desc = soup.new_tag('profileDesc')
-
-    if 'title' in data:
-        titles = generate_tei_titles(data=data)
-        title_stmt.append(titles)
-
-    if 'responsibility' in data:
-        responsibilities = generate_tei_responsibilities(data=data)
-        title_stmt.append(responsibilities)
-
-    if 'document' in data:
-        measures = generate_tei_extent(data=data)
-        extent.append(measures)
-        
-        app_info = generate_tei_app_info()
-        encoding_desc.append(app_info)
+def generate_tei(document):
+    soup = BeautifulSoup(read_template(), 'xml')
     
-    if 'pubAuthority' in data:
-        pub_authorities = generate_tei_pub_authorities(data=data)
-        publication_stmt.append(pub_authorities)
-
-    if 'pubPlace' in data:
-        pub_place = soup.new_tag('pubPlace')
-        pub_place.string = data['pubPlace']['name']
-        pub_place['sameAs'] = data['pubPlace']['authority']
-        publication_stmt.append(pub_place)
-
-    if 'pubDate' in data:
-        pub_date = soup.new_tag('date')
-        pub_date.string = str(data['pubDate']['date'])
-        pub_date['when'] = data['pubDate']['date']
-        publication_stmt.append(pub_date)
-
-    if 'identifier' in data:
-        identifiers = generate_tei_identifiers(data=data)
-        publication_stmt.append(identifiers)
-
-    if 'license' in data:
-        availability = soup.new_tag('availability')
-        license = soup.new_tag('license')
-        license.string = data['license']['text']
-        license['target'] = data['license']['link']
-        availability.append(license)
-        publication_stmt.append(availability)
-
-    if 'note' in data:
-        notes = generate_tei_notes(data=data)
-        note_stmt.append(notes)
-
-    if 'source' in data:
-        sources = generate_tei_sources(data=data)
-        source_desc.append(sources)
-
-    if 'description' in data:
-        description = soup.new_tag('projectDesc')
-        paragraph = soup.new_tag('p')
-        paragraph.string = data['description']['text']
-        description.append(paragraph)
-        encoding_desc.append(description)
-
-    if 'creationDate' in data:
-        creation = soup.new_tag('creation')
-        creation_date = soup.new_tag('date')
-        creation_date.string = str(data['creationDate']['date'])
-        creation_date['when'] = data['creationDate']['date']
-        creation.append(creation_date)
-        profile_desc.append(creation)
-
-    if 'languages' in data:
-        languages = generate_tei_languages(data=data)
-        profile_desc.append(languages)
-
-    if 'category' in data:
-        categories = generate_tei_categories(data=data)
-        profile_desc.append(categories)
-
-    # Append the child tags to their respective parents
-    file_desc.append(title_stmt)
-    file_desc.append(extent)
-    file_desc.append(publication_stmt)
-    file_desc.append(note_stmt)
-    file_desc.append(source_desc)
-    tei_header.append(file_desc)
-    tei_header.append(encoding_desc)
-    tei_header.append(profile_desc)
-
-    # Append the <teiHeader> tag to the soup
-    soup.append(tei_header)
-
+    titleStmt = soup.find('titleStmt')
+    for title in document['title']:
+        tei_title = soup.new_tag('title')
+        tei_title['xml:id'] = f'title-{title["id"]}'
+        tei_title['xml:lang'] = title['language']
+        tei_title.string = title['text']
+        titleStmt.append(tei_title)
+    for responsibility in document['responsibility']:
+        if responsibility['role'] == 'author':
+            tei_resp = soup.new_tag('author')
+        elif responsibility['role'] == 'editor':
+            tei_resp = soup.new_tag('editor')
+        elif responsibility['role'] == 'founder':
+            tei_resp = soup.new_tag('founder')
+        elif responsibility['role'] == 'sponsor':
+            tei_resp = soup.new_tag('sponsor')
+        else:
+            tei_resp = soup.new_tag('principal')
+        tei_resp['xml:id'] = f'resp-{responsibility["id"]}'
+        tei_resp['sameAs'] = responsibility['authority']
+        tei_resp.string = f'{responsibility["surname"]}, {responsibility["name"]}'
+        titleStmt.append(tei_resp)
+    publicationStmt = soup.find('publicationStmt')
+    for pubAuthority in document['pubAuthority']:
+        if pubAuthority['role'] == 'publisher':
+            tei_auth = soup.new_tag('publisher')
+        elif pubAuthority['role'] == 'distributor':
+            tei_auth = soup.new_tag('distributor')
+        elif pubAuthority['role'] == 'authority':
+            tei_auth = soup.new_tag('authority')
+        tei_auth['xml:id'] = f'pubauth-{pubAuthority["id"]}'
+        tei_auth['sameAs'] = pubAuthority['authority']
+        tei_auth.string = pubAuthority['name']
+        publicationStmt.append(tei_auth)
+    for identifier in document['identifier']:
+        tei_idno = soup.new_tag('idno')
+        tei_idno['xml:id'] = f'ident-{identifier["id"]}'
+        tei_idno['type'] = identifier['type']
+        tei_idno.string = identifier['text']
+        publicationStmt.append(tei_idno)
+    for pubPlace in document['pubPlace']:
+        tei_pubPlace = soup.new_tag('pubPlace')
+        tei_pubPlace['xml:id'] = f'pubplace-{pubPlace["id"]}'
+        tei_pubPlace['sameAs'] = pubPlace['authority']
+        tei_pubPlace.string = pubPlace['name']
+        publicationStmt.append(tei_pubPlace)
+    '''for pubDate in document['pubDate']:
+        tei_pubDate = soup.new_tag('date')
+        tei_pubDate['xml:id'] = f'pubdate-{pubDate["id"]}'
+        tei_pubDate['when'] = pubDate['date']
+        tei_pubDate.string = pubDate['date']
+        publicationStmt.append(pubDate)'''
+    for license in document['license']:
+        tei_availability = soup.new_tag('availability')
+        tei_license = soup.new_tag('licence')
+        tei_p = soup.new_tag('p')
+        tei_license['xml:id'] = f'license-{license["id"]}'
+        tei_license['target'] = license['link']
+        tei_p.string = license['text']
+        tei_license.append(tei_p)
+        tei_availability.append(tei_license)
+        publicationStmt.append(tei_availability)
+    notesStmt = soup.find('notesStmt')
+    for note in document['note']:
+        tei_note = soup.new_tag('note')
+        tei_note['xml:id'] = f'note-{note["id"]}'
+        tei_note.string = note['text']
+        notesStmt.append(tei_note)
+    sourceDesc = soup.find('sourceDesc')
+    for source in document['source']:
+        tei_source = soup.new_tag('bibl')
+        tei_source['xml:id'] = f'{source["id"]}'
+        tei_source.string = source['text']
+        sourceDesc.append(tei_source)
+    '''creation = soup.find('creation')
+    for creationDate in document['creationDate']:
+        tei_creationDate = soup.new_tag('date')
+        tei_creationDate['xml:id'] = f'creationdate-{creationDate["id"]}'
+        tei_creationDate['when'] = creationDate['date']
+        tei_creationDate.string = creationDate['date']'''
+    textClass = soup.find('textClass')
+    for category in document['category']:
+        tei_catRef = soup.new_tag('catRef')
+        tei_catRef['xml:id'] = f'category-{category["id"]}'
+        tei_catRef['target'] = category['type']
+        textClass.append(tei_catRef)
+    '''profileDesc = soup.find('profileDesc')
+    for abstract in document['abstract']:
+        tei_abstract = soup.new_tag('abstract')
+        tei_abstract['xml:id'] = f'abstract-{abstract["id"]}'
+        tei_abstract.string = abstract['text']
+        profileDesc.append(abstract)'''
+    rdfData = soup.find('RDF')
+    for entity in document['entity']:
+        if entity['type'] == 'person':
+            rdf_entity = soup.new_tag('foaf:Person')
+            rdf_entity_label = soup.new_tag('foaf:name')
+        elif entity['type'] == 'place':
+            rdf_entity = soup.new_tag('schema:Place')
+            rdf_entity_label = soup.new_tag('schema:name')
+        elif entity['type'] == 'organization':
+            rdf_entity = soup.new_tag('foaf:Organization')
+            rdf_entity_label = soup.new_tag('foaf:name')
+        elif entity['type'] == 'work':
+            rdf_entity = soup.new_tag('fabio:Work')
+            rdf_entity_label = soup.new_tag('dcterms:title')
+        rdf_entity['rdf:about'] = f"#entity-{entity['id']}"
+        rdf_entity_label.string = entity['label']
+        rdf_entity_sameas = soup.new_tag('owl:sameAs')
+        rdf_entity_sameas['rdf:resource'] = entity['authority']
+        rdf_entity.append(rdf_entity_label)
+        rdf_entity.append(rdf_entity_sameas)
+        rdfData.append(rdf_entity)
+    
+    tei_text = soup.find('text')
+    clean_content = document['content'].strip()
+    split_content = clean_content.split('<br>')[:-1]
+    joined_content = ''
+    for i, content_chunk in enumerate(split_content):
+        content_chunk = f'<p xml:id="paragraph-{i}" n="{i}">{content_chunk}</p>'
+        joined_content += content_chunk
+    content_soup = BeautifulSoup(joined_content, 'html.parser')
+    references = content_soup.find_all('span', class_='reference')
+    for reference in references:
+        ref_tag = soup.new_tag('ref')
+        ref_tag.string = reference.text
+        for attr_name, attr_value in reference.attrs.items():
+            if attr_name == 'id':
+                ref_tag['xml:id'] = f'{attr_value}'
+            elif attr_name == 'data-entity':
+                ref_tag['target'] = f'#entity-{attr_value}'
+        reference.replace_with(ref_tag)
+    tei_text.append(content_soup)
+    
+    listAnnotation = soup.find('listAnnotation')
+    for entity in document['entity']:
+        for reference in entity['reference']:
+            for annotation in reference['annotation']:
+                tei_annotation = soup.new_tag('annotation')
+                tei_annotation['xml:id'] = f'annotation-{annotation["id"]}'
+                tei_annotation['xml:lang'] = annotation['language']
+                tei_annotation['motivation'] = annotation['motivation']
+                tei_annotation['target'] = f'#reference-{annotation["reference_id"]}'
+                tei_annotation_note = soup.new_tag('note')
+                tei_annotation_note.string = annotation['text']
+                tei_annotation_license = soup.new_tag('license')
+                tei_annotation_license['target'] = annotation['license']
+                tei_annotation_revision = soup.new_tag('revisionDesc')
+                tei_annotation_created = soup.new_tag('change')
+                tei_annotation_modified = soup.new_tag('change')
+                tei_annotation_created['when'] = annotation['created_at']
+                tei_annotation_created['status'] = 'created'
+                tei_annotation_modified['when'] = annotation['updated_at']
+                tei_annotation_modified['status'] = 'modified'
+                tei_annotation_revision.append(tei_annotation_created)
+                tei_annotation_revision.append(tei_annotation_modified)
+                tei_annotation.append(tei_annotation_revision)
+                tei_annotation.append(tei_annotation_note)
+                tei_annotation.append(tei_annotation_license)
+                listAnnotation.append(tei_annotation)
+    print(tei_text)
+    extent = soup.find('extent')
+    #characters -> tei_text
+    #words -> tei_text
+    #sentences -> tei_text
+    #entities -> xenodata
+    #references -> tei_text
+    #annotations -> standoff
     return soup.prettify()
 
 
-def generate_tei_content(data):
-
-    # Create a BeautifulSoup object and parse the HTML
-    soup = BeautifulSoup(data['document']['content'], 'html.parser')
-
-    paragraphs = []
-    current_paragraph = []
-
-    for element in soup.descendants:
-        if element.name == 'br':
-            if current_paragraph:
-                paragraphs.append(current_paragraph)
-            current_paragraph = []
-        elif element.name == 'span' and 'entity' in element.get('class', []):
-            current_paragraph.append(element)
-        elif element.string:
-            current_paragraph.append(element.string.strip())
-
-    if current_paragraph:
-        paragraphs.append(current_paragraph)
-
-    # Create a new TEI document
-    tei_soup = BeautifulSoup()
-    tei_text = tei_soup.new_tag('text')
-    tei_soup.append(tei_text)
-
-    # Create paragraphs and reinsert marked-up entities
-    paragraph_counter = 1
-    for paragraph_content in paragraphs:
-        paragraph = tei_soup.new_tag('p')
-        paragraph['xml:id'] = f"D{data['document']['id']}P{paragraph_counter}"
-        paragraph['n'] = paragraph_counter
-        in_span = False  # Flag to track if we are inside a <span> tag
-        for item in paragraph_content:
-            if isinstance(item, str) and not in_span:
-                paragraph.append(item)
-            elif isinstance(item, Tag) and item.name == 'span':
-                paragraph.append(item)
-                if item.name == 'span':
-                    in_span = True
-            else:
-                in_span = False
-        tei_text.append(paragraph)
-        paragraph_counter += 1
-
-    entity_spans = tei_soup.find_all('span', class_='entity')
-    if entity_spans:
-        for entity in entity_spans:
-            if 'date' in entity['class']:
-                new_tag = soup.new_tag('date')
-                if entity.has_attr('data-when'):
-                    new_tag['when'] = entity['data-when']
-                if entity.has_attr('data-from'):
-                    new_tag['from'] = entity['data-from']
-                if entity.has_attr('data-to'):
-                    new_tag['to'] = entity['data-to']
-                if entity.has_attr('data-notBefore'):
-                    new_tag['notBefore'] = entity['data-notbefore']
-                if entity.has_attr('data-notAfter'):
-                    new_tag['notAfter'] = entity['data-notafter']
-            else:
-                if 'person' in entity['class']:
-                    new_tag = soup.new_tag('persName')
-                elif 'place' in entity['class']:
-                    new_tag = soup.new_tag('placeName')
-                elif 'work' in entity['class']:
-                    new_tag = soup.new_tag('bibl')
-                elif 'organization' in entity['class']:
-                    new_tag = soup.new_tag('orgName')
-
-                if 'data-sameas' in entity:
-                    new_tag['ref'] = entity['data-sameas']
-                
-            new_tag.string = entity.get_text()
-            new_tag['n'] = f"D{data['document']['id']}A{entity['data-link']}" # DA RIVEDERE se voglio usare xml:id
-            if entity.has_attr('data-certainty'):
-                new_tag['cert'] = entity['data-certainty']
-            if entity.has_attr('data-evidence'):
-                new_tag['evidence'] = entity['data-evidence']
-            
-            entity.replace_with(new_tag)
-
-    tei_content = tei_soup.prettify()
-    return tei_content
-
-
-def download_all_documents_as_tei_zip():
-    # Create a temporary directory to store TEI XML files
+def generate_tei_mass():
     temp_dir = 'temp_tei_files'
     os.makedirs(temp_dir, exist_ok=True)
-
-    # Retrieve all documents from your database
     all_documents = Document.query.all()
-
-    # Loop through each document and generate TEI XML
     try:
         for document in all_documents:
-            data = get_data(document.id)
-            tei_header = generate_tei_header(data=data)
-            tei_content = generate_tei_content(data=data)
-            tei_template = f"""
-                <TEI xmlns="http://www.tei-c.org/ns/1.0">
-                {tei_header}
-                {tei_content}
-                </TEI>
-                """
-            tei_filename = f"{document.id}.xml"
+            tei_document = generate_tei(document)
+            tei_filename = f"tei-{document['id']}.xml"
             tei_filepath = os.path.join(temp_dir, tei_filename)
-
-            # Write TEI XML content to a file
             with open(tei_filepath, 'w', encoding='utf-8') as tei_file:
-                tei_file.write(tei_template)
-        # Create a zip file to store all TEI XML files
+                tei_file.write(tei_document)
         zip_filename = 'tei_documents.zip'
         with zipfile.ZipFile(zip_filename, 'w', zipfile.ZIP_DEFLATED) as tei_zip:
-            # Add each TEI XML file to the zip archive
             for document in all_documents:
-                tei_filename = f"{document.id}.xml"
+                tei_filename = f"{document['id']}.xml"
                 tei_filepath = os.path.join(temp_dir, tei_filename)
                 tei_zip.write(tei_filepath, os.path.basename(tei_filepath))
-
-        # Clean up the temporary directory
         for document in all_documents:
-            tei_filename = f"{document.id}.xml"
+            tei_filename = f"{document['id']}.xml"
             tei_filepath = os.path.join(temp_dir, tei_filename)
             os.remove(tei_filepath)
         os.rmdir(temp_dir)
     except Exception as e:
         raise Exception(f"An error occurred: {e}")
-
-    # Return the path to the generated zip file
     return zip_filename

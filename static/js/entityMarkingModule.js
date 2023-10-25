@@ -97,9 +97,14 @@ const EntityMarkingModule = (function () {
 
               range.surroundContents(span);
               const icon = document.createElement("i");
-              icon.classList.add("tag-icon", "fas", `fa-${referenceDataResponse.type}`);
+              icon.classList.add(
+                "tag-icon", 
+                "fas", 
+                `fa-${referenceDataResponse.type}`
+              );
               span.appendChild(icon);
-
+              
+              /*
               let annotationCounter = document.createElement("span");
               annotationCounter.classList.add(
                 "counter", 
@@ -109,9 +114,8 @@ const EntityMarkingModule = (function () {
               );
               annotationCounter.textContent = referenceDataResponse.annotation.length;
               span.appendChild(annotationCounter);
+              */
 
-
-              // Make an HTTP POST request to create the entity
               fetch(`/entity/${referenceDataResponse.entity_id}`, {
                   method: 'GET',
                   headers: {
