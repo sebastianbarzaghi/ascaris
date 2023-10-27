@@ -69,12 +69,14 @@ def generate_tei(document):
         tei_pubPlace['sameAs'] = pubPlace['authority']
         tei_pubPlace.string = pubPlace['name']
         publicationStmt.append(tei_pubPlace)
-    '''for pubDate in document['pubDate']:
+    for pubDate in document['pubDate']:
         tei_pubDate = soup.new_tag('date')
+        pubDate_obj = datetime.strptime(pubDate["date"], "%Y-%m-%dT%H:%M:%S")
+        formatted_pubDate = pubDate_obj.strftime("%Y-%m-%d")
         tei_pubDate['xml:id'] = f'pubdate-{pubDate["id"]}'
-        tei_pubDate['when'] = pubDate['date']
-        tei_pubDate.string = pubDate['date']
-        publicationStmt.append(pubDate)'''
+        tei_pubDate['when'] = formatted_pubDate
+        tei_pubDate.string = formatted_pubDate
+        publicationStmt.append(tei_pubDate)
     for license in document['license']:
         tei_availability = soup.new_tag('availability')
         tei_license = soup.new_tag('licence')
@@ -97,24 +99,27 @@ def generate_tei(document):
         tei_source['xml:id'] = f'{source["id"]}'
         tei_source.string = source['text']
         sourceDesc.append(tei_source)
-    '''creation = soup.find('creation')
+    creation = soup.find('creation')
     for creationDate in document['creationDate']:
         tei_creationDate = soup.new_tag('date')
+        creationDate_obj = datetime.strptime(creationDate["date"], "%Y-%m-%dT%H:%M:%S")
+        formatted_creationDate = creationDate_obj.strftime("%Y-%m-%d")
         tei_creationDate['xml:id'] = f'creationdate-{creationDate["id"]}'
-        tei_creationDate['when'] = creationDate['date']
-        tei_creationDate.string = creationDate['date']'''
+        tei_creationDate['when'] = formatted_creationDate
+        tei_creationDate.string = formatted_creationDate
+        creation.append(tei_creationDate)
     textClass = soup.find('textClass')
     for category in document['category']:
         tei_catRef = soup.new_tag('catRef')
         tei_catRef['xml:id'] = f'category-{category["id"]}'
         tei_catRef['target'] = category['type']
         textClass.append(tei_catRef)
-    '''profileDesc = soup.find('profileDesc')
+    profileDesc = soup.find('profileDesc')
     for abstract in document['abstract']:
         tei_abstract = soup.new_tag('abstract')
         tei_abstract['xml:id'] = f'abstract-{abstract["id"]}'
         tei_abstract.string = abstract['text']
-        profileDesc.append(abstract)'''
+        profileDesc.append(tei_abstract)
     rdfData = soup.find('RDF')
     for entity in document['entity']:
         if entity['type'] == 'person':
@@ -183,14 +188,46 @@ def generate_tei(document):
                 tei_annotation.append(tei_annotation_note)
                 tei_annotation.append(tei_annotation_license)
                 listAnnotation.append(tei_annotation)
-    print(tei_text)
     extent = soup.find('extent')
-    #characters -> tei_text
-    #words -> tei_text
-    #sentences -> tei_text
-    #entities -> xenodata
-    #references -> tei_text
-    #annotations -> standoff
+    text = soup.get_text()
+    character_count = len(text)
+    words = re.findall(r'\w+', text)
+    word_count = len(words)
+    sentences = re.split(r'(?<=[.!?])\s+', text)
+    sentence_count = len(sentences)
+    tei_measure_characters = soup.new_tag('measure')
+    tei_measure_characters['unit'] = 'characters'
+    tei_measure_characters['quantity'] = character_count
+    tei_measure_characters.string = str(character_count)
+    tei_measure_words = soup.new_tag('measure')
+    tei_measure_words['unit'] = 'words'
+    tei_measure_words['quantity'] = word_count
+    tei_measure_words.string = str(word_count)
+    tei_measure_sentences = soup.new_tag('measure')
+    tei_measure_sentences['unit'] = 'sentences'
+    tei_measure_sentences['quantity'] = sentence_count
+    tei_measure_sentences.string = str(sentence_count)
+
+    reference_elements = tei_text.find_all('ref')
+    reference_count = len(reference_elements)
+    tei_measure_references = soup.new_tag('measure')
+    tei_measure_references['unit'] = 'references'
+    tei_measure_references['quantity'] = reference_count
+    tei_measure_references.string = str(reference_count)
+
+    annotation_elements = listAnnotation.find_all('annotation')
+    annotation_count = len(annotation_elements)
+    tei_measure_annotations = soup.new_tag('measure')
+    tei_measure_annotations['unit'] = 'annotations'
+    tei_measure_annotations['quantity'] = annotation_count
+    tei_measure_annotations.string = str(annotation_count)
+
+    extent.append(tei_measure_characters)
+    extent.append(tei_measure_words)
+    extent.append(tei_measure_sentences)
+    extent.append(tei_measure_references)
+    extent.append(tei_measure_annotations)
+
     return soup.prettify()
 
 
