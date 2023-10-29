@@ -120,29 +120,8 @@ def generate_tei(document):
         tei_abstract['xml:id'] = f'abstract-{abstract["id"]}'
         tei_abstract.string = abstract['text']
         profileDesc.append(tei_abstract)
-    rdfData = soup.find('RDF')
-    for entity in document['entity']:
-        if entity['type'] == 'person':
-            rdf_entity = soup.new_tag('foaf:Person')
-            rdf_entity_label = soup.new_tag('foaf:name')
-        elif entity['type'] == 'place':
-            rdf_entity = soup.new_tag('schema:Place')
-            rdf_entity_label = soup.new_tag('schema:name')
-        elif entity['type'] == 'organization':
-            rdf_entity = soup.new_tag('foaf:Organization')
-            rdf_entity_label = soup.new_tag('foaf:name')
-        elif entity['type'] == 'work':
-            rdf_entity = soup.new_tag('fabio:Work')
-            rdf_entity_label = soup.new_tag('dcterms:title')
-        rdf_entity['rdf:about'] = f"#entity-{entity['id']}"
-        rdf_entity_label.string = entity['label']
-        rdf_entity_sameas = soup.new_tag('owl:sameAs')
-        rdf_entity_sameas['rdf:resource'] = entity['authority']
-        rdf_entity.append(rdf_entity_label)
-        rdf_entity.append(rdf_entity_sameas)
-        rdfData.append(rdf_entity)
     
-    tei_text = soup.find('text')
+    tei_body = soup.find('body')
     clean_content = document['content'].strip()
     split_content = clean_content.split('<br>')[:-1]
     joined_content = ''
@@ -160,8 +139,39 @@ def generate_tei(document):
             elif attr_name == 'data-entity':
                 ref_tag['target'] = f'#entity-{attr_value}'
         reference.replace_with(ref_tag)
-    tei_text.append(content_soup)
+    tei_body.append(content_soup)
     
+    for entity in document['entity']:
+        if entity['type'] == 'person':
+            list_entity = soup.find('listPerson')
+            new_entity = soup.new_tag('person')
+            new_entity_label = soup.new_tag('persName')
+        elif entity['type'] == 'organization':
+            list_entity = soup.find('listOrg')
+            new_entity = soup.new_tag('organization')
+            new_entity_label = soup.new_tag('orgName')
+        elif entity['type'] == 'place':
+            list_entity = soup.find('listPlace')
+            new_entity = soup.new_tag('place')
+            new_entity_label = soup.new_tag('placeName')
+        elif entity['type'] == 'work':
+            list_entity = soup.find('listBibl')
+            new_entity = soup.new_tag('bibl')
+            new_entity_label = soup.new_tag('title')
+        elif entity['type'] == 'event':
+            list_entity = soup.find('listEvent')
+            new_entity = soup.new_tag('event')
+            new_entity_label = soup.new_tag('label')
+        elif entity['type'] == 'term':
+            list_entity = soup.find('list')
+            new_entity = soup.new_tag('item')
+            new_entity_label = soup.new_tag('term')
+        new_entity['xsm:id'] = f"entity-{entity['id']}"
+        new_entity['sameAs'] = entity['authority']
+        new_entity_label.string = entity['label']
+        new_entity.append(new_entity_label)
+        list_entity.append(new_entity)
+
     listAnnotation = soup.find('listAnnotation')
     for entity in document['entity']:
         for reference in entity['reference']:
@@ -208,7 +218,7 @@ def generate_tei(document):
     tei_measure_sentences['quantity'] = sentence_count
     tei_measure_sentences.string = str(sentence_count)
 
-    reference_elements = tei_text.find_all('ref')
+    reference_elements = tei_body.find_all('ref')
     reference_count = len(reference_elements)
     tei_measure_references = soup.new_tag('measure')
     tei_measure_references['unit'] = 'references'

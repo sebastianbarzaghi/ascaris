@@ -70,12 +70,20 @@ html {
   color: #ff8fab;
 }
 
-.date, .date-button {
+.event, .event-button {
   background-color: #00f5d4;
 }
 
-.date-block .panel-icon i {
+.event-block .panel-icon i {
   color: #00f5d4;
+}
+
+.term, .term-button {
+  background-color: #f263ff;
+}
+
+.term-block .panel-icon i {
+  color: #f263ff;
 }
 
 .panel-content {

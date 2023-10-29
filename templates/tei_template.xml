@@ -1,4 +1,4 @@
-<TEI xmlns="http://www.tei-c.org/ns/1.0">
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xml:id="document">
     <teiHeader xml:id="header">
         <fileDesc>
             <titleStmt>
@@ -18,8 +18,7 @@
                 version="1.0.0"
                 ident="Ascaris">
                     <label>Ascaris</label>
-                    <ptr target="#header"/>
-                    <ptr target="#text"/>
+                    <ptr target="#document"/>
                 </application>
             </appInfo>
         </encodingDesc>
@@ -29,14 +28,24 @@
             <textClass>
             </textClass>
         </profileDesc>
-        <xenoData>
-            <rdf:RDF>
-            </rdf:RDF>
-        </xenoData>
     </teiHeader>
     <text xml:id="text">
+        <body>
+        </body>
     </text>
     <standOff>
+        <listPerson>
+        </listPerson>
+        <listOrg>
+        </listOrg>
+        <listPlace>
+        </listPlace>
+        <listBibl>
+        </listBibl>
+        <listEvent>
+        </listEvent>
+        <list type="listTerm">
+        </list>
         <listAnnotation>
         </listAnnotation>
     </standOff>

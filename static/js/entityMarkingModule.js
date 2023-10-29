@@ -29,10 +29,16 @@ const EntityMarkingModule = (function () {
       panelClass: "organizations-panel-blocks"
     },
     {
-      buttonSelector: ".date-button",
-      spanClass: "date",
+      buttonSelector: ".event-button",
+      spanClass: "event",
       iconClass: "calendar-alt",
-      panelClass: "dates-panel-blocks"
+      panelClass: "events-panel-blocks"
+    },
+    {
+      buttonSelector: ".term-button",
+      spanClass: "term",
+      iconClass: "quote-left",
+      panelClass: "terms-panel-blocks"
     }
   ];
 

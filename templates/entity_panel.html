@@ -4,7 +4,8 @@
         <li class="tab places-tab" data-name="places"><a>Places</a></li>
         <li class="tab works-tab" data-name="works"><a>Works</a></li>
         <li class="tab organizations-tab" data-name="organizations"><a>Organizations</a></li>
-        <li class="tab dates-tab" data-name="dates"><a>Dates</a></li>
+        <li class="tab events-tab" data-name="events"><a>Events</a></li>
+        <li class="tab terms-tab" data-name="terms"><a>Terms</a></li>
     </ul>
 </div>
 <div class="tab-content">
@@ -36,9 +37,16 @@
       {% endfor %}
     </div>
   </div>
-  <div class="dates-content panel-content hidden">
-    <div class="dates-panel-blocks">
-      {% for entity in entities if entity.type == "date" %}
+  <div class="events-content panel-content hidden">
+    <div class="events-panel-blocks">
+      {% for entity in entities if entity.type == "event" %}
+        {% include 'entity_box.html' %}
+      {% endfor %}
+    </div>
+  </div>
+  <div class="terms-content panel-content hidden">
+    <div class="terms-panel-blocks">
+      {% for entity in entities if entity.type == "term" %}
         {% include 'entity_box.html' %}
       {% endfor %}
     </div>
