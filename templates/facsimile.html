@@ -1,0 +1,42 @@
+<div class="column">
+    <h2 class="subtitle">Upload image</h2>
+    <form method="post" action="{{ url_for('upload_file') }}" enctype="multipart/form-data">
+        <div id="file-upload" class="field is-large is-boxed file has-name">
+            <label class="file-label">
+                <input class="file-input" type="file" name="uploaded_file">
+                <span class="file-cta">
+                    <span class="file-icon">
+                        <i class="fas fa-upload"></i>
+                    </span>
+                    <span class="file-label">
+                        Choose a file…
+                    </span>
+                </span>
+                <span class="file-name">
+                    No file uploaded
+                </span>
+            </label>
+        </div>
+        <div class="field">
+            <div class="control">
+                <button type="submit" class="button is-primary">Upload</button>
+            </div>
+        </div>
+    </form>
+    {% if img %}
+        <h1>Rendered Image</h1>
+        <img src="{{img}}">
+    {% else %}
+        <h1>Image will be render here...</h1>
+    {% endif %}
+</div>
+
+<script>
+    const fileInput = document.querySelector('#file-upload input[type=file]');
+    fileInput.onchange = () => {
+      if (fileInput.files.length > 0) {
+        const fileName = document.querySelector('#file-upload .file-name');
+        fileName.textContent = fileInput.files[0].name;
+      }
+    }
+</script>

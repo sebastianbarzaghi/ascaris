@@ -13,11 +13,16 @@
         <ul>
           <li class="editor-tab text-tab is-active"><a>Text</a></li>
           <li class="editor-tab metadata-tab"><a>Metadata</a></li>
+          <li class="editor-tab facsimile-tab"><a>Facsimile</a></li>
         </ul>
       </div>
 
       <div class="metadata-panel" id="metadataContent">
         {% include 'form_modal.html' %}
+      </div>
+
+      <div class="facsimile-panel" id="facsimileContent">
+        {% include 'facsimile.html' %}
       </div>
 
       <div class="editor-panel">

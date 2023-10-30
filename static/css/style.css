@@ -192,6 +192,10 @@ html {
   display: none;
 }
 
+.facsimile-panel {
+  display: none;
+}
+
 .editor-panel {
   display: block;
 }

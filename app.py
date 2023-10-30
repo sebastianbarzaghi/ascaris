@@ -1,4 +1,4 @@
-from flask import Response, render_template, request, flash, jsonify, send_from_directory
+from flask import Response, render_template, request, flash, jsonify, redirect, url_for
 from download_tei import generate_tei, generate_tei_mass
 from manipulate_documents import allowed_file, read_docx, read_pdf, read_txt
 from config import app, connex_app
@@ -20,11 +20,16 @@ import abstract as abstract_api
 import document as document_api
 import category as category_api
 from datetime import datetime
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = 'static\images'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 
 connex_app.add_api("swagger.yml")
 secret_key = secrets.token_hex(24)
 app.secret_key = secret_key
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 @app.route('/')
@@ -151,7 +156,6 @@ def save_metadata(id):
     try:
         data = request.get_json()
         for field_group in metadata:
-            print(field_group)
             if data[field_group]:
                 for field in data[field_group]:
                     field_id = field['id']
@@ -434,6 +438,29 @@ def download_all_documents_route():
     except Exception as e:
         return str(e), 500
 
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            img = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            return render_template('edit_document.html', img=img)
+    return render_template('edit_document.html')
 
 '''
 @app.route('/delete/<model_name>/<int:record_id>', methods=['DELETE'])
