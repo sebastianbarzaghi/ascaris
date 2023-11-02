@@ -1,8 +1,8 @@
-from flask import Response, render_template, request, flash, jsonify, redirect, url_for
+from flask import Response, render_template, request, flash, jsonify, redirect, send_from_directory, url_for
 from download_tei import generate_tei, generate_tei_mass
 from manipulate_documents import allowed_file, read_docx, read_pdf, read_txt
 from config import app, connex_app
-import secrets, os
+import secrets, os, time
 import annotation as annotation_api
 import reference as reference_api
 import entity as entity_api
@@ -84,7 +84,8 @@ def edit_document(id):
                            existing_abstracts=existing_abstracts,
                            existing_creationDates=existing_creationDates,
                            existing_categories=existing_categories,
-                           concepts=concepts)
+                           concepts=concepts,
+                           images=get_uploaded_images())
 
 
 @app.route('/document/new', methods=['GET', 'POST'])
@@ -443,24 +444,68 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/upload', methods=['GET', 'POST'])
+def get_uploaded_images():
+    image_files = [f for f in os.listdir(app.config['UPLOAD_FOLDER']) if f.endswith(('.jpg', '.jpeg', '.png'))]
+    images = []
+    for image in image_files:
+        image_path = os.path.join(UPLOAD_FOLDER, image)
+        created = os.path.getctime(image_path)
+        size = os.path.getsize(image_path)
+        images.append({
+            'filename': image,
+            'created': time.ctime(created),
+            'size': f'{size} bytes'
+        })
+    return images
+
+@app.route('/uploads/<filename>')
+def uploaded_image(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route('/image/new', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
         file = request.files['file']
-        # If the user does not select a file, the browser submits an
-        # empty file without a filename.
         if file.filename == '':
             flash('No selected file')
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             img = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            return render_template('edit_document.html', img=img)
-    return render_template('edit_document.html')
+            file.save(img)
+            return render_template('new_image.html', images=get_uploaded_images())
+    return render_template('new_image.html', images=get_uploaded_images())
+
+@app.route('/document/<int:id>/associate_images', methods=['POST'])
+def associate_images(id):
+    document = document_api.read_one(id)
+    
+    selected_images = request.form.getlist('selected_images')
+    
+    # Append selected images to the document's image attribute
+    if not document.get('image'):
+        document['image'] = ''
+    
+    document['image'].extend(selected_images)
+    
+    # Update the document in your data store
+    document_api.update(document)
+    
+    return redirect(url_for('edit_document', id=id))
+
+
+@app.route('/delete_image/<filename>', methods=['POST'])
+def delete_image(filename):
+    image_path = os.path.join(UPLOAD_FOLDER, filename)
+
+    if os.path.exists(image_path):
+        os.remove(image_path)
+        return "Image deleted successfully"
+    else:
+        return "Image not found", 404
 
 '''
 @app.route('/delete/<model_name>/<int:record_id>', methods=['DELETE'])

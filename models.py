@@ -235,6 +235,7 @@ class Document(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     docTitle = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
+    image = db.Column(db.Text)
     title = db.relationship(
         Title,
         backref="document",

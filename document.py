@@ -30,6 +30,7 @@ def update(id, document):
         update_document = document_schema.load(document, session=db.session)
         existing_document.docTitle = update_document.docTitle
         existing_document.content = update_document.content
+        existing_document.image = update_document.image
         db.session.merge(existing_document)
         db.session.commit()
         return document_schema.dump(existing_document), 201
