@@ -1,6 +1,11 @@
 const ModalModule = (function () {
   // Functions to open and close a modal
 
+  function openModal(el) {
+    console.log(el)
+    el.classList.add('is-active');
+  }
+
   function closeModal(el) {
     el.classList.remove('is-active');
   }
@@ -11,6 +16,14 @@ const ModalModule = (function () {
       closeModal(modal);
     });
   }
+
+  const openModalButtons = document.querySelectorAll('.open-modal');
+  openModalButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const modal = button.nextElementSibling;
+      openModal(modal)
+    });
+  })
 
   /*
   // Add a click event on buttons to open a specific modal

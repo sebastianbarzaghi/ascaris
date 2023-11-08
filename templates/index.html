@@ -23,6 +23,7 @@
 <table class="table is-striped is-hoverable is-fullwidth">
     <thead>
         <tr>
+            <th>Document ID</th>
             <th>Document title</th>
             <th>Created at</th>
             <th>Updated at</th>
@@ -31,6 +32,9 @@
     <tbody>
         {% for document in documents %}
         <tr>
+            <td>
+                {{ document.id }}
+            </td>
             <td>
                 <a href="{{ url_for('edit_document', id=document.id) }}">{{ document.docTitle }}</a>
             </td>

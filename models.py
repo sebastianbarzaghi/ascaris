@@ -2,6 +2,19 @@ from datetime import datetime
 from config import db, ma
 from marshmallow_sqlalchemy import fields
 
+class Image(db.Model):
+    __tablename__ = "image"
+    id = db.Column(db.Integer, primary_key=True)
+    document_id = db.Column(db.Integer, db.ForeignKey("document.id"))
+    name = db.Column(db.String)
+
+class ImageSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Image
+        load_instance = True
+        sqla_session = db.session
+        include_fk = True
+
 class Annotation(db.Model):
     __tablename__ = "annotation"
     id = db.Column(db.Integer, primary_key=True)
@@ -235,7 +248,12 @@ class Document(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     docTitle = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    image = db.Column(db.Text)
+    image = db.relationship(
+        Image,
+        backref="document",
+        single_parent=True,
+        lazy=True
+    )
     title = db.relationship(
         Title,
         backref="document",
@@ -327,6 +345,7 @@ class DocumentSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         sqla_session = db.session
         include_relationships = True
+    image = fields.Nested(ImageSchema, many=True)
     title = fields.Nested(TitleSchema, many=True)
     responsibility = fields.Nested(ResponsibilitySchema, many=True)
     pubAuthority = fields.Nested(PubAuthoritySchema, many=True)
@@ -359,6 +378,9 @@ entity_schema = EntitySchema()
 entities_schema = EntitySchema(many=True)
 reference_schema = ReferenceSchema()
 annotation_schema = AnnotationSchema()
+
+image_schema = ImageSchema()
+images_schema = ImageSchema(many=True)
 
 document_schema = DocumentSchema()
 documents_schema = DocumentSchema(many=True)

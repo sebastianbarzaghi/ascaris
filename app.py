@@ -3,6 +3,7 @@ from download_tei import generate_tei, generate_tei_mass
 from manipulate_documents import allowed_file, read_docx, read_pdf, read_txt
 from config import app, connex_app
 import secrets, os, time
+import image as image_api
 import annotation as annotation_api
 import reference as reference_api
 import entity as entity_api
@@ -45,6 +46,8 @@ def get_document(id):
 def edit_document(id):
     document = document_api.read_one(id)
 
+    images = image_api.read_all_document(id)
+
     entities = entity_api.read_all(id)
 
     concepts = category_api.get_skos_concepts()
@@ -85,7 +88,8 @@ def edit_document(id):
                            existing_creationDates=existing_creationDates,
                            existing_categories=existing_categories,
                            concepts=concepts,
-                           images=get_uploaded_images())
+                           images=images
+                        )
 
 
 @app.route('/document/new', methods=['GET', 'POST'])
@@ -444,6 +448,51 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@app.route('/image/<int:document_id>', methods=['POST'])
+def create_image(document_id):
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            img = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(img)
+            image = {
+                'document_id': document_id,
+                'name': filename
+            }
+            image_api.create(image)
+
+    return render_template('new_image.html', images=image_api.read_all())
+
+@app.route('/static/images', methods=['GET'])
+def get_images():
+    images = image_api.read_all()
+    return render_template('new_image.html', images=images)
+
+@app.route('/static/images/<int:image_name>', methods=['GET'])
+def get_image(image_name):
+    image = image_api.read_one(image_name)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], image_name)
+
+@app.route('/static/images/<path:image_name>', methods=['DELETE'])
+def delete_image(image_name):
+    image = image_api.read_one(image_name)
+    print(image)
+    image_path = os.path.join(UPLOAD_FOLDER, image_name)
+    if os.path.exists(image_path):
+        image_api.delete(image.id)
+        os.remove(image_path)
+        return render_template('new_image.html', images=image_api.read_all())
+    else:
+        return "Image not found", 404
+
+'''
 def get_uploaded_images():
     image_files = [f for f in os.listdir(app.config['UPLOAD_FOLDER']) if f.endswith(('.jpg', '.jpeg', '.png'))]
     images = []
@@ -458,56 +507,7 @@ def get_uploaded_images():
         })
     return images
 
-@app.route('/uploads/<filename>')
-def uploaded_image(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-@app.route('/image/new', methods=['GET', 'POST'])
-def upload_file():
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            img = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(img)
-            return render_template('new_image.html', images=get_uploaded_images())
-    return render_template('new_image.html', images=get_uploaded_images())
-
-@app.route('/document/<int:id>/associate_images', methods=['POST'])
-def associate_images(id):
-    document = document_api.read_one(id)
-    
-    selected_images = request.form.getlist('selected_images')
-    
-    # Append selected images to the document's image attribute
-    if not document.get('image'):
-        document['image'] = ''
-    
-    document['image'].extend(selected_images)
-    
-    # Update the document in your data store
-    document_api.update(document)
-    
-    return redirect(url_for('edit_document', id=id))
-
-
-@app.route('/delete_image/<filename>', methods=['POST'])
-def delete_image(filename):
-    image_path = os.path.join(UPLOAD_FOLDER, filename)
-
-    if os.path.exists(image_path):
-        os.remove(image_path)
-        return "Image deleted successfully"
-    else:
-        return "Image not found", 404
-
-'''
 @app.route('/delete/<model_name>/<int:record_id>', methods=['DELETE'])
 def delete_record(model_name, record_id):
     try:

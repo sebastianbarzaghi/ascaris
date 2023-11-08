@@ -11,6 +11,15 @@ servers:
 
 components:
   schemas:
+    Image:
+      type: "object"
+      properties:
+        id:
+          type: "number"
+        document_id:
+          type: "number"
+        name:
+          type: "string"
     Title:
       type: "object"
       properties:
@@ -201,7 +210,10 @@ components:
           type: "string"
         content:
           type: "string"
-          
+        image:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Image"
         entity:
           type: "array"
           items:
@@ -210,7 +222,6 @@ components:
           type: "array"
           items:
             $ref: "#/components/schemas/Reference"
-
         title:
           type: "array"
           items:
@@ -264,6 +275,13 @@ components:
     id:
       name: "id"
       description: "Identifier of the document to get"
+      in: path
+      required: True
+      schema:
+        type: "number"
+    image_id:
+      name: "image_id"
+      description: "Identifier of the image"
       in: path
       required: True
       schema:
@@ -444,6 +462,75 @@ paths:
       responses:
         "204":
           description: "Success: deleted document"
+
+  /image:
+    get:
+      operationId: "image.read_all"
+      tags:
+        - "Image"
+      summary: "Read the list of images"
+      responses:
+        "200":
+          description: "Success: read image list"
+    post:
+      operationId: "image.create"
+      tags:
+        - Image
+      summary: "Create a image"
+      requestBody:
+        description: "Image to create"
+        required: True
+        content:
+          application/json:
+            schema:
+              x-body-name: "image"
+              type: "object"
+              properties:
+                document_id:
+                  type: "number"
+                name:
+                  type: "string"
+      responses:
+        "201":
+          description: "Success: document created"
+
+  /image/{image_id}:
+    get:
+      operationId: "image.read_one"
+      tags:
+        - Image
+      summary: "Read one image"
+      parameters:
+        - $ref: "#/components/parameters/image_id"
+      responses:
+        "200":
+          description: "Success: read image"
+    put:
+      tags:
+        - Image
+      operationId: "image.update"
+      summary: "Update a image"
+      parameters:
+        - $ref: "#/components/parameters/image_id"
+      responses:
+        "200":
+          description: "Success: updated image"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "image"
+              $ref: "#/components/schemas/Image"
+    delete:
+      tags:
+        - Image
+      operationId: "image.delete"
+      summary: "Delete a image"
+      parameters:
+        - $ref: "#/components/parameters/image_id"
+      responses:
+        "204":
+          description: "Success: deleted image"
 
   /entity:
     get:
