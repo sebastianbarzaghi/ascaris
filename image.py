@@ -10,14 +10,14 @@ def read_all_document(document_id):
     images = Image.query.filter_by(document_id=document_id).all()
     return images_schema.dump(images)
 
-def read_one(image_name):
-    image = Image.query.get(image_name)
+def read_one(image_id):
+    image = Image.query.get(image_id)
     if image:
         return image_schema.dump(image)
     else:
         abort(
             404, 
-            f"Error: image with name = {image_name} not found"
+            f"Error: image with name = {image_id} not found"
         )
 
 def create(image):
@@ -33,21 +33,6 @@ def create(image):
         abort(
             404, 
             f"Error: document with ID = {document_id} not found"
-        )
-
-def update(image_id, image):
-    existing_image = Image.query.get(image_id)
-    if existing_image:
-        update_image = image_schema.load(image, 
-                                           session=db.session)
-        existing_image.name = update_image.name
-        db.session.merge(existing_image)
-        db.session.commit()
-        return image_schema.dump(existing_image), 201
-    else:
-        abort(
-            404, 
-            f"Error: image with ID = {image_id} not found"
         )
 
 def delete(image_id):

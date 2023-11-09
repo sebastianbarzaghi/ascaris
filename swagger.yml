@@ -467,7 +467,7 @@ paths:
     get:
       operationId: "image.read_all"
       tags:
-        - "Image"
+        - Image
       summary: "Read the list of images"
       responses:
         "200":
@@ -505,22 +505,6 @@ paths:
       responses:
         "200":
           description: "Success: read image"
-    put:
-      tags:
-        - Image
-      operationId: "image.update"
-      summary: "Update a image"
-      parameters:
-        - $ref: "#/components/parameters/image_id"
-      responses:
-        "200":
-          description: "Success: updated image"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              x-body-name: "image"
-              $ref: "#/components/schemas/Image"
     delete:
       tags:
         - Image

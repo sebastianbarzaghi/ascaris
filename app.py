@@ -475,18 +475,17 @@ def get_images():
     images = image_api.read_all()
     return render_template('new_image.html', images=images)
 
-@app.route('/static/images/<int:image_name>', methods=['GET'])
-def get_image(image_name):
-    image = image_api.read_one(image_name)
-    return send_from_directory(app.config['UPLOAD_FOLDER'], image_name)
+@app.route('/static/images/<int:image_id>', methods=['GET'])
+def get_image(image_id):
+    image = image_api.read_one(image_id)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], image['name'])
 
-@app.route('/static/images/<path:image_name>', methods=['DELETE'])
-def delete_image(image_name):
-    image = image_api.read_one(image_name)
-    print(image)
-    image_path = os.path.join(UPLOAD_FOLDER, image_name)
+@app.route('/static/images/<int:image_id>', methods=['DELETE'])
+def delete_image(image_id):
+    image = image_api.read_one(image_id)
+    image_path = os.path.join(UPLOAD_FOLDER, image['name'])
     if os.path.exists(image_path):
-        image_api.delete(image.id)
+        image_api.delete(image_id)
         os.remove(image_path)
         return render_template('new_image.html', images=image_api.read_all())
     else:

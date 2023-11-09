@@ -8,7 +8,7 @@
     >
         <div 
         id="file-upload" 
-        class="field is-large is-boxed file has-name"
+        class="field file has-name"
         >
             <label class="file-label">
                 <input class="file-input" type="file" name="file">
@@ -34,19 +34,32 @@
         </div>
     </form>
     
+    <table class="table is-striped is-hoverable is-fullwidth">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for image in images %}
+                <tr>
+                    <td>
+                        <img 
+                        src="{{ url_for('get_image', image_id=image.id) }}" 
+                        alt="Uploaded Image" 
+                        width="300" 
+                        height="200"
+                        >
+                    </td>
+                    <td>
+                        {{ image.name }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-    <div>
-        {% for image in images %}
-            <img 
-            src="{{ url_for('get_image', image_name=image.name) }}" 
-            alt="Uploaded Image" 
-            width="300" 
-            height="200"
-            >
-        {% endfor %}
-    </div>
-
-    
 </div>
 
 <script>
