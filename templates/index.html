@@ -13,9 +13,9 @@
     <div class="column is-two-thirds">
         <div class="buttons is-right">
             <a class="button">Download XML-TEI</a>
-            <a class="button">Download HTML-RDFa</a>
-            <a class="button">Download TEI and RDFa</a>
-            <a class="button">Download Knowledge base</a>
+            <a class="button is-static">Download HTML-RDFa</a>
+            <a class="button is-static">Download TEI and RDFa</a>
+            <a class="button is-static">Download Knowledge base</a>
         </div>
     </div>
 </div>
@@ -27,6 +27,7 @@
             <th>Document title</th>
             <th>Created at</th>
             <th>Updated at</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -44,9 +45,41 @@
             <td>
                 {{ document.updated_at }}
             </td>
+            <td>
+                <button 
+                    class="button delete-document-button" 
+                    data-documentid="{{ document.id }}"
+                    >
+                        Delete
+                </button>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
+<script>
+    document.querySelectorAll('.delete-document-button').forEach(button => {
+        button.addEventListener('click', function () {
+            const documentid = this.getAttribute('data-documentid');
+            if (confirm('Are you sure you want to delete this document?')) {
+                fetch(`/document/${documentid}`, { 
+                        method: 'DELETE' 
+                        }
+                    )
+                    .then(
+                        response => {
+                        if (response.status === 200) {
+                            // Remove the image from the frontend
+                            this.parentNode.parentNode.remove()
+                        } else {
+                            alert('Failed to delete the image.');
+                            }
+                        }
+                    );
+            }
+        });
+    });
+</script>
 
 {% endblock %}

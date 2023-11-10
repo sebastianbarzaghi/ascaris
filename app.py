@@ -38,7 +38,7 @@ def index():
     documents = document_api.read_all()
     return render_template('index.html', documents=documents)
 
-@app.route('/document/<int:id>')
+@app.route('/document/<int:id>', methods=['GET'])
 def get_document(id):
     return document_api.read_one(id)
 
@@ -140,6 +140,11 @@ def save_document():
     data = request.get_json()
     document_id = data.get("id")
     return document_api.update(document_id, {'docTitle': data.get('docTitle'), 'content': data.get('content')})
+
+
+@app.route("/document/<int:id>", methods=['DELETE'])
+def delete_document(id):
+    return document_api.delete(id)
 
 
 @app.route('/metadata/<int:id>', methods=['PUT'])
